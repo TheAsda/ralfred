@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ralfred", "Ralfred\Ralfred.csproj", "{3FCDD01A-2AD5-473F-9504-0F31FE892B0A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecretsProvider", "SecretsProvider\SecretsProvider.csproj", "{3FCDD01A-2AD5-473F-9504-0F31FE892B0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{37969E99-8035-4D75-B1AA-E59BC1CE557A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +14,9 @@ Global
 		{3FCDD01A-2AD5-473F-9504-0F31FE892B0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FCDD01A-2AD5-473F-9504-0F31FE892B0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FCDD01A-2AD5-473F-9504-0F31FE892B0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37969E99-8035-4D75-B1AA-E59BC1CE557A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37969E99-8035-4D75-B1AA-E59BC1CE557A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37969E99-8035-4D75-B1AA-E59BC1CE557A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37969E99-8035-4D75-B1AA-E59BC1CE557A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
