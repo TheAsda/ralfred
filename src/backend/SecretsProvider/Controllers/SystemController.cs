@@ -10,6 +10,7 @@ namespace Ralfred.Controllers
 	public class SystemController : ControllerBase
 	{
 		[HttpGet("status")]
+		[ProducesResponseType(200)]
 		public SystemInfo GetSystemInfo()
 		{
 			// TODO: add getting version and storage type
@@ -21,6 +22,7 @@ namespace Ralfred.Controllers
 		}
 
 		[HttpGet("config")]
+		[ProducesResponseType(200)]
 		public Config GetConfig()
 		{
 			// TODO: add real config
@@ -28,6 +30,7 @@ namespace Ralfred.Controllers
 		}
 
 		[HttpGet("start")]
+		[ProducesResponseType(200)]
 		public void Start()
 		{
 			// TODO: add start logic
@@ -35,6 +38,7 @@ namespace Ralfred.Controllers
 		}
 
 		[HttpGet("stop")]
+		[ProducesResponseType(200)]
 		public void Stop()
 		{
 			// TODO: add stop logic
