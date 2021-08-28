@@ -11,11 +11,6 @@ namespace Ralfred.Common.DataAccess.Context
 	{
 		#region Implementation of IStorageContext
 
-		public T Get()
-		{
-			throw new NotImplementedException();
-		}
-
 		public T Get(Expression<Func<T, bool>> filter)
 		{
 			throw new NotImplementedException();

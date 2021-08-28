@@ -2,10 +2,9 @@
 {
 	public enum StorageEngineType
 	{
-		None = 0,
-		InMemory = 10,
-		Postgres = 20,
-		Mongo = 30,
-		Redis = 40
+		InMemory = 0,
+		Postgres = 10,
+		Mongo = 20,
+		Redis = 30
 	}
 }

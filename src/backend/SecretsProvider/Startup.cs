@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Ralfred.Common.DependencyInjection;
+using Ralfred.Common.Types;
 
 
 namespace Ralfred.SecretsProvider
@@ -12,7 +13,7 @@ namespace Ralfred.SecretsProvider
 	{
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.ConfigureStorageContext("" /* storage type from configuration */);
+			services.ConfigureStorageContext(StorageEngineType.InMemory /* storage type from configuration */);
 
 			services.AddControllers();
 		}

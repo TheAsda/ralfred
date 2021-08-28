@@ -9,8 +9,6 @@ namespace Ralfred.Common.DataAccess.Context
 {
 	public interface IStorageContext<T> where T : Entity
 	{
-		T Get();
-
 		T Get(Expression<Func<T, bool>> filter);
 
 		IEnumerable<T> List();
