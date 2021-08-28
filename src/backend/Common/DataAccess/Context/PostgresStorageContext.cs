@@ -5,15 +5,16 @@ using System.Linq.Expressions;
 using Npgsql;
 
 using Ralfred.Common.DataAccess.Entities;
+using Ralfred.Common.Types;
 
 
 namespace Ralfred.Common.DataAccess.Context
 {
 	public class PostgreStorageContext<T> : IStorageContext<T> where T : Entity
 	{
-		public PostgreStorageContext(string connectionString)
+		public PostgreStorageContext(StorageConnection connectionSettings)
 		{
-			_connectionString = connectionString;
+			_connectionSettings = connectionSettings;
 		}
 
 		#region Implementation of IStorageContext
@@ -57,13 +58,13 @@ namespace Ralfred.Common.DataAccess.Context
 
 		private T Process(Func<NpgsqlConnection, T> func)
 		{
-			using var connection = new NpgsqlConnection(_connectionString);
+			using var connection = new NpgsqlConnection(_connectionSettings.ConnectionString);
 
 			connection.Open();
 
 			return func(connection);
 		}
 
-		private readonly string _connectionString;
+		private readonly StorageConnection _connectionSettings;
 	}
 }

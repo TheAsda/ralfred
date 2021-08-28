@@ -5,15 +5,16 @@ using System.Linq.Expressions;
 using MongoDB.Driver;
 
 using Ralfred.Common.DataAccess.Entities;
+using Ralfred.Common.Types;
 
 
 namespace Ralfred.Common.DataAccess.Context
 {
 	public class MongoStorageContext<T> : IStorageContext<T> where T : Entity
 	{
-		public MongoStorageContext(string connectionString)
+		public MongoStorageContext(StorageConnection connectionSettings)
 		{
-			_connectionString = connectionString;
+			_connectionSettings = connectionSettings;
 		}
 
 		#region Implementation of IStorageContext
@@ -57,13 +58,13 @@ namespace Ralfred.Common.DataAccess.Context
 
 		private T Process(Func<IMongoClient, T> func)
 		{
-			_client ??= new MongoClient(_connectionString);
+			_client ??= new MongoClient(_connectionSettings.ConnectionString);
 
 			return func(_client);
 		}
 
 		private IMongoClient? _client;
 
-		private readonly string _connectionString;
+		private readonly StorageConnection _connectionSettings;
 	}
 }

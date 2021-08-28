@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 
 using Ralfred.Common.DataAccess.Entities;
+using Ralfred.Common.Types;
 
 using StackExchange.Redis;
 
@@ -11,9 +12,9 @@ namespace Ralfred.Common.DataAccess.Context
 {
 	public class RedisStorageContext<T> : IStorageContext<T> where T : Entity
 	{
-		public RedisStorageContext(string connectionString)
+		public RedisStorageContext(StorageConnection connectionSettings)
 		{
-			_connectionString = connectionString;
+			_connectionSettings = connectionSettings;
 		}
 
 		#region Implementation of IStorageContext
@@ -57,13 +58,13 @@ namespace Ralfred.Common.DataAccess.Context
 
 		private T Process(Func<IDatabase, T> func)
 		{
-			_connection ??= ConnectionMultiplexer.Connect(_connectionString);
+			_connection ??= ConnectionMultiplexer.Connect(_connectionSettings.ConnectionString);
 
 			return func(_connection.GetDatabase());
 		}
 
 		private IConnectionMultiplexer? _connection;
 
-		private readonly string _connectionString;
+		private readonly StorageConnection _connectionSettings;
 	}
 }
