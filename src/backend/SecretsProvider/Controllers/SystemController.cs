@@ -26,5 +26,19 @@ namespace Ralfred.Controllers
 			// TODO: add real config
 			return new Config();
 		}
+
+		[HttpGet("start")]
+		public void Start()
+		{
+			// TODO: add start logic
+			return;
+		}
+
+		[HttpGet("stop")]
+		public void Stop()
+		{
+			// TODO: add stop logic
+			return;
+		}
 	}
 }
