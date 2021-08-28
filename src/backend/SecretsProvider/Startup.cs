@@ -11,14 +11,14 @@ namespace Ralfred.SecretsProvider
 {
 	public class Startup
 	{
-		public void ConfigureServices(IServiceCollection services)
+		public static void ConfigureServices(IServiceCollection services)
 		{
 			services.ConfigureStorageContext(StorageEngineType.InMemory /* storage type from configuration */);
 
 			services.AddControllers();
 		}
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			if (env.IsDevelopment())
 			{
