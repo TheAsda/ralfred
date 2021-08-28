@@ -4,12 +4,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using Ralfred.Common.DependencyInjection;
+
 
 namespace Ralfred
 {
 	public class Startup
 	{
-		public void ConfigureServices(IServiceCollection services) { }
+		public void ConfigureServices(IServiceCollection services)
+		{
+			services.ConfigureStorageContext("" /* storage type from configuration */);
+
+			services.AddControllers();
+		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
@@ -22,7 +29,7 @@ namespace Ralfred
 
 			app.UseEndpoints(endpoints =>
 			{
-				endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); });
+				endpoints.MapControllers();
 			});
 		}
 	}
