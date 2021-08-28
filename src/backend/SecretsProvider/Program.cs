@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 
-namespace Ralfred
+namespace Ralfred.SecretsProvider
 {
 	public static class Program
 	{

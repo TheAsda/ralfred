@@ -1,20 +1,24 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using Ralfred.Common.DependencyInjection;
+using Ralfred.Common.Types;
 
-namespace Ralfred
+
+namespace Ralfred.SecretsProvider
 {
 	public class Startup
 	{
-		public void ConfigureServices(IServiceCollection services)
+		public static void ConfigureServices(IServiceCollection services)
 		{
+			services.ConfigureStorageContext(StorageEngineType.InMemory /* storage type from configuration */);
+
 			services.AddControllers();
 		}
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			if (env.IsDevelopment())
 			{
@@ -22,7 +26,11 @@ namespace Ralfred
 			}
 
 			app.UseRouting();
-			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllers();
+			});
 		}
 	}
 }
