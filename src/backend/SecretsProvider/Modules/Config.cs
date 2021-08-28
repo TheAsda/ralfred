@@ -1,7 +1,4 @@
 ﻿namespace Ralfred.Modules
 {
-	public class Config
-	{
-		
-	}
+	public record Config { }
 }
