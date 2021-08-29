@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using Ralfred.Models;
+using Ralfred.SecretsProvider.Models;
 
 
-namespace Ralfred.Controllers
+namespace Ralfred.SecretsProvider.Controllers
 {
 	[ApiController]
 	[Route("system")]

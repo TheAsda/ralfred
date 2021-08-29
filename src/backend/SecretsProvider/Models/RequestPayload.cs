@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace Ralfred.Models
+namespace Ralfred.SecretsProvider.Models
 {
 	[Serializable]
 	public record RequestPayload(string Route)
