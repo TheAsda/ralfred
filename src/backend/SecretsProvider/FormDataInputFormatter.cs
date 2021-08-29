@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.Formatters;
 
 
-namespace Ralfred
+namespace Ralfred.SecretsProvider
 {
 	public class BypassFormDataInputFormatter : IInputFormatter
 	{
