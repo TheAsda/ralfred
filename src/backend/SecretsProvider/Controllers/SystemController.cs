@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using Ralfred.Modules;
+using Ralfred.Models;
 
 
 namespace Ralfred.Controllers

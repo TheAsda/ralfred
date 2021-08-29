@@ -1,4 +1,4 @@
-﻿namespace Ralfred.Modules
+﻿namespace Ralfred.Models
 {
 	public record SystemInfo
 	{
