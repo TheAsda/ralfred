@@ -1,30 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Ralfred.Models;
 
 
 namespace Ralfred.Controllers
 {
 	[ApiController]
+	[Route("{route}")]
 	public class SecretsController : ControllerBase
 	{
-		[HttpPut("{*route}")]
-		// TODO: add body payload
-		public void AddSecrets([FromForm] IFormCollection formPayload, [FromQuery] string? secrets, [FromRoute] string route)
+		[HttpPut]
+		public void AddSecrets([FromRoute] RequestPayload payload)
 		{
-			var secretNames = secrets?.Split(',');
-			var secretPath = route.Split("/");
+			var secretNames = payload.Secrets?.Split(',');
+			var secretPath = payload.Route.Split("/");
 		}
-		
-		[HttpDelete("{*route}")]
-		// TODO: add body payload
-		public void RemoveSecrets([FromForm] IFormCollection formPayload, [FromQuery] string? secrets, [FromRoute] string route)
+
+		[HttpDelete]
+		public void RemoveSecrets([FromRoute] RequestPayload payload)
 		{
-			var secretNames = secrets?.Split(',');
-			var secretPath = route.Split("/");
+			var secretNames = payload.Secrets?.Split(',');
+			var secretPath = payload.Route.Split("/");
 		}
 	}
 }
