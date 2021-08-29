@@ -6,7 +6,7 @@ using Ralfred.Models;
 namespace Ralfred.Controllers
 {
 	[ApiController]
-	[Route("{route}")]
+	[Route("{*route}")]
 	public class SecretsController : ControllerBase
 	{
 		[HttpPut]

@@ -15,7 +15,7 @@ namespace Ralfred
 
 		public Task<InputFormatterResult> ReadAsync(InputFormatterContext context)
 		{
-			return InputFormatterResult.SuccessAsync(new Dictionary<object, object>());
+			return InputFormatterResult.SuccessAsync(null);
 		}
 	}
 }
