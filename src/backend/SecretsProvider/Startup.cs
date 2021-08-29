@@ -15,7 +15,7 @@ namespace Ralfred.SecretsProvider
 		{
 			services.ConfigureStorageContext(StorageEngineType.InMemory /* storage type from configuration */);
 
-			services.AddControllers();
+			services.AddControllers(options => { options.InputFormatters.Add(new BypassFormDataInputFormatter()); });
 		}
 
 		public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -27,10 +27,7 @@ namespace Ralfred.SecretsProvider
 
 			app.UseRouting();
 
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapControllers();
-			});
+			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 		}
 	}
 }
