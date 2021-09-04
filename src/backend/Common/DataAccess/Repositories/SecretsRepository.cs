@@ -11,6 +11,16 @@ namespace Ralfred.Common.DataAccess.Repositories
 			_storageContext = storageContext;
 		}
 
+		public void AddSecret(string name, string value)
+		{
+			_storageContext.Add(new Secret
+			{
+				Name = name, 
+				Value = value,
+				IsFile = false
+			});
+		}
+
 		private readonly IStorageContext<Secret> _storageContext;
 	}
 }

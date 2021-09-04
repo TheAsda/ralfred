@@ -39,17 +39,17 @@ namespace Ralfred.Common.DataAccess.Context
 			throw new NotImplementedException();
 		}
 
-		public void Add(T entity)
+		public T Add(T entity)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void Delete(T entity)
+		public T Delete(int id)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void Update(T entity)
+		public T Update(T entity)
 		{
 			throw new NotImplementedException();
 		}
