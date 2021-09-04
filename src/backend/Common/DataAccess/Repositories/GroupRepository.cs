@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -10,9 +11,10 @@ namespace Ralfred.Common.DataAccess.Repositories
 {
 	public class GroupRepository : IGroupRepository
 	{
-		public GroupRepository(IStorageContext<Group> storageContext)
+		public GroupRepository(IStorageContext<Group> groupStorageContext, IStorageContext<Secret> secretStorageContext)
 		{
-			_storageContext = storageContext;
+			_groupStorageContext = groupStorageContext;
+			_secretStorageContext = secretStorageContext;
 		}
 
 		public Group? FindByFullPath(string fullPath)
@@ -20,10 +22,57 @@ namespace Ralfred.Common.DataAccess.Repositories
 			var array = fullPath.Split('/');
 			var path = string.Join("/", array[..^1]);
 			var name = array.Last();
-			
-			return _storageContext.Find(g => g.Path == path && g.Name == name);
+			var group = _groupStorageContext.Find(g => g.Path == path && g.Name == name);
+
+			if (group is null)
+			{
+				return null;
+			}
+
+			group.Secrets = _secretStorageContext.List(x => x.GroupId == group.Id).ToArray();
+
+			return group;
 		}
 
-		private readonly IStorageContext<Group> _storageContext;
+		public void SetSecrets(int id, Dictionary<string, string> secrets)
+		{
+			// Check if group exists
+			_groupStorageContext.Get(x => x.Id == id);
+
+			foreach (var secret in secrets)
+			{
+				_secretStorageContext.Add(new Secret
+				{
+					Name = secret.Key,
+					Value = secret.Value,
+					GroupId = id
+				});
+			}
+		}
+
+		public Group CreateGroup(string name, string path)
+		{
+			return _groupStorageContext.Add(new Group
+			{
+				Name = name,
+				Path = path
+			});
+		}
+
+		public Group CreateGroup(string fullPath)
+		{
+			var array = fullPath.Split('/');
+			var path = string.Join("/", array[..^1]);
+			var name = array.Last();
+
+			return _groupStorageContext.Add(new Group
+			{
+				Name = name,
+				Path = path,
+			});
+		}
+
+		private readonly IStorageContext<Secret> _secretStorageContext;
+		private readonly IStorageContext<Group> _groupStorageContext;
 	}
 }

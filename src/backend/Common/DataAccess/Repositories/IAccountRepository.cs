@@ -1,7 +1,4 @@
 ﻿namespace Ralfred.Common.DataAccess.Repositories
 {
-	public interface IAccountRepository
-	{
-		
-	}
+	public interface IAccountRepository { }
 }

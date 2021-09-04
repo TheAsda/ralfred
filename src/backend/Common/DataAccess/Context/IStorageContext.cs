@@ -18,10 +18,10 @@ namespace Ralfred.Common.DataAccess.Context
 
 		IEnumerable<T> List(Expression<Func<T, bool>> filter);
 
-		void Add(T entity);
+		T Add(T entity);
 
-		void Delete(T entity);
+		T Delete(int id);
 
-		void Update(T entity);
+		T Update(T entity);
 	}
 }

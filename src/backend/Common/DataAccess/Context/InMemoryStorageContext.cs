@@ -10,9 +10,9 @@ namespace Ralfred.Common.DataAccess.Context
 {
 	public class InMemoryStorageContext<T> : IStorageContext<T> where T : Entity
 	{
-		public InMemoryStorageContext(List<T> storage)
+		public InMemoryStorageContext()
 		{
-			_storage = storage;
+			_storage = new List<T>();
 		}
 
 		#region Implementation of IStorageContext
@@ -37,23 +37,46 @@ namespace Ralfred.Common.DataAccess.Context
 			return _storage.Where(filter.Compile());
 		}
 
-		public void Add(T entity)
+		public T Add(T entity)
 		{
+			entity.Id = GetNextId();
 			_storage.Add(entity);
+
+			return entity;
 		}
 
-		public void Delete(T entity)
+		public T Delete(int id)
 		{
-			_storage = _storage.Where(x => x.Id == entity.Id).ToList();
+			var entity = _storage.First(x => x.Id == id);
+			_storage.Remove(entity);
+
+			return entity;
 		}
 
-		public void Update(T entity)
+		public T Update(T entity)
 		{
 			var index = _storage.FindIndex(x => x.Id == entity.Id);
 			_storage[index] = entity;
+
+			return entity;
 		}
 
 		#endregion
+
+		private int GetNextId()
+		{
+			var ids = _storage.Select(x => x.Id).ToList();
+			ids.Sort((a, b) => a - b);
+
+			try
+			{
+				return ids.Last() + 1;
+			}
+			catch
+			{
+				return 0;
+			}
+		}
 
 		private List<T> _storage;
 	}
