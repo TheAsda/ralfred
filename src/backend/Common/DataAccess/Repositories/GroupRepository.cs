@@ -5,6 +5,7 @@ using System.Linq;
 
 using Ralfred.Common.DataAccess.Context;
 using Ralfred.Common.DataAccess.Entities;
+using Ralfred.Common.Resolvers;
 
 
 namespace Ralfred.Common.DataAccess.Repositories
@@ -50,6 +51,12 @@ namespace Ralfred.Common.DataAccess.Repositories
 			}
 		}
 
+		public void RemoveSecret(int id, string name)
+		{
+			var secret = _secretStorageContext.Get(x => x.GroupId == id);
+			_secretStorageContext.Delete(secret.Id);
+		}
+
 		public Group CreateGroup(string name, string path)
 		{
 			return _groupStorageContext.Add(new Group
@@ -61,15 +68,27 @@ namespace Ralfred.Common.DataAccess.Repositories
 
 		public Group CreateGroup(string fullPath)
 		{
-			var array = fullPath.Split('/');
-			var path = string.Join("/", array[..^1]);
-			var name = array.Last();
+			var (name, path) = PathResolver.SplitPath(fullPath);
 
 			return _groupStorageContext.Add(new Group
 			{
 				Name = name,
 				Path = path,
 			});
+		}
+
+		public void RemoveGroup(string fullPath)
+		{
+			var (name, path) = PathResolver.SplitPath(fullPath);
+
+			var group = _groupStorageContext.Get(x => x.Path == path && x.Name == name);
+			_groupStorageContext.Delete(group.Id);
+			var groupSecrets = _secretStorageContext.List(x => x.GroupId == group.Id);
+
+			foreach (var secret in groupSecrets)
+			{
+				_secretStorageContext.Delete(secret.Id);
+			}
 		}
 
 		private readonly IStorageContext<Secret> _secretStorageContext;

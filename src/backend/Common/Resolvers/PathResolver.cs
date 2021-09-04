@@ -15,12 +15,12 @@ namespace Ralfred.Common.Resolvers
 			_groupRepository = groupRepository;
 		}
 
-		public PathType GetPathType(string path)
+		public PathType GetPathType(string fullPath)
 		{
-			ValidatePath(path);
+			ValidatePath(fullPath);
 
 			// Find group with full path (path/name)
-			var fullPathGroup = _groupRepository.FindByFullPath(path);
+			var fullPathGroup = _groupRepository.FindByFullPath(fullPath);
 
 			// If group is found then provided path leads to a group
 			if (fullPathGroup is not null)
@@ -28,11 +28,12 @@ namespace Ralfred.Common.Resolvers
 				return PathType.Group;
 			}
 
+			var (_, path) = SplitPath(fullPath);
 			// Trying to find group with path except the last element in it 
-			var pathGroup = _groupRepository.FindByFullPath(string.Join("/", path.Split("/")[..^1]));
+			var pathGroup = _groupRepository.FindByFullPath(path);
 
 			// If group is found it means that the excepted element is the name of a secret
-			if (pathGroup is null)
+			if (pathGroup is null && fullPath.Split("/").Length > 1)
 			{
 				return PathType.Secret;
 			}
@@ -41,9 +42,18 @@ namespace Ralfred.Common.Resolvers
 			return PathType.None;
 		}
 
-		private void ValidatePath(string path)
+		public static (string name, string path) SplitPath(string fullPath)
 		{
-			var isValid = new Regex(@"^(/\w+)+/?$").IsMatch(path);
+			var array = fullPath.Split('/');
+			var path = string.Join("", array[..^1]);
+			var name = array.Last();
+
+			return (name, path);
+		}
+
+		private static void ValidatePath(string path)
+		{
+			var isValid = new Regex(@"^[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*$").IsMatch(path);
 
 			if (!isValid)
 			{

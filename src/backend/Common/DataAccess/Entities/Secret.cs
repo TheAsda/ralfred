@@ -10,5 +10,7 @@ namespace Ralfred.Common.DataAccess.Entities
 		public string Name { get; set; }
 
 		public string Value { get; set; }
+
+		public bool IsFile { get; set; }
 	}
 }

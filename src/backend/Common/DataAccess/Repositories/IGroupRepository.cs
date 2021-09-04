@@ -9,9 +9,11 @@ namespace Ralfred.Common.DataAccess.Repositories
 	{
 		Group? FindByFullPath(string fullPath);
 
-		void SetSecrets(int id, Dictionary<string, string> secrets);
+		void SetSecrets(int   id, Dictionary<string, string> secrets);
+		void RemoveSecret(int id, string                     name);
 
 		Group CreateGroup(string name, string path);
 		Group CreateGroup(string fullPath);
+		void  RemoveGroup(string path);
 	}
 }
