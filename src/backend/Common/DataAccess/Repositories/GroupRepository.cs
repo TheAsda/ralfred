@@ -22,11 +22,9 @@ namespace Ralfred.Common.DataAccess.Repositories
 			return group != null;
 		}
 
-		public Group? FindByPath(string path)
+		public Group? FindByPath(string path, string name)
 		{
-			var (groupName, groupPath) = path.DeconstructPath();
-
-			var group = _storageContext.Find(g => g.Path.Equals(groupPath) && g.Name.Equals(groupName));
+			var group = _storageContext.Find(g => g.Path.Equals(path) && g.Name.Equals(name));
 
 			return group;
 		}

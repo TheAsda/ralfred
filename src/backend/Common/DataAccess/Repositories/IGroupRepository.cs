@@ -7,6 +7,6 @@ namespace Ralfred.Common.DataAccess.Repositories
 	{
 		bool Exists(string path);
 
-		Group? FindByPath(string path);
+		Group? FindByPath(string path, string name);
 	}
 }
