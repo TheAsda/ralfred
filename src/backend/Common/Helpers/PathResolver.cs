@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 using Ralfred.Common.DataAccess.Repositories;
-using Ralfred.Common.Extensions;
 using Ralfred.Common.Types;
 
 
-namespace Ralfred.SecretsProvider.Helpers
+namespace Ralfred.Common.Helpers
 {
 	public class PathResolver : IPathResolver
 	{
@@ -18,7 +19,7 @@ namespace Ralfred.SecretsProvider.Helpers
 
 		public PathType Resolve(string path)
 		{
-			if (!path.ValidatePath())
+			if (!ValidatePath(path))
 			{
 				throw new Exception("Path is not valid");
 			}
@@ -28,7 +29,7 @@ namespace Ralfred.SecretsProvider.Helpers
 				return PathType.Group;
 			}
 
-			var (_, aboveGroupPath) = path.DeconstructPath();
+			var (_, aboveGroupPath) = DeconstructPath(path);
 
 			if (string.IsNullOrWhiteSpace(aboveGroupPath))
 			{
@@ -41,6 +42,25 @@ namespace Ralfred.SecretsProvider.Helpers
 			}
 
 			return PathType.None;
+		}
+
+		public (string name, string? path) DeconstructPath(string fullPath)
+		{
+			const string separator = "/";
+
+			var splitted = fullPath.Split(separator);
+
+			var name = splitted.Last();
+			var path = string.Join(separator, splitted.Take(splitted.Length - 1));
+
+			return (name, path.Equals(string.Empty) ? null : path);
+		}
+
+		public bool ValidatePath(string path)
+		{
+			var pattern = new Regex(@"^[a-zA-Z0-9\-_]+(\/[a-zA-Z0-9\-_]+)*$");
+
+			return pattern.IsMatch(path);
 		}
 
 		#endregion

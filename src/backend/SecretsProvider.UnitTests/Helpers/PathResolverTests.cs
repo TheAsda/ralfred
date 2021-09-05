@@ -3,9 +3,8 @@
 using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Repositories;
-using Ralfred.Common.Extensions;
+using Ralfred.Common.Helpers;
 using Ralfred.Common.Types;
-using Ralfred.SecretsProvider.Helpers;
 
 
 namespace SecretsProvider.UnitTests.Helpers
@@ -80,7 +79,7 @@ namespace SecretsProvider.UnitTests.Helpers
 
 			_groupRepository.Setup(x => x.Exists(path)).Returns(false);
 
-			var (_, abovePath) = path.DeconstructPath();
+			var (_, abovePath) = _target.DeconstructPath(path);
 
 			_groupRepository.Setup(x => x.Exists(abovePath)).Returns(true);
 
@@ -92,6 +91,33 @@ namespace SecretsProvider.UnitTests.Helpers
 
 			_groupRepository.Verify(x => x.Exists(path), Times.Once);
 			_groupRepository.Verify(x => x.Exists(abovePath), Times.Once);
+		}
+
+		[Test]
+		[TestCase("path/to/folder", "path/to", "folder")]
+		[TestCase("path/to", "path", "to")]
+		[TestCase("path", null, "path")]
+		public void DeconstructTest(string fullPath, string expectedPath, string expectedName)
+		{
+			// act
+			var (name, path) = _target.DeconstructPath(fullPath);
+
+			// assert
+			Assert.AreEqual(expectedName, name);
+			Assert.AreEqual(expectedPath, path);
+		}
+
+		[Test]
+		[TestCase("path/to/folder", true)]
+		[TestCase("path", true)]
+		[TestCase("|||", false)]
+		public void ValidatePathTest(string fullPath, bool expectedResult)
+		{
+			// act
+			var result = _target.ValidatePath(fullPath);
+
+			// assert
+			Assert.AreEqual(expectedResult, result);
 		}
 
 		private Mock<IGroupRepository> _groupRepository;
