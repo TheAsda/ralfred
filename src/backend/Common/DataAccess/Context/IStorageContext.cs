@@ -11,6 +11,8 @@ namespace Ralfred.Common.DataAccess.Context
 	{
 		T Get(Expression<Func<T, bool>> filter);
 
+		T? Find(Expression<Func<T, bool>> filter);
+
 		IEnumerable<T> List();
 
 		IEnumerable<T> List(Expression<Func<T, bool>> filter);

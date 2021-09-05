@@ -24,6 +24,11 @@ namespace Ralfred.Common.DataAccess.Context
 			throw new NotImplementedException();
 		}
 
+		public T? Find(Expression<Func<T, bool>> filter)
+		{
+			throw new NotImplementedException();
+		}
+
 		public IEnumerable<T> List()
 		{
 			throw new NotImplementedException();
