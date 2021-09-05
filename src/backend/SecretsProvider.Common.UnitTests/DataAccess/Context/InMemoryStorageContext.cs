@@ -48,6 +48,45 @@ namespace SecretsProvider.UnitTests.DataAccess.Context
 			Assert.AreNotEqual(entity.Id, Guid.Empty);
 		}
 
+		[Test]
+		public void GetTest()
+		{
+			// arrange
+			var newEntity = new TestEntity
+			{
+				Name = "test",
+				Age = 0
+			};
+
+			var entity = _target.Add(newEntity);
+
+			// act
+			var found = _target.Get(x => x.Id == entity.Id);
+
+			// assert
+			Assert.AreEqual(entity.Name, found.Name);
+			Assert.AreEqual(entity.Age, found.Age);
+			Assert.AreEqual(entity.Id, found.Id);
+		}
+
+		[Test]
+		public void GetNotFoundTest()
+		{
+			// arrange
+			var newEntity = new TestEntity
+			{
+				Name = "test",
+				Age = 0
+			};
+
+			_target.Add(newEntity);
+
+			// act
+
+			// assert			
+			Assert.Throws<Exception>(() => _target.Get(x => x.Id == Guid.NewGuid()));
+		}
+
 		private IStorageContext<TestEntity> _target;
 	}
 
