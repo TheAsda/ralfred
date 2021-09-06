@@ -242,9 +242,9 @@ namespace SecretsProvider.UnitTests.DataAccess.Context
 			var deleted = _target.Delete(x => x.Id == entity.Id);
 
 			// assert
-			Assert.AreEqual(entity.Name, entity.Name);
-			Assert.AreEqual(entity.Age, entity.Age);
-			Assert.AreEqual(entity.Id, entity.Id);
+			Assert.AreEqual(entity.Name, deleted.Name);
+			Assert.AreEqual(entity.Age, deleted.Age);
+			Assert.AreEqual(entity.Id, deleted.Id);
 		}
 
 		[Test]
