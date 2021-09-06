@@ -2,7 +2,6 @@
 using System.Linq;
 
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 using Ralfred.Common.DataAccess.Context;
 using Ralfred.Common.DataAccess.Entities;
@@ -160,13 +159,16 @@ namespace SecretsProvider.UnitTests.DataAccess.Context
 				Age = 0
 			};
 
-			_target.Add(newEntity);
+			var entity = _target.Add(newEntity);
 
 			// act
-			var list = _target.List();
+			var list = _target.List().ToList();
 
 			// assert
-			Assert.AreEqual(list.Count(), 1);
+			Assert.AreEqual(list.Count, 1);
+			Assert.AreEqual(entity.Name, list[0].Name);
+			Assert.AreEqual(entity.Age, list[0].Age);
+			Assert.AreEqual(entity.Id, list[0].Id);
 		}
 
 		[Test]
@@ -209,7 +211,7 @@ namespace SecretsProvider.UnitTests.DataAccess.Context
 				Age = 0
 			};
 
-			var entity = _target.Add(newEntity);
+			_target.Add(newEntity);
 
 			var newEntity2 = new TestEntity
 			{
@@ -322,8 +324,8 @@ namespace SecretsProvider.UnitTests.DataAccess.Context
 
 	public record TestEntity : Entity
 	{
-		public string Name { get; set; }
+		public string Name { get; init; }
 
-		public uint Age { get; set; }
+		public uint Age { get; init; }
 	}
 }
