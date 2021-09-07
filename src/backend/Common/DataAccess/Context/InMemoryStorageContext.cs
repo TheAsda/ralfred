@@ -47,9 +47,17 @@ namespace Ralfred.Common.DataAccess.Context
 
 		public T Add(T entity)
 		{
-			if (entity.Id == default)
+			if (entity.Id == Guid.Empty)
 			{
 				entity.Id = Guid.NewGuid();
+			}
+			else
+			{
+				if (_storage.Any(x => x.Id == entity.Id))
+				{
+					// TODO: change to custom exception
+					throw new ArgumentException("Id already exists");
+				}
 			}
 
 			_storage.Add(entity);

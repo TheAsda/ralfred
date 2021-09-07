@@ -50,6 +50,31 @@ namespace SecretsProvider.UnitTests.DataAccess.Context
 		}
 
 		[Test]
+		public void AddExistingIdTest()
+		{
+			// arrange
+			var newEntity = new TestEntity
+			{
+				Name = "test",
+				Age = 0
+			};
+
+			var entity = _target.Add(newEntity);
+
+			var newEntity2 = new TestEntity
+			{
+				Id = entity.Id,
+				Name = "another",
+				Age = 10
+			};
+
+			// act
+
+			// assert
+			Assert.Throws<ArgumentException>(() => _target.Add(newEntity2));
+		}
+
+		[Test]
 		public void AddWithIdTest()
 		{
 			// arrange
