@@ -44,7 +44,7 @@ namespace Ralfred.Common.DataAccess.Context
 			throw new NotImplementedException();
 		}
 
-		public T Delete(Expression<Predicate<T>> filter)
+		public IEnumerable<T> Delete(Expression<Func<T, bool>> filter)
 		{
 			throw new NotImplementedException();
 		}

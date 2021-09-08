@@ -65,35 +65,21 @@ namespace Ralfred.Common.DataAccess.Context
 			return entity;
 		}
 
-		public T Delete(Expression<Predicate<T>> filter)
+		public IEnumerable<T> Delete(Expression<Func<T, bool>> filter)
 		{
-			var index = _storage.FindIndex(filter.Compile());
+			var items = _storage.Where(filter.Compile()).ToList();
+			items.ForEach(x => _storage.Remove(x));
 
-			if (index == -1)
-			{
-				// TODO: change to custom exception
-				throw new Exception("No item match criteria");
-			}
-
-			var item = _storage[index];
-			_storage.RemoveAt(index);
-
-			return item;
+			return items;
 		}
 
-		public T Update(T entity)
+		public T? Update(T entity)
 		{
-			if (entity.Id == default)
-			{
-				throw new ArgumentException("Id is not provided");
-			}
-
 			var index = _storage.FindIndex(x => x.Id == entity.Id);
 
 			if (index == -1)
 			{
-				// TODO: change to custom exception
-				throw new Exception("No item witch such id");
+				return null;
 			}
 
 			_storage[index] = entity;

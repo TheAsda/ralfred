@@ -19,8 +19,8 @@ namespace Ralfred.Common.DataAccess.Context
 
 		T Add(T entity);
 
-		T Delete(Expression<Predicate<T>> filter);
+		IEnumerable<T> Delete(Expression<Func<T, bool>> filter);
 
-		T Update(T entity);
+		T? Update(T entity);
 	}
 }

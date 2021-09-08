@@ -266,15 +266,42 @@ namespace SecretsProvider.UnitTests.DataAccess.Context
 			var entity = _target.Add(newEntity);
 
 			// act
-			var deleted = _target.Delete(x => x.Id == entity.Id);
+			var deleted = _target.Delete(x => x.Id == entity.Id).ToList();
 
 			// assert
-			Assert.AreEqual(entity.Name, deleted.Name);
-			Assert.AreEqual(entity.Age, deleted.Age);
-			Assert.AreEqual(entity.Id, deleted.Id);
+			Assert.AreEqual(deleted.Count, 1);
+			Assert.AreEqual(entity.Name, deleted[0].Name);
+			Assert.AreEqual(entity.Age, deleted[0].Age);
+			Assert.AreEqual(entity.Id, deleted[0].Id);
 		}
 
 		[Test]
+		public void DeleteManyTest()
+		{
+			// arrange
+			var newEntity = new TestEntity
+			{
+				Name = "test",
+				Age = 0
+			};
+
+			_target.Add(newEntity);
+
+			var newEntity2 = new TestEntity
+			{
+				Name = "test2",
+				Age = 0
+			};
+
+			_target.Add(newEntity2);
+
+			// act
+			var deleted = _target.Delete(x => x.Age == 0).ToList();
+
+			// assert
+			Assert.AreEqual(deleted.Count, 2);
+		}
+
 		public void DeleteNotFoundTest()
 		{
 			// arrange
@@ -287,9 +314,10 @@ namespace SecretsProvider.UnitTests.DataAccess.Context
 			_target.Add(newEntity);
 
 			// act
+			var deleted = _target.Delete(x => x.Name == "random");
 
 			// assert
-			Assert.Throws<Exception>(() => _target.Delete(x => x.Name == "random"));
+			Assert.AreEqual(deleted.Count(), 0);
 		}
 
 		[Test]
@@ -339,9 +367,10 @@ namespace SecretsProvider.UnitTests.DataAccess.Context
 			};
 
 			// act
+			var entity = _target.Update(updatedEntity);
 
 			// assert
-			Assert.Throws<ArgumentException>(() => _target.Update(updatedEntity));
+			Assert.IsNull(entity);
 		}
 
 		private IStorageContext<TestEntity> _target;
