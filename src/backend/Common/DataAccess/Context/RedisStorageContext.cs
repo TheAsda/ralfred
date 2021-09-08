@@ -19,12 +19,12 @@ namespace Ralfred.Common.DataAccess.Context
 
 		#region Implementation of IStorageContext
 
-		public T Get(Expression<Func<T, bool>> filter)
+		public T Get(Expression<Predicate<T>> filter)
 		{
 			throw new NotImplementedException();
 		}
 
-		public T? Find(Expression<Func<T, bool>> filter)
+		public T? Find(Expression<Predicate<T>> filter)
 		{
 			throw new NotImplementedException();
 		}
@@ -39,17 +39,17 @@ namespace Ralfred.Common.DataAccess.Context
 			throw new NotImplementedException();
 		}
 
-		public void Add(T entity)
+		public T Add(T entity)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void Delete(T entity)
+		public IEnumerable<T> Delete(Expression<Func<T, bool>> filter)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void Update(T entity)
+		public T Update(T entity)
 		{
 			throw new NotImplementedException();
 		}

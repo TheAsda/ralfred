@@ -9,18 +9,18 @@ namespace Ralfred.Common.DataAccess.Context
 {
 	public interface IStorageContext<T> where T : Entity
 	{
-		T Get(Expression<Func<T, bool>> filter);
+		T Get(Expression<Predicate<T>> filter);
 
-		T? Find(Expression<Func<T, bool>> filter);
+		T? Find(Expression<Predicate<T>> filter);
 
 		IEnumerable<T> List();
 
 		IEnumerable<T> List(Expression<Func<T, bool>> filter);
 
-		void Add(T entity);
+		T Add(T entity);
 
-		void Delete(T entity);
+		IEnumerable<T> Delete(Expression<Func<T, bool>> filter);
 
-		void Update(T entity);
+		T? Update(T entity);
 	}
 }

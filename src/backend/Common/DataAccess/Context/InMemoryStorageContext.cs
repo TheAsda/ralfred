@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 using Ralfred.Common.DataAccess.Entities;
@@ -9,43 +10,85 @@ namespace Ralfred.Common.DataAccess.Context
 {
 	public class InMemoryStorageContext<T> : IStorageContext<T> where T : Entity
 	{
-		#region Implementation of IStorageContext
-
-		public T Get(Expression<Func<T, bool>> filter)
+		public InMemoryStorageContext()
 		{
-			throw new NotImplementedException();
+			_storage = new List<T>();
 		}
 
-		public T? Find(Expression<Func<T, bool>> filter)
+		#region Implementation of IStorageContext
+
+		public T Get(Expression<Predicate<T>> filter)
 		{
-			throw new NotImplementedException();
+			var found = _storage.Find(filter.Compile());
+
+			if (found is null)
+			{
+				// TODO: change to custom exception
+				throw new Exception("No item match criteria");
+			}
+
+			return found;
+		}
+
+		public T? Find(Expression<Predicate<T>> filter)
+		{
+			return _storage.Find(filter.Compile());
 		}
 
 		public IEnumerable<T> List()
 		{
-			throw new NotImplementedException();
+			return _storage;
 		}
 
 		public IEnumerable<T> List(Expression<Func<T, bool>> filter)
 		{
-			throw new NotImplementedException();
+			return _storage.Where(filter.Compile());
 		}
 
-		public void Add(T entity)
+		public T Add(T entity)
 		{
-			throw new NotImplementedException();
+			if (entity.Id == Guid.Empty)
+			{
+				entity.Id = Guid.NewGuid();
+			}
+			else
+			{
+				if (_storage.Any(x => x.Id == entity.Id))
+				{
+					// TODO: change to custom exception
+					throw new ArgumentException("Id already exists");
+				}
+			}
+
+			_storage.Add(entity);
+
+			return entity;
 		}
 
-		public void Delete(T entity)
+		public IEnumerable<T> Delete(Expression<Func<T, bool>> filter)
 		{
-			throw new NotImplementedException();
+			var items = _storage.Where(filter.Compile()).ToList();
+			items.ForEach(x => _storage.Remove(x));
+
+			return items;
 		}
 
-		public void Update(T entity)
+		public T? Update(T entity)
 		{
-			throw new NotImplementedException();
+			var index = _storage.FindIndex(x => x.Id == entity.Id);
+
+			if (index == -1)
+			{
+				return null;
+			}
+
+			_storage[index] = entity;
+
+			return entity;
 		}
 
 		#endregion
+
+		private readonly List<T> _storage;
 	}
 }
