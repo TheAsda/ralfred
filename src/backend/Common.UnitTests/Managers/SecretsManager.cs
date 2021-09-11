@@ -125,8 +125,6 @@ namespace SecretsProvider.UnitTests.Managers
 				mockSecret
 			});
 
-			// act
-
 			// assert
 			Assert.Throws<Exception>(() => _target.GetSecrets("test", Array.Empty<string>()));
 		}

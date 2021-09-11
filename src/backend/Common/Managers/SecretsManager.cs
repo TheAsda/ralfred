@@ -4,6 +4,7 @@ using System.Linq;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories;
+using Ralfred.Common.Exceptions;
 using Ralfred.Common.Helpers;
 using Ralfred.Common.Types;
 
@@ -24,9 +25,7 @@ namespace Ralfred.Common.Managers
 
 			switch (pathType)
 			{
-				case PathType.None:
-					// TODO: change to custom exception
-					throw new Exception("Path not found");
+
 				case PathType.Secret:
 				{
 					var (name, groupPath) = _pathResolver.DeconstructPath(path);
@@ -49,8 +48,11 @@ namespace Ralfred.Common.Managers
 
 					return _secretsRepository.GetGroupSecrets(groupName, folderPath);
 				}
+				case PathType.None:
+					// TODO: change to custom exception
+					throw new Exception("Path not found");
 				default:
-					throw new Exception("WTF");
+					throw new WtfException();
 			}
 		}
 
