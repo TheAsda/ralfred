@@ -64,11 +64,7 @@ namespace SecretsProvider.UnitTests.Managers
 
 			// assert
 			Assert.AreEqual(result.Count, 1);
-			Assert.AreEqual(result[0].Id, mockSecret.Id);
-			Assert.AreEqual(result[0].Name, mockSecret.Name);
-			Assert.AreEqual(result[0].Value, mockSecret.Value);
-			Assert.AreEqual(result[0].GroupId, mockSecret.GroupId);
-			Assert.AreEqual(result[0].IsFile, mockSecret.IsFile);
+			Assert.AreEqual(result[0], mockSecret);
 		}
 
 		[Test]
@@ -97,11 +93,7 @@ namespace SecretsProvider.UnitTests.Managers
 
 			// assert
 			Assert.AreEqual(result.Count, 1);
-			Assert.AreEqual(result[0].Id, mockSecret.Id);
-			Assert.AreEqual(result[0].Name, mockSecret.Name);
-			Assert.AreEqual(result[0].Value, mockSecret.Value);
-			Assert.AreEqual(result[0].GroupId, mockSecret.GroupId);
-			Assert.AreEqual(result[0].IsFile, mockSecret.IsFile);
+			Assert.AreEqual(result[0], mockSecret);
 		}
 
 		[Test]
@@ -126,7 +118,84 @@ namespace SecretsProvider.UnitTests.Managers
 			});
 
 			// assert
-			Assert.Throws<Exception>(() => _target.GetSecrets("test", Array.Empty<string>()));
+			Assert.Throws<Exception>(() => _target.GetSecrets("random", Array.Empty<string>()));
+		}
+
+		[Test]
+		public void GetSecretsGroupWithNamesTest()
+		{
+			// arrange
+			var mockSecret = new Secret
+			{
+				Id = Guid.NewGuid(),
+				Name = "test",
+				Value = "test",
+				GroupId = Guid.Empty,
+				IsFile = false
+			};
+
+			var mockSecret2 = new Secret
+			{
+				Id = Guid.NewGuid(),
+				Name = "test2",
+				Value = "test2",
+				GroupId = Guid.Empty,
+				IsFile = false
+			};
+
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
+			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns(("test", "test"));
+
+			_secretsRepository.Setup(x => x.GetGroupSecrets(It.IsAny<string>(), It.IsAny<string>())).Returns(new List<Secret>
+			{
+				mockSecret,
+				mockSecret2
+			});
+
+			// act
+			var result = _target.GetSecrets("test", new[] { "test2" }).ToList();
+
+			// assert
+			Assert.AreEqual(result.Count, 1);
+			Assert.AreEqual(result[0], mockSecret2);
+		}
+
+		[Test]
+		public void GetSecretsGroupWithRandomNamesTest()
+		{
+			// arrange
+			var mockSecret = new Secret
+			{
+				Id = Guid.NewGuid(),
+				Name = "test",
+				Value = "test",
+				GroupId = Guid.Empty,
+				IsFile = false
+			};
+
+			var mockSecret2 = new Secret
+			{
+				Id = Guid.NewGuid(),
+				Name = "test2",
+				Value = "test2",
+				GroupId = Guid.Empty,
+				IsFile = false
+			};
+
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
+			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns(("test", "test"));
+
+			_secretsRepository.Setup(x => x.GetGroupSecrets(It.IsAny<string>(), It.IsAny<string>())).Returns(new List<Secret>
+			{
+				mockSecret,
+				mockSecret2
+			});
+
+			// act
+			var result = _target.GetSecrets("test", new[] { "random" }).ToList();
+
+			// assert
+			Assert.AreEqual(result.Count, 0);
 		}
 
 		private ISecretsManager _target;

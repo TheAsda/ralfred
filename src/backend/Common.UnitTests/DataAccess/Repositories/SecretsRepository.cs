@@ -53,11 +53,7 @@ namespace SecretsProvider.UnitTests.DataAccess.Repositories
 
 			// assert
 			Assert.AreEqual(result.Count, 1);
-			Assert.AreEqual(result[0].Id, mockSecret.Id);
-			Assert.AreEqual(result[0].Name, mockSecret.Name);
-			Assert.AreEqual(result[0].GroupId, mockSecret.GroupId);
-			Assert.AreEqual(result[0].Value, mockSecret.Value);
-			Assert.AreEqual(result[0].IsFile, mockSecret.IsFile);
+			Assert.AreEqual(result[0], mockSecret);
 		}
 
 		private ISecretsRepository _target;

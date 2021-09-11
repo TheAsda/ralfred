@@ -46,7 +46,8 @@ namespace Ralfred.Common.Managers
 				{
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
 
-					return _secretsRepository.GetGroupSecrets(groupName, folderPath);
+					return _secretsRepository.GetGroupSecrets(groupName, folderPath)
+						.Where(x => secrets.Length == 0 || secrets.Contains(x.Name));
 				}
 				case PathType.None:
 					// TODO: change to custom exception
