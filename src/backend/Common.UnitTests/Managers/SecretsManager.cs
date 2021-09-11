@@ -23,7 +23,8 @@ namespace SecretsProvider.UnitTests.Managers
 		{
 			_pathResolver = new Mock<IPathResolver>();
 			_secretsRepository = new Mock<ISecretsRepository>();
-			_target = new SecretsManager(_pathResolver.Object, _secretsRepository.Object);
+			_groupRepository = new Mock<IGroupRepository>();
+			_target = new SecretsManager(_pathResolver.Object, _secretsRepository.Object, _groupRepository.Object);
 		}
 
 		[Test]
@@ -201,5 +202,6 @@ namespace SecretsProvider.UnitTests.Managers
 		private ISecretsManager _target;
 		private Mock<IPathResolver> _pathResolver;
 		private Mock<ISecretsRepository> _secretsRepository;
+		private Mock<IGroupRepository> _groupRepository;
 	}
 }

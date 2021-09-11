@@ -21,6 +21,16 @@ namespace Ralfred.Common.DataAccess.Repositories
 			return _secretsContext.List(x => x.GroupId == group.Id);
 		}
 
+		public void UpdateGroupSecrets(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void SetGroupSecrets(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		private readonly IStorageContext<Group> _groupContext;
 		private readonly IStorageContext<Secret> _secretsContext;
 	}

@@ -13,10 +13,11 @@ namespace Ralfred.Common.Managers
 {
 	public class SecretsManager : ISecretsManager
 	{
-		public SecretsManager(IPathResolver pathResolver, ISecretsRepository secretsRepository)
+		public SecretsManager(IPathResolver pathResolver, ISecretsRepository secretsRepository, IGroupRepository groupRepository)
 		{
 			_pathResolver = pathResolver;
 			_secretsRepository = secretsRepository;
+			_groupRepository = groupRepository;
 		}
 
 		public IEnumerable<Secret> GetSecrets(string path, string[] secrets)
@@ -25,12 +26,11 @@ namespace Ralfred.Common.Managers
 
 			switch (pathType)
 			{
-
 				case PathType.Secret:
 				{
 					var (name, groupPath) = _pathResolver.DeconstructPath(path);
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(groupPath);
-					var groupSecrets = _secretsRepository.GetGroupSecrets(groupName, folderPath);
+					var groupSecrets = _secretsRepository.GetGroupSecrets(groupName, folderPath ?? "");
 
 					var secret = groupSecrets.FirstOrDefault(x => x.Name == name);
 
@@ -46,7 +46,7 @@ namespace Ralfred.Common.Managers
 				{
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
 
-					return _secretsRepository.GetGroupSecrets(groupName, folderPath)
+					return _secretsRepository.GetGroupSecrets(groupName, folderPath ?? "")
 						.Where(x => secrets.Length == 0 || secrets.Contains(x.Name));
 				}
 				case PathType.None:
@@ -57,7 +57,43 @@ namespace Ralfred.Common.Managers
 			}
 		}
 
+		public void AddSecret(string path, Dictionary<string, string> input, Dictionary<string, string> files, string[] secrets)
+		{
+			var pathType = _pathResolver.Resolve(path);
+
+			switch (pathType)
+			{
+				case PathType.None:
+				{
+					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
+					_groupRepository.CreateGroup(groupName, folderPath ?? "", input, files);
+
+					break;
+				}
+				case PathType.Group:
+				{
+					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
+
+					if (secrets.Length > 0)
+					{
+						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? "",
+							input.Where(x => secrets.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value),
+							files.Where(x => secrets.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value));
+					}
+					else
+					{
+						_secretsRepository.SetGroupSecrets(groupName, folderPath ?? "", input, files);
+					}
+
+					break;
+				}
+				default:
+					throw new WtfException();
+			}
+		}
+
 		private readonly IPathResolver _pathResolver;
 		private readonly ISecretsRepository _secretsRepository;
+		private readonly IGroupRepository _groupRepository;
 	}
 }

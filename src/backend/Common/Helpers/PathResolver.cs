@@ -24,19 +24,21 @@ namespace Ralfred.Common.Helpers
 				throw new Exception("Path is not valid");
 			}
 
-			if (_groupRepository.Exists(path))
+			var (name, path2) = DeconstructPath(path);
+
+			if (_groupRepository.Exists(name, path2 ?? ""))
 			{
 				return PathType.Group;
 			}
 
-			var (_, aboveGroupPath) = DeconstructPath(path);
+			var (name2, path3) = DeconstructPath(path2);
 
-			if (string.IsNullOrWhiteSpace(aboveGroupPath))
+			if (string.IsNullOrWhiteSpace(path3))
 			{
 				return PathType.None;
 			}
 
-			if (_groupRepository.Exists(aboveGroupPath))
+			if (_groupRepository.Exists(name2, path3))
 			{
 				return PathType.Secret;
 			}
