@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories;
@@ -7,10 +8,16 @@ using Ralfred.Common.Helpers;
 using Ralfred.Common.Types;
 
 
-namespace Ralfred.Common.Providers
+namespace Ralfred.Common.Managers
 {
-	public class SecretsProvider
+	public class SecretsManager : ISecretsManager
 	{
+		public SecretsManager(IPathResolver pathResolver, ISecretsRepository secretsRepository)
+		{
+			_pathResolver = pathResolver;
+			_secretsRepository = secretsRepository;
+		}
+
 		public IEnumerable<Secret> GetSecrets(string path, string[] secrets)
 		{
 			var pathType = _pathResolver.Resolve(path);
@@ -24,9 +31,17 @@ namespace Ralfred.Common.Providers
 				{
 					var (name, groupPath) = _pathResolver.DeconstructPath(path);
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(groupPath);
-					var secret = _secretsRepository.GetGroupSecrets(groupName, folderPath);
+					var groupSecrets = _secretsRepository.GetGroupSecrets(groupName, folderPath);
 
-					return new Secret[] { secret };
+					var secret = groupSecrets.FirstOrDefault(x => x.Name == name);
+
+					if (secret is null)
+					{
+						// TODO: change to custom exception
+						throw new Exception("Group does not contain such secret");
+					}
+
+					return new[] { secret };
 				}
 				case PathType.Group:
 				{
