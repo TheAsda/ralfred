@@ -4,7 +4,6 @@ using System.Linq;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories;
-using Ralfred.Common.Exceptions;
 using Ralfred.Common.Helpers;
 using Ralfred.Common.Types;
 
@@ -53,7 +52,7 @@ namespace Ralfred.Common.Managers
 					// TODO: change to custom exception
 					throw new Exception("Path not found");
 				default:
-					throw new WtfException();
+					throw new ArgumentOutOfRangeException();
 			}
 		}
 
@@ -88,7 +87,7 @@ namespace Ralfred.Common.Managers
 					break;
 				}
 				default:
-					throw new WtfException();
+					throw new ArgumentOutOfRangeException();
 			}
 		}
 

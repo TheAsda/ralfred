@@ -8,9 +8,9 @@ namespace Ralfred.Common.DataAccess.Repositories
 {
 	public sealed class SecretsRepository : ISecretsRepository
 	{
-		public SecretsRepository(IStorageContext<Secret> secretsContext, IStorageContext<Group> groupContext)
+		public SecretsRepository(IStorageContext<Secret> secretContext, IStorageContext<Group> groupContext)
 		{
-			_secretsContext = secretsContext;
+			_secretContext = secretContext;
 			_groupContext = groupContext;
 		}
 
@@ -18,20 +18,59 @@ namespace Ralfred.Common.DataAccess.Repositories
 		{
 			var group = _groupContext.Get(x => x.Name == groupName && x.Path == path);
 
-			return _secretsContext.List(x => x.GroupId == group.Id);
+			return _secretContext.List(x => x.GroupId == group.Id);
 		}
 
 		public void UpdateGroupSecrets(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
-			throw new System.NotImplementedException();
+			var group = _groupContext.Get(x => x.Name == name && x.Path == path);
+
+			foreach (var (key, value) in secrets)
+			{
+				var secret = _secretContext.Get(x => x.GroupId == group.Id && x.Name == key);
+				secret.Value = value;
+
+				_secretContext.Update(secret);
+			}
+
+			foreach (var (key, value) in files)
+			{
+				var secret = _secretContext.Get(x => x.GroupId == group.Id && x.Name == key);
+				secret.Value = value;
+
+				_secretContext.Update(secret);
+			}
 		}
 
 		public void SetGroupSecrets(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
-			throw new System.NotImplementedException();
+			var group = _groupContext.Get(x => x.Name == name && x.Path == path);
+			_secretContext.Delete(x => x.GroupId == group.Id);
+
+			foreach (var (key, value) in secrets)
+			{
+				_secretContext.Add(new Secret
+				{
+					Name = key,
+					Value = value,
+					GroupId = group.Id,
+					IsFile = false
+				});
+			}
+
+			foreach (var (key, value) in files)
+			{
+				_secretContext.Add(new Secret
+				{
+					Name = key,
+					Value = value,
+					GroupId = group.Id,
+					IsFile = true
+				});
+			}
 		}
 
 		private readonly IStorageContext<Group> _groupContext;
-		private readonly IStorageContext<Secret> _secretsContext;
+		private readonly IStorageContext<Secret> _secretContext;
 	}
 }
