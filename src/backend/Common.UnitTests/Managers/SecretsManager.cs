@@ -199,6 +199,28 @@ namespace SecretsProvider.UnitTests.Managers
 			Assert.AreEqual(result.Count, 0);
 		}
 
+		[Test]
+		public void AddSecretsTest()
+		{
+			// arrange 
+			const string fullPath = "path/to/group";
+			const string name = "group";
+			const string path = "path/to";
+
+			var secrets = new Dictionary<string, string> { { "test", "test" } };
+			var files = new Dictionary<string, string> { { "file", "file" } };
+
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.None);
+			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
+			_groupRepository.Setup(x => x.CreateGroup(name, path, secrets, files)).Verifiable();
+
+			// act
+			_target.AddSecrets(fullPath, secrets, files, new string[] { });
+
+			// assert
+			_groupRepository.Verify(x => x.CreateGroup(name, path, secrets, files), Times.Once);
+		}
+
 		private ISecretsManager _target;
 		private Mock<IPathResolver> _pathResolver;
 		private Mock<ISecretsRepository> _secretsRepository;

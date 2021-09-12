@@ -10,6 +10,6 @@ namespace Ralfred.Common.Managers
 	{
 		IEnumerable<Secret> GetSecrets(string path, string[] secrets);
 
-		void AddSecret(string path, Dictionary<string, string> input, Dictionary<string, string> files, string[] secrets);
+		void AddSecrets(string path, Dictionary<string, string> input, Dictionary<string, string> files, string[] secrets);
 	}
 }

@@ -56,7 +56,7 @@ namespace Ralfred.Common.Managers
 			}
 		}
 
-		public void AddSecret(string path, Dictionary<string, string> input, Dictionary<string, string> files, string[] secrets)
+		public void AddSecrets(string path, Dictionary<string, string> input, Dictionary<string, string> files, string[] secrets)
 		{
 			var pathType = _pathResolver.Resolve(path);
 
