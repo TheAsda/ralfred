@@ -25,6 +25,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		{
 			var group = _groupContext.Get(x => x.Name == name && x.Path == path);
 
+			// TODO: add transaction
 			foreach (var (key, value) in secrets)
 			{
 				var secret = _secretContext.Get(x => x.GroupId == group.Id && x.Name == key);
@@ -47,6 +48,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 			var group = _groupContext.Get(x => x.Name == name && x.Path == path);
 			_secretContext.Delete(x => x.GroupId == group.Id);
 
+			// TODO: add transaction
 			foreach (var (key, value) in secrets)
 			{
 				_secretContext.Add(new Secret

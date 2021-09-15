@@ -40,6 +40,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 				Path = path
 			});
 
+			// TODO: add transaction
 			foreach (var (key, value) in secrets)
 			{
 				_secretContext.Add(new Secret
