@@ -29,7 +29,7 @@ namespace Ralfred.Common.Managers
 				{
 					var (name, groupPath) = _pathResolver.DeconstructPath(path);
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(groupPath);
-					var groupSecrets = _secretsRepository.GetGroupSecrets(groupName, folderPath ?? "");
+					var groupSecrets = _secretsRepository.GetGroupSecrets(groupName, folderPath ?? string.Empty);
 
 					var secret = groupSecrets.FirstOrDefault(x => x.Name == name);
 
@@ -45,7 +45,7 @@ namespace Ralfred.Common.Managers
 				{
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
 
-					return _secretsRepository.GetGroupSecrets(groupName, folderPath ?? "")
+					return _secretsRepository.GetGroupSecrets(groupName, folderPath ?? string.Empty)
 						.Where(x => secrets.Length == 0 || secrets.Contains(x.Name));
 				}
 				case PathType.None:
@@ -66,7 +66,7 @@ namespace Ralfred.Common.Managers
 				{
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
 
-					_groupRepository.CreateGroup(groupName, folderPath ?? "",
+					_groupRepository.CreateGroup(groupName, folderPath ?? string.Empty,
 						FilterDictionaryKeys(input, secrets),
 						FilterDictionaryKeys(files, secrets));
 
@@ -81,13 +81,13 @@ namespace Ralfred.Common.Managers
 					// на предоставленные в словаре.
 					if (secrets.Length > 0)
 					{
-						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? "",
+						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? string.Empty,
 							FilterDictionaryKeys(input, secrets),
 							FilterDictionaryKeys(files, secrets));
 					}
 					else
 					{
-						_secretsRepository.SetGroupSecrets(groupName, folderPath ?? "", input, files);
+						_secretsRepository.SetGroupSecrets(groupName, folderPath ?? string.Empty, input, files);
 					}
 
 					break;
@@ -104,13 +104,13 @@ namespace Ralfred.Common.Managers
 
 					if (input.ContainsKey("value"))
 					{
-						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? "",
+						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? string.Empty,
 							new Dictionary<string, string> { { name, input["value"] } },
 							new Dictionary<string, string>());
 					}
 					else
 					{
-						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? "",
+						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? string.Empty,
 							new Dictionary<string, string>(),
 							new Dictionary<string, string> { { name, files["value"] } });
 					}

@@ -26,7 +26,7 @@ namespace Ralfred.Common.Helpers
 
 			var (name, path2) = DeconstructPath(path);
 
-			if (_groupRepository.Exists(name, path2 ?? ""))
+			if (_groupRepository.Exists(name, path2 ?? string.Empty))
 			{
 				return PathType.Group;
 			}
