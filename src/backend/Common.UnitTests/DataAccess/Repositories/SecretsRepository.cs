@@ -56,6 +56,98 @@ namespace SecretsProvider.UnitTests.DataAccess.Repositories
 			Assert.AreEqual(result[0], mockSecret);
 		}
 
+		[Test]
+		public void UpdateGroupSecretsTest()
+		{
+			// arrange
+			const string name = "test";
+			const string path = "";
+
+			var mockGroup = new Group
+			{
+				Id = Guid.NewGuid(),
+				Name = name,
+				Path = path
+			};
+
+			var secrets = new Dictionary<string, string>
+			{
+				{ "test", "test" },
+				{ "test2", "test2" }
+			};
+
+			var files = new Dictionary<string, string>
+			{
+				{ "file", "file" }
+			};
+
+			_groupContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Group>>>())).Returns(mockGroup);
+
+			var mockSecret = new Secret
+			{
+				Id = Guid.NewGuid(),
+				Value = "oldValue",
+			};
+
+			_secretContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Secret>>>())).Returns(mockSecret);
+			_secretContext.Setup(x => x.Update(It.IsAny<Secret>()));
+
+			// act
+			_target.UpdateGroupSecrets(name, path, secrets, files);
+
+			// assert
+			_groupContext.Verify(x => x.Get(It.IsAny<Expression<Predicate<Group>>>()), Times.Once);
+
+			_secretContext.Verify(x => x.Get(It.IsAny<Expression<Predicate<Secret>>>()),
+				Times.Exactly(secrets.Keys.Count + files.Keys.Count));
+
+			_secretContext.Verify(x => x.Update(It.IsAny<Secret>()), Times.Exactly(secrets.Keys.Count + files.Keys.Count));
+		}
+
+		[Test]
+		public void SetGroupSecretsTest()
+		{
+			// arrange
+			const string name = "test";
+			const string path = "";
+
+			var mockGroup = new Group
+			{
+				Id = Guid.NewGuid(),
+				Name = name,
+				Path = path
+			};
+
+			var secrets = new Dictionary<string, string>
+			{
+				{ "test", "test" },
+				{ "test2", "test2" }
+			};
+
+			var files = new Dictionary<string, string>
+			{
+				{ "file", "file" }
+			};
+
+			_groupContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Group>>>())).Returns(mockGroup);
+
+			var mockSecret = new Secret
+			{
+				Id = Guid.NewGuid(),
+				Value = "oldValue",
+			};
+
+			_secretContext.Setup(x => x.Add(It.IsAny<Secret>()));
+
+			// act
+			_target.SetGroupSecrets(name, path, secrets, files);
+
+			// assert
+			_groupContext.Verify(x => x.Get(It.IsAny<Expression<Predicate<Group>>>()), Times.Once);
+
+			_secretContext.Verify(x => x.Add(It.IsAny<Secret>()), Times.Exactly(secrets.Keys.Count + files.Keys.Count));
+		}
+
 		private ISecretsRepository _target;
 		private Mock<IStorageContext<Secret>> _secretContext;
 		private Mock<IStorageContext<Group>> _groupContext;
