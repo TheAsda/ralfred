@@ -6,6 +6,8 @@
         <IsPackable>false</IsPackable>
 
         <RootNamespace>SecretsProvider.UnitTests</RootNamespace>
+
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
