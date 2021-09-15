@@ -122,10 +122,12 @@ namespace Ralfred.Common.Managers
 			}
 		}
 
-		private Dictionary<string, string> FilterDictionaryKeys(Dictionary<string, string> dictionary, IEnumerable<string> keys) =>
-			dictionary
-				.Where(x => !keys.Any() || keys.Contains(x.Key))
-				.ToDictionary(x => x.Key, x => x.Value);
+		private Dictionary<string, string> FilterDictionaryKeys(Dictionary<string, string> dictionary, string[] keys) =>
+			keys.Any()
+				? dictionary
+					.Where(x => keys.Contains(x.Key))
+					.ToDictionary(x => x.Key, x => x.Value)
+				: dictionary;
 
 		private readonly IPathResolver _pathResolver;
 		private readonly ISecretsRepository _secretsRepository;
