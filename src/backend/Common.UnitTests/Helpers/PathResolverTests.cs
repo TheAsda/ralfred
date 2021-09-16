@@ -26,7 +26,7 @@ namespace SecretsProvider.UnitTests.Helpers
 			// arrange
 			const string path = "path";
 
-			_groupRepository.Setup(x => x.Exists(It.IsAny<string>())).Returns(false);
+			_groupRepository.Setup(x => x.Exists(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
 
 			// act
 			var result = _target.Resolve(path);
@@ -34,7 +34,7 @@ namespace SecretsProvider.UnitTests.Helpers
 			// assert
 			Assert.AreEqual(PathType.None, result);
 
-			_groupRepository.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
+			_groupRepository.Verify(x => x.Exists(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
 		}
 
 		[Test]
@@ -43,7 +43,7 @@ namespace SecretsProvider.UnitTests.Helpers
 			// arrange
 			const string path = "not/existing/path";
 
-			_groupRepository.Setup(x => x.Exists(It.IsAny<string>())).Returns(false);
+			_groupRepository.Setup(x => x.Exists(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
 
 			// act
 			var result = _target.Resolve(path);
@@ -51,16 +51,17 @@ namespace SecretsProvider.UnitTests.Helpers
 			// assert
 			Assert.AreEqual(PathType.None, result);
 
-			_groupRepository.Verify(x => x.Exists(It.IsAny<string>()), Times.Exactly(2));
+			_groupRepository.Verify(x => x.Exists(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
 		}
 
 		[Test]
 		public void Resolve_PathToGroupTest()
 		{
 			// arrange
+			const string name = "test";
 			const string path = "path";
 
-			_groupRepository.Setup(x => x.Exists(path)).Returns(true);
+			_groupRepository.Setup(x => x.Exists(name, path)).Returns(true);
 
 			// act
 			var result = _target.Resolve(path);
@@ -68,29 +69,31 @@ namespace SecretsProvider.UnitTests.Helpers
 			// assert
 			Assert.AreEqual(PathType.Group, result);
 
-			_groupRepository.Verify(x => x.Exists(path), Times.Once);
+			_groupRepository.Verify(x => x.Exists(name, path), Times.Once);
 		}
 
 		[Test]
 		public void Resolve_PathToSecretTest()
 		{
 			// arrange
-			const string path = "path/to/folder";
+			const string fullPath = "path/to/folder";
+			const string name = "folder";
+			const string path = "path/to";
 
-			_groupRepository.Setup(x => x.Exists(path)).Returns(false);
+			_groupRepository.Setup(x => x.Exists(name, path)).Returns(false);
 
-			var (_, abovePath) = _target.DeconstructPath(path);
+			var (name2, abovePath) = _target.DeconstructPath(fullPath);
 
-			_groupRepository.Setup(x => x.Exists(abovePath)).Returns(true);
+			_groupRepository.Setup(x => x.Exists(name2, abovePath)).Returns(true);
 
 			// act
-			var result = _target.Resolve(path);
+			var result = _target.Resolve(fullPath);
 
 			// assert
 			Assert.AreEqual(PathType.Secret, result);
 
-			_groupRepository.Verify(x => x.Exists(path), Times.Once);
-			_groupRepository.Verify(x => x.Exists(abovePath), Times.Once);
+			_groupRepository.Verify(x => x.Exists(name, path), Times.Once);
+			_groupRepository.Verify(x => x.Exists(name2, abovePath), Times.Once);
 		}
 
 		[Test]
