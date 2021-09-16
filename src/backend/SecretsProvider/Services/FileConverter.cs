@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Ralfred.SecretsProvider.Services
 {
-	public class FormConverter : IFormConverter
+	public class FileConverter : IFileConverter
 	{
 		public Dictionary<string, string> Convert(IFormCollection? form)
 		{
@@ -15,11 +15,6 @@ namespace Ralfred.SecretsProvider.Services
 			if (form is null)
 			{
 				return dict;
-			}
-
-			foreach (var key in form.Keys)
-			{
-				dict.Add(key, form[key]);
 			}
 
 			foreach (var file in form.Files)

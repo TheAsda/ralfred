@@ -31,7 +31,7 @@ namespace Ralfred.Common.Helpers
 				return PathType.Group;
 			}
 
-			var (name2, path3) = DeconstructPath(path2);
+			var (name2, path3) = DeconstructPath(path2 ?? string.Empty);
 
 			if (string.IsNullOrWhiteSpace(path3))
 			{

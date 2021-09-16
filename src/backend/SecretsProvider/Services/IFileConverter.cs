@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Ralfred.SecretsProvider.Services
 {
-	public interface IFormConverter
+	public interface IFileConverter
 	{
 		Dictionary<string, string> Convert(IFormCollection? form);
 	}

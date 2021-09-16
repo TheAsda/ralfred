@@ -13,12 +13,12 @@ using Ralfred.SecretsProvider.Services;
 
 namespace SecretsProvider.UnitTests.Services
 {
-	public class FormConverterTest
+	public class FileConverterTest
 	{
 		[SetUp]
 		public void Setup()
 		{
-			_target = new FormConverter();
+			_target = new FileConverter();
 		}
 
 		[Test]
@@ -41,13 +41,11 @@ namespace SecretsProvider.UnitTests.Services
 			var dictionary = _target.Convert(form);
 
 			// assert
-			Assert.AreEqual(2, dictionary.Keys.Count);
-			Assert.AreEqual(true, dictionary.ContainsKey("test"));
-			Assert.AreEqual("test", dictionary["test"]);
+			Assert.AreEqual(1, dictionary.Keys.Count);
 			Assert.AreEqual(true, dictionary.ContainsKey("file"));
 			Assert.AreEqual("file", Encoding.UTF8.GetString(Convert.FromBase64String(dictionary["file"])));
 		}
 
-		private IFormConverter _target;
+		private IFileConverter _target;
 	}
 }
