@@ -41,7 +41,7 @@ jobs:
           fi
 
       - name: running backend tests
-        run: dotnet test --no-restore --no-build --logger:"liquid.md;LogFileName=${{ github.workspace }}/${{ env.file_name }};Title=${{env.title}};"
+        run: dotnet test --no-restore --no-build --logger:"liquid.md;LogFileName=${{ github.workspace }}/${{ env.file_name }};Title=${{env.title}};" ${{ env.BACKEND_DIRECTORY }}
 
       - name: uploading build artifacts
         uses: actions/upload-artifact@v2
