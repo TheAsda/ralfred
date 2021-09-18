@@ -19,11 +19,11 @@ namespace Ralfred.SecretsProvider
 		{
 			services.ConfigureStorageContext(StorageEngineType.InMemory /* storage type from configuration */);
 
-			services.AddSingleton<ISecretsRepository, SecretsRepository>();
-			services.AddSingleton<IGroupRepository, GroupRepository>();
-			services.AddSingleton<IFileConverter, FileConverter>();
-			services.AddSingleton<IPathResolver, PathResolver>();
-			services.AddSingleton<ISecretsManager, SecretsManager>();
+			services.AddTransient<ISecretsRepository, SecretsRepository>();
+			services.AddTransient<IGroupRepository, GroupRepository>();
+			services.AddTransient<IFileConverter, FileConverter>();
+			services.AddTransient<IPathResolver, PathResolver>();
+			services.AddTransient<ISecretsManager, SecretsManager>();
 			services.AddControllers(options => { options.InputFormatters.Add(new BypassFormDataInputFormatter()); });
 		}
 
