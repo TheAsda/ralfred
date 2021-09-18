@@ -13,14 +13,15 @@ using Ralfred.Common.DataAccess.Repositories;
 
 namespace SecretsProvider.UnitTests.DataAccess.Repositories
 {
-	public class GroupRepository
+	public class GroupRepositoryTests
 	{
 		[SetUp]
 		public void Setup()
 		{
 			_secretContext = new Mock<IStorageContext<Secret>>();
 			_groupContext = new Mock<IStorageContext<Group>>();
-			_target = new Ralfred.Common.DataAccess.Repositories.GroupRepository(_groupContext.Object, _secretContext.Object);
+
+			_target = new GroupRepository(_groupContext.Object, _secretContext.Object);
 		}
 
 		[Test]
@@ -54,7 +55,7 @@ namespace SecretsProvider.UnitTests.DataAccess.Repositories
 			const string name = "test";
 			const string path = "";
 
-			_groupContext.Setup(x => x.Find(It.IsAny<Expression<Predicate<Group>>>())).Returns<Group?>(null);
+			_groupContext.Setup(x => x.Find(It.IsAny<Expression<Predicate<Group>>>())).Returns<Group>(null);
 
 			// act
 			var exists = _target.Exists(name, path);
@@ -102,8 +103,9 @@ namespace SecretsProvider.UnitTests.DataAccess.Repositories
 				Times.Exactly(secrets.Keys.Count + files.Keys.Count));
 		}
 
-		private IGroupRepository _target;
-		private Mock<IStorageContext<Secret>> _secretContext;
 		private Mock<IStorageContext<Group>> _groupContext;
+		private Mock<IStorageContext<Secret>> _secretContext;
+
+		private IGroupRepository _target;
 	}
 }

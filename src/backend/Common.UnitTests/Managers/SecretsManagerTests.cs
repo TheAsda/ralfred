@@ -16,7 +16,7 @@ using Ralfred.Common.Types;
 namespace SecretsProvider.UnitTests.Managers
 {
 	[TestFixture]
-	public class SecretsManagerTest
+	public class SecretsManagerTests
 	{
 		[SetUp]
 		public void Setup()
@@ -202,7 +202,7 @@ namespace SecretsProvider.UnitTests.Managers
 		[Test]
 		public void AddSecretsTest()
 		{
-			// arrange 
+			// arrange
 			const string fullPath = "path/to/group";
 			const string name = "group";
 			const string path = "path/to";
@@ -224,7 +224,7 @@ namespace SecretsProvider.UnitTests.Managers
 		[Test]
 		public void AddSecretsWithNamesTest()
 		{
-			// arrange 
+			// arrange
 			const string fullPath = "path/to/group";
 			const string name = "group";
 			const string path = "path/to";
@@ -255,7 +255,7 @@ namespace SecretsProvider.UnitTests.Managers
 		public void AddSecretsGroup()
 		{
 
-			// arrange 
+			// arrange
 			const string fullPath = "path/to/group";
 			const string name = "group";
 			const string path = "path/to";
@@ -277,7 +277,7 @@ namespace SecretsProvider.UnitTests.Managers
 		[Test]
 		public void AddSecretsGroupWithNamesTest()
 		{
-			// arrange 
+			// arrange
 			const string fullPath = "path/to/group";
 			const string name = "group";
 			const string path = "path/to";
@@ -308,7 +308,7 @@ namespace SecretsProvider.UnitTests.Managers
 		public void AddSecretFile()
 		{
 
-			// arrange 
+			// arrange
 			const string fullPath = "path/to/group/secret";
 			const string secretName = "secret";
 			const string groupPath = "path/to/group";
@@ -339,7 +339,7 @@ namespace SecretsProvider.UnitTests.Managers
 		public void AddSecret()
 		{
 
-			// arrange 
+			// arrange
 			const string fullPath = "path/to/group/secret";
 			const string secretName = "secret";
 			const string groupPath = "path/to/group";
