@@ -58,13 +58,14 @@ namespace SecretsProvider.UnitTests.Helpers
 		public void Resolve_PathToGroupTest()
 		{
 			// arrange
+			const string fullPath = "path/test";
 			const string name = "test";
 			const string path = "path";
 
 			_groupRepository.Setup(x => x.Exists(name, path)).Returns(true);
 
 			// act
-			var result = _target.Resolve(path);
+			var result = _target.Resolve(fullPath);
 
 			// assert
 			Assert.AreEqual(PathType.Group, result);
@@ -82,7 +83,7 @@ namespace SecretsProvider.UnitTests.Helpers
 
 			_groupRepository.Setup(x => x.Exists(name, path)).Returns(false);
 
-			var (name2, abovePath) = _target.DeconstructPath(fullPath);
+			var (name2, abovePath) = _target.DeconstructPath(path);
 
 			_groupRepository.Setup(x => x.Exists(name2, abovePath)).Returns(true);
 
@@ -99,7 +100,7 @@ namespace SecretsProvider.UnitTests.Helpers
 		[Test]
 		[TestCase("path/to/folder", "path/to", "folder")]
 		[TestCase("path/to", "path", "to")]
-		[TestCase("path", null, "path")]
+		[TestCase("path", "", "path")]
 		public void DeconstructTest(string fullPath, string expectedPath, string expectedName)
 		{
 			// act
