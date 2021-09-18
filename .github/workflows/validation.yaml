@@ -1,6 +1,6 @@
 name: validation
 
-on: [push, pull_request]
+on: [pull_request]
 
 env:
   BACKEND_DIRECTORY: ./src/backend
@@ -17,6 +17,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.x
+
+      - name: setting up liquid
+        run: dotnet tool install --global LiquidTestReports.Cli --version 1.2.1-beta
 
       - name: install dependencies
         run: dotnet restore ${{ env.BACKEND_DIRECTORY }}
