@@ -26,7 +26,7 @@ namespace Ralfred.Common.Helpers
 
 			var (name, path2) = DeconstructPath(path);
 
-			if (_groupRepository.Exists(name, path2 ?? string.Empty))
+			if (_groupRepository.Exists(name, path2))
 			{
 				return PathType.Group;
 			}
@@ -46,7 +46,7 @@ namespace Ralfred.Common.Helpers
 			return PathType.None;
 		}
 
-		public (string name, string? path) DeconstructPath(string fullPath)
+		public (string name, string path) DeconstructPath(string fullPath)
 		{
 			const string separator = "/";
 
@@ -55,7 +55,7 @@ namespace Ralfred.Common.Helpers
 			var name = splitted.Last();
 			var path = string.Join(separator, splitted.Take(splitted.Length - 1));
 
-			return (name, path.Equals(string.Empty) ? null : path);
+			return (name, path);
 		}
 
 		public bool ValidatePath(string path)

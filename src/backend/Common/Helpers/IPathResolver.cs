@@ -7,7 +7,7 @@ namespace Ralfred.Common.Helpers
 	{
 		PathType Resolve(string path);
 
-		public (string name, string? path) DeconstructPath(string fullPath);
+		public (string name, string path) DeconstructPath(string fullPath);
 
 		public bool ValidatePath(string path);
 	}

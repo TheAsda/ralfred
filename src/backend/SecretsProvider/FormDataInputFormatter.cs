@@ -9,7 +9,7 @@ namespace Ralfred.SecretsProvider
 	{
 		public bool CanRead(InputFormatterContext context)
 		{
-			return context.HttpContext.Request.HasFormContentType;
+			return true;
 		}
 
 		public Task<InputFormatterResult> ReadAsync(InputFormatterContext context)
