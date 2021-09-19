@@ -14,15 +14,15 @@ namespace Ralfred.SecretsProvider.Services
 			_serializerResolver = serializerResolver;
 		}
 
-		public IContentFormatter Resolve(FormatType? type)
+		public ISecretFormatter Resolve(FormatType? type)
 		{
 			var serializer = _serializerResolver(type);
 
 			return type switch
 			{
-				FormatType.Env  => new KeyValueContentFormatter(),
-				FormatType.Json => new JsonContentFormatter(serializer),
-				FormatType.Xml  => new XmlContentFormatter(serializer),
+				FormatType.Env  => new KeyValueSecretFormatter(),
+				FormatType.Json => new JsonSecretFormatter(serializer),
+				FormatType.Xml  => new XmlSecretFormatter(serializer),
 
 				_ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
 			};

@@ -7,9 +7,9 @@ using Ralfred.Common.Helpers.Serialization;
 
 namespace Ralfred.SecretsProvider.Services.Formatters
 {
-	public class XmlContentFormatter : IContentFormatter
+	public class XmlSecretFormatter : ISecretFormatter
 	{
-		public XmlContentFormatter(ISerializer? serializer)
+		public XmlSecretFormatter(ISerializer? serializer)
 		{
 			_serializer = serializer;
 		}

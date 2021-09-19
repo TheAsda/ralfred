@@ -7,7 +7,7 @@ using Ralfred.Common.DataAccess.Entities;
 
 namespace Ralfred.SecretsProvider.Services.Formatters
 {
-	public class KeyValueContentFormatter : IContentFormatter
+	public class KeyValueSecretFormatter : ISecretFormatter
 	{
 		public string Format(IEnumerable<Secret> data)
 		{

@@ -49,7 +49,7 @@ namespace SecretsProvider.UnitTests.Services
 			var result = _target.Resolve(type);
 
 			// assert
-			new[] { typeof(JsonContentFormatter), typeof(XmlContentFormatter) }.Contains(result.GetType()).Should().BeTrue();
+			new[] { typeof(JsonSecretFormatter), typeof(XmlSecretFormatter) }.Contains(result.GetType()).Should().BeTrue();
 		}
 
 		[Test]
@@ -66,7 +66,7 @@ namespace SecretsProvider.UnitTests.Services
 			var result = _target.Resolve(type);
 
 			// assert
-			result.GetType().Should().Be(typeof(KeyValueContentFormatter));
+			result.GetType().Should().Be(typeof(KeyValueSecretFormatter));
 		}
 
 		[Test]

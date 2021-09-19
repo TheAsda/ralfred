@@ -6,6 +6,6 @@ namespace Ralfred.SecretsProvider.Services
 {
 	public interface IFormatterResolver
 	{
-		IContentFormatter Resolve(FormatType? type);
+		ISecretFormatter Resolve(FormatType? type);
 	}
 }

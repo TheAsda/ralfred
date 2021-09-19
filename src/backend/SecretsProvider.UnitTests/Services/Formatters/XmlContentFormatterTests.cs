@@ -25,7 +25,7 @@ namespace SecretsProvider.UnitTests.Services.Formatters
 
 			_serializer = new Mock<ISerializer>(MockBehavior.Strict);
 
-			_target = new XmlContentFormatter(_serializer.Object);
+			_target = new XmlSecretFormatter(_serializer.Object);
 		}
 
 		[Test]
@@ -56,6 +56,6 @@ namespace SecretsProvider.UnitTests.Services.Formatters
 
 		private Mock<ISerializer> _serializer;
 
-		private XmlContentFormatter _target;
+		private XmlSecretFormatter _target;
 	}
 }

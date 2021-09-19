@@ -7,9 +7,9 @@ using Ralfred.Common.Helpers.Serialization;
 
 namespace Ralfred.SecretsProvider.Services.Formatters
 {
-	public class JsonContentFormatter : IContentFormatter
+	public class JsonSecretFormatter : ISecretFormatter
 	{
-		public JsonContentFormatter(ISerializer? serializer)
+		public JsonSecretFormatter(ISerializer? serializer)
 		{
 			_serializer = serializer;
 		}

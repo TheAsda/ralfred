@@ -25,7 +25,7 @@ namespace SecretsProvider.UnitTests.Services.Formatters
 
 			_serializer = new Mock<ISerializer>(MockBehavior.Strict);
 
-			_target = new JsonContentFormatter(_serializer.Object);
+			_target = new JsonSecretFormatter(_serializer.Object);
 		}
 
 		[Test]
@@ -52,6 +52,6 @@ namespace SecretsProvider.UnitTests.Services.Formatters
 
 		private Mock<ISerializer> _serializer;
 
-		private JsonContentFormatter _target;
+		private JsonSecretFormatter _target;
 	}
 }

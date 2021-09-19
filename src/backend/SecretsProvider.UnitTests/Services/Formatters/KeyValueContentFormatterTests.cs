@@ -24,7 +24,7 @@ namespace SecretsProvider.UnitTests.Services.Formatters
 		{
 			_fixture = new Fixture();
 
-			_target = new KeyValueContentFormatter();
+			_target = new KeyValueSecretFormatter();
 		}
 
 		[Test]
@@ -43,6 +43,6 @@ namespace SecretsProvider.UnitTests.Services.Formatters
 
 		private IFixture _fixture;
 
-		private KeyValueContentFormatter _target;
+		private KeyValueSecretFormatter _target;
 	}
 }
