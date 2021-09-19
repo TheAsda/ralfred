@@ -9,7 +9,7 @@ namespace Ralfred.SecretsProvider.Services.Formatters
 {
 	public class XmlContentFormatter : IContentFormatter
 	{
-		public XmlContentFormatter(ISerializer serializer)
+		public XmlContentFormatter(ISerializer? serializer)
 		{
 			_serializer = serializer;
 		}
@@ -22,9 +22,9 @@ namespace Ralfred.SecretsProvider.Services.Formatters
 				Value = x.Value
 			});
 
-			return _serializer.Serialize(outputData.ToList());
+			return _serializer?.Serialize(outputData.ToList());
 		}
 
-		private readonly ISerializer _serializer;
+		private readonly ISerializer? _serializer;
 	}
 }

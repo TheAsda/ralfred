@@ -9,7 +9,7 @@ namespace Ralfred.SecretsProvider.Services.Formatters
 {
 	public class JsonContentFormatter : IContentFormatter
 	{
-		public JsonContentFormatter(ISerializer serializer)
+		public JsonContentFormatter(ISerializer? serializer)
 		{
 			_serializer = serializer;
 		}
@@ -18,9 +18,9 @@ namespace Ralfred.SecretsProvider.Services.Formatters
 		{
 			var dictionary = data.ToDictionary(x => x.Name, x => x.Value);
 
-			return _serializer.Serialize(dictionary);
+			return _serializer?.Serialize(dictionary);
 		}
 
-		private readonly ISerializer _serializer;
+		private readonly ISerializer? _serializer;
 	}
 }
