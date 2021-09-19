@@ -71,7 +71,7 @@ namespace Ralfred.SecretsProvider
 			var appConfiguration = appConfigurationDefaults;
 
 			if (appConfigurationOverrides is not null)
-				appConfiguration = configurationManager.Apply(appConfigurationDefaults, appConfigurationOverrides);
+				appConfiguration = configurationManager.Merge(appConfigurationDefaults, appConfigurationOverrides);
 
 			services.AddSingleton(appConfiguration);
 

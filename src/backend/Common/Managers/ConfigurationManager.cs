@@ -26,7 +26,7 @@ namespace Ralfred.Common.Managers
 			return _serializer.Deserialize<Configuration>(content);
 		}
 
-		public Configuration Apply(Configuration old, Configuration @new)
+		public Configuration Merge(Configuration old, Configuration @new)
 		{
 			old.Engine = @new.Engine ?? old.Engine;
 			old.EnableWebUi = @new.EnableWebUi ?? old.EnableWebUi;

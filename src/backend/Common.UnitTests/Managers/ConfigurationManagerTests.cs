@@ -53,7 +53,7 @@ namespace SecretsProvider.UnitTests.Managers
 		}
 
 		[Test]
-		public void ApplyTest()
+		public void MergeTest()
 		{
 			// arrange
 			var firstConfiguration = _fixture.Create<Configuration>();
@@ -65,7 +65,7 @@ namespace SecretsProvider.UnitTests.Managers
 			};
 
 			// act
-			var result = _target.Apply(firstConfiguration, secondConfiguration);
+			var result = _target.Merge(firstConfiguration, secondConfiguration);
 
 			// assert
 			result.Should().NotBeNull();

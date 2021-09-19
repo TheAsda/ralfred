@@ -7,6 +7,6 @@ namespace Ralfred.Common.Managers
 	{
 		Configuration? Get(string path);
 
-		Configuration Apply(Configuration old, Configuration @new);
+		Configuration Merge(Configuration old, Configuration @new);
 	}
 }
