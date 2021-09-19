@@ -2,7 +2,7 @@
 
 using NUnit.Framework;
 
-using Ralfred.Common.Helpers;
+using Ralfred.Common.Helpers.Serialization;
 
 
 namespace SecretsProvider.UnitTests.Helpers
@@ -23,7 +23,7 @@ namespace SecretsProvider.UnitTests.Helpers
 			var @object = new { Field = "value" };
 
 			// act
-			var result = _target.Serialiaze(@object);
+			var result = _target.Serialize(@object);
 
 			// assert
 			result.Should().NotBeNull();

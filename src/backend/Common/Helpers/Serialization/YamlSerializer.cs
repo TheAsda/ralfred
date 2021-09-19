@@ -2,11 +2,11 @@
 using YamlDotNet.Serialization.NamingConventions;
 
 
-namespace Ralfred.Common.Helpers
+namespace Ralfred.Common.Helpers.Serialization
 {
 	public class YamlSerializer : ISerializer
 	{
-		public string? Serialiaze(object? @object)
+		public string? Serialize(object? @object)
 		{
 			if (@object is null)
 				return null;
