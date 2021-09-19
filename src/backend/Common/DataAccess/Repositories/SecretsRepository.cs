@@ -72,6 +72,16 @@ namespace Ralfred.Common.DataAccess.Repositories
 			}
 		}
 
+		public void DeleteGroupSecrets(string name, string path, IEnumerable<string> secrets)
+		{
+			var group = _groupContext.Get(x => x.Name == name && x.Path == path);
+
+			foreach (var secret in secrets)
+			{
+				_secretContext.Delete(x => x.GroupId == group.Id && x.Name == secret);
+			}
+		}
+
 		private readonly IStorageContext<Group> _groupContext;
 		private readonly IStorageContext<Secret> _secretContext;
 	}

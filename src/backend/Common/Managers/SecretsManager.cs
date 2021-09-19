@@ -104,19 +104,56 @@ namespace Ralfred.Common.Managers
 
 					if (input.ContainsKey("value"))
 					{
-						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? string.Empty,
+						_secretsRepository.UpdateGroupSecrets(groupName, folderPath,
 							new Dictionary<string, string> { { name, input["value"] } },
 							new Dictionary<string, string>());
 					}
 					else
 					{
-						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? string.Empty,
+						_secretsRepository.UpdateGroupSecrets(groupName, folderPath,
 							new Dictionary<string, string>(),
 							new Dictionary<string, string> { { name, files["value"] } });
 					}
 
 					break;
 				}
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		public void DeleteSecrets(string path, string[] secrets)
+		{
+			var pathType = _pathResolver.Resolve(path);
+
+			switch (pathType)
+			{
+				case PathType.Secret:
+				{
+					var (name, groupPath) = _pathResolver.DeconstructPath(path);
+					var (groupName, folderPath) = _pathResolver.DeconstructPath(groupPath);
+					_secretsRepository.DeleteGroupSecrets(groupName, folderPath, new[] { name });
+
+					break;
+				}
+				case PathType.Group:
+				{
+					var (name, groupPath) = _pathResolver.DeconstructPath(path);
+
+					if (secrets.Length > 0)
+					{
+						_secretsRepository.DeleteGroupSecrets(name, groupPath, secrets);
+					}
+					else
+					{
+						_groupRepository.DeleteGroup(name, groupPath);
+					}
+
+					break;
+				}
+				case PathType.None:
+					// TODO: change to custom exception
+					throw new Exception("Path not found");
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

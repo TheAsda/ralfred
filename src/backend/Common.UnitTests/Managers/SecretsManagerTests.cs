@@ -252,7 +252,7 @@ namespace SecretsProvider.UnitTests.Managers
 		}
 
 		[Test]
-		public void AddSecretsGroup()
+		public void AddSecretsGroupTest()
 		{
 
 			// arrange
@@ -305,7 +305,7 @@ namespace SecretsProvider.UnitTests.Managers
 		}
 
 		[Test]
-		public void AddSecretFile()
+		public void AddSecretFileTest()
 		{
 
 			// arrange
@@ -336,7 +336,7 @@ namespace SecretsProvider.UnitTests.Managers
 		}
 
 		[Test]
-		public void AddSecret()
+		public void AddSecretTest()
 		{
 
 			// arrange
@@ -367,7 +367,7 @@ namespace SecretsProvider.UnitTests.Managers
 		}
 
 		[Test]
-		public void AddSecretWithoutValue()
+		public void AddSecretWithoutValueTest()
 		{
 
 			// arrange
@@ -376,6 +376,77 @@ namespace SecretsProvider.UnitTests.Managers
 			// assert
 			Assert.Throws<Exception>(() => _target.AddSecrets("path/to/folder", new Dictionary<string, string>(),
 				new Dictionary<string, string>(), Array.Empty<string>()));
+		}
+
+		[Test]
+		public void DeleteNotFoundSecretTest()
+		{
+			// arrange
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.None);
+
+			// assert
+			Assert.Throws<Exception>(() => _target.DeleteSecrets("path/to/folder", Array.Empty<string>()));
+		}
+
+		[Test]
+		public void DeleteGroupTest()
+		{
+			// arrange
+			const string fullPath = "path/to/group";
+			const string path = "path/to";
+			const string name = "group";
+
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
+			_pathResolver.Setup(x => x.DeconstructPath(fullPath)).Returns((name, path));
+			_groupRepository.Setup(x => x.DeleteGroup(name, path)).Verifiable();
+
+			// act
+			_target.DeleteSecrets(fullPath, Array.Empty<string>());
+
+			// assert
+			_groupRepository.Verify(x => x.DeleteGroup(name, path), Times.Once);
+		}
+
+		[Test]
+		public void DeleteGroupSecretsTest()
+		{
+			// arrange
+			const string fullPath = "path/to/group";
+			const string path = "path/to";
+			const string name = "group";
+			var secrets = new[] { "test" };
+
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
+			_pathResolver.Setup(x => x.DeconstructPath(fullPath)).Returns((name, path));
+			_secretsRepository.Setup(x => x.DeleteGroupSecrets(name, path, secrets)).Verifiable();
+
+			// act
+			_target.DeleteSecrets(fullPath, secrets);
+
+			// assert
+			_secretsRepository.Verify(x => x.DeleteGroupSecrets(name, path, secrets), Times.Once);
+		}
+
+		[Test]
+		public void DeleteSecretTest()
+		{
+			// arrange
+			const string fullPath = "path/group/secret";
+			const string secretName = "secret";
+			const string groupPath = "path/group";
+			const string groupName = "group";
+			const string folderPath = "path";
+
+			_pathResolver.Setup(x => x.Resolve(fullPath)).Returns(PathType.Secret);
+			_pathResolver.Setup(x => x.DeconstructPath(fullPath)).Returns((secretName, groupPath));
+			_pathResolver.Setup(x => x.DeconstructPath(groupPath)).Returns((groupName, folderPath));
+			_secretsRepository.Setup(x => x.DeleteGroupSecrets(groupName, folderPath, new[] { secretName })).Verifiable();
+
+			// target
+			_target.DeleteSecrets(fullPath, Array.Empty<string>());
+
+			// assert
+			_secretsRepository.Verify(x => x.DeleteGroupSecrets(groupName, folderPath, new[] { secretName }), Times.Once);
 		}
 
 		private ISecretsManager _target;

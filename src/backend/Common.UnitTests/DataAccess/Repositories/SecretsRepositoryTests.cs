@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
+using AutoFixture;
+
 using Moq;
 
 using NUnit.Framework;
@@ -20,6 +22,7 @@ namespace SecretsProvider.UnitTests.DataAccess.Repositories
 		[SetUp]
 		public void Setup()
 		{
+			_fixture = new Fixture();
 			_secretContext = new Mock<IStorageContext<Secret>>();
 			_groupContext = new Mock<IStorageContext<Group>>();
 			_target = new SecretsRepository(_secretContext.Object, _groupContext.Object);
@@ -147,6 +150,26 @@ namespace SecretsProvider.UnitTests.DataAccess.Repositories
 
 			_secretContext.Verify(x => x.Add(It.IsAny<Secret>()), Times.Exactly(secrets.Keys.Count + files.Keys.Count));
 		}
+
+		[Test]
+		public void DeleteGroupSecretsTest()
+		{
+			// arrange
+			var group = _fixture.Create<Group>();
+			var secrets = _fixture.Build<Secret>().With(x => x.GroupId, () => group.Id).CreateMany().ToList();
+			_groupContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Group>>>())).Returns(group);
+			_secretContext.Setup(x => x.Delete(It.IsAny<Expression<Func<Secret, bool>>>())).Verifiable();
+
+			// act
+			var enumerable = secrets.ToList();
+			_target.DeleteGroupSecrets(group.Name, group.Path, enumerable.Select(x => x.Name));
+
+			// assert
+			_groupContext.Verify(x => x.Get(It.IsAny<Expression<Predicate<Group>>>()), Times.Once);
+			_secretContext.Verify(x => x.Delete(It.IsAny<Expression<Func<Secret, bool>>>()), Times.Exactly(secrets.Count));
+		}
+
+		private IFixture _fixture;
 
 		private ISecretsRepository _target;
 		private Mock<IStorageContext<Secret>> _secretContext;
