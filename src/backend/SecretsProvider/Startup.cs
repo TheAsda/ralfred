@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Ralfred.Common.DataAccess.Repositories;
 using Ralfred.Common.DependencyInjection;
 using Ralfred.Common.Helpers;
+using Ralfred.Common.Helpers.Serialization;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
 using Ralfred.SecretsProvider.Services;
@@ -25,22 +26,38 @@ namespace Ralfred.SecretsProvider
 
 		public static void ConfigureServices(IServiceCollection services)
 		{
-			/* if json serializer will appear, need to convert to named registration */
-			services.AddTransient<ISerializer, YamlSerializer>();
+			services.AddTransient<JsonSerializer>();
+			services.AddTransient<XmlSerializer>();
+			services.AddTransient<YamlSerializer>();
+
+			services.AddTransient<StorageResolvingExtensions.SerializerResolver>(serviceProvider => key =>
+			{
+				return key switch
+				{
+					FormatType.Json => serviceProvider.GetService<JsonSerializer>()!,
+					FormatType.Xml  => serviceProvider.GetService<XmlSerializer>()!,
+					FormatType.Yaml => serviceProvider.GetService<YamlSerializer>()!,
+
+					_ => null
+				};
+			});
+
 			services.AddTransient<IContentProvider, ContentProvider>();
 
-			services.AddTransient<IConfigurationManager, ConfigurationManager>();
+			services.AddTransient<IConfigurationManager, ConfigurationManager>(serviceProvider =>
+				new ConfigurationManager(serviceProvider.GetService<YamlSerializer>()!, serviceProvider.GetService<IContentProvider>()!));
 
 			var configuration = RegisterApplicationConfiguration(services);
 
 			services.ConfigureStorageContext(configuration.Engine!.Value);
 
-			services.AddTransient<ISecretsRepository, SecretsRepository>();
 			services.AddTransient<IGroupRepository, GroupRepository>();
+			services.AddTransient<ISecretsRepository, SecretsRepository>();
 
 			services.AddTransient<IPathResolver, PathResolver>();
 			services.AddTransient<IFileConverter, FileConverter>();
 			services.AddTransient<ISecretsManager, SecretsManager>();
+			services.AddTransient<IFormatterResolver, FormatterResolver>();
 
 			services.AddControllers(options => { options.InputFormatters.Add(new BypassFormDataInputFormatter()); });
 		}
@@ -59,6 +76,8 @@ namespace Ralfred.SecretsProvider
 
 		private static Configuration RegisterApplicationConfiguration(IServiceCollection services)
 		{
+			// TODO: add config validation
+
 			var serviceProvider = services.BuildServiceProvider();
 			var configurationManager = serviceProvider.GetService<IConfigurationManager>()!;
 

@@ -1,8 +1,5 @@
-﻿using System.IO;
-using System.Linq;
-using System.Text;
-
-using Ralfred.Common.Helpers;
+﻿using Ralfred.Common.Helpers;
+using Ralfred.Common.Helpers.Serialization;
 using Ralfred.Common.Types;
 
 
@@ -30,6 +27,7 @@ namespace Ralfred.Common.Managers
 		{
 			old.Engine = @new.Engine ?? old.Engine;
 			old.EnableWebUi = @new.EnableWebUi ?? old.EnableWebUi;
+			old.DefaultFormat = @new.DefaultFormat ?? old.DefaultFormat;
 			old.ConnectionString = @new.ConnectionString ?? old.ConnectionString;
 
 			return old;

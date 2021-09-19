@@ -8,6 +8,8 @@ namespace Ralfred.Common.Types
 	{
 		public bool? EnableWebUi { get; set; }
 
+		public FormatType? DefaultFormat { get; set; }
+
 		public StorageEngineType? Engine { get; set; }
 
 		public string? ConnectionString { get; set; }

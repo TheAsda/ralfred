@@ -1,2 +1,3 @@
 ﻿enableWebUi: true
 engine: InMemory
+defaultFormat: env

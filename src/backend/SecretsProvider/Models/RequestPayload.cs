@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using Ralfred.Common.Types;
+
 
 namespace Ralfred.SecretsProvider.Models
 {
@@ -15,5 +17,9 @@ namespace Ralfred.SecretsProvider.Models
 		[FromForm] public IFormCollection? FormData { get; init; }
 
 		[FromQuery] public string? Secrets { get; init; }
+
+		[FromQuery] public FormatType? Format { get; set; }
+
+		[FromQuery] public bool IncludeFiles { get; set; }
 	}
 }

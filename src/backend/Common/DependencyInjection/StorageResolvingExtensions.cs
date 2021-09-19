@@ -3,6 +3,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using Ralfred.Common.DataAccess.Context;
+using Ralfred.Common.Helpers.Serialization;
 using Ralfred.Common.Types;
 
 
@@ -26,5 +27,7 @@ namespace Ralfred.Common.DependencyInjection
 
 			services.AddSingleton(typeof(IStorageContext<>), targetType);
 		}
+
+		public delegate ISerializer? SerializerResolver(FormatType? format);
 	}
 }
