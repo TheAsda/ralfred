@@ -9,6 +9,7 @@ using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Context;
 using Ralfred.Common.DataAccess.Entities;
+using Ralfred.Common.Exceptions;
 
 
 namespace SecretsProvider.UnitTests.DataAccess.Context
@@ -106,7 +107,7 @@ namespace SecretsProvider.UnitTests.DataAccess.Context
 			// act
 
 			// assert
-			Assert.Throws<Exception>(() => _target.Get(x => x.Name == _fixture.Create<string>()));
+			Assert.Throws<NotFoundException>(() => _target.Get(x => x.Name == _fixture.Create<string>()));
 		}
 
 		[Test]
