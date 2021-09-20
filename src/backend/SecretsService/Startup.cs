@@ -12,10 +12,10 @@ using Ralfred.Common.Helpers;
 using Ralfred.Common.Helpers.Serialization;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
-using Ralfred.SecretsProvider.Services;
+using Ralfred.SecretsService.Services;
 
 
-namespace Ralfred.SecretsProvider
+namespace Ralfred.SecretsService
 {
 	public class Startup
 	{

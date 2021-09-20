@@ -1,4 +1,4 @@
-﻿namespace Ralfred.SecretsProvider.Models
+﻿namespace Ralfred.SecretsService.Models
 {
 	public record SystemInfo
 	{

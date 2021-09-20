@@ -14,7 +14,7 @@ using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories;
 
 
-namespace SecretsProvider.UnitTests.DataAccess.Repositories
+namespace SecretsService.UnitTests.DataAccess.Repositories
 {
 	[TestFixture]
 	public class SecretsRepositoryTests

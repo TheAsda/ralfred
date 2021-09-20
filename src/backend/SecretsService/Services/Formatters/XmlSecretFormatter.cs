@@ -5,7 +5,7 @@ using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.Helpers.Serialization;
 
 
-namespace Ralfred.SecretsProvider.Services.Formatters
+namespace Ralfred.SecretsService.Services.Formatters
 {
 	public class XmlSecretFormatter : ISecretFormatter
 	{

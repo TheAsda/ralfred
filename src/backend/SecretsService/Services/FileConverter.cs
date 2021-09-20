@@ -4,7 +4,7 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 
 
-namespace Ralfred.SecretsProvider.Services
+namespace Ralfred.SecretsService.Services
 {
 	public class FileConverter : IFileConverter
 	{

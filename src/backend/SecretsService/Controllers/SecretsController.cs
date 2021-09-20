@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
-using Ralfred.SecretsProvider.Models;
-using Ralfred.SecretsProvider.Services;
+using Ralfred.SecretsService.Models;
+using Ralfred.SecretsService.Services;
 
 
-namespace Ralfred.SecretsProvider.Controllers
+namespace Ralfred.SecretsService.Controllers
 {
 	[ApiController]
 	[Route("{*route}")]

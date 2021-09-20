@@ -11,7 +11,7 @@ using Ralfred.Common.DataAccess.Context;
 using Ralfred.Common.DataAccess.Entities;
 
 
-namespace SecretsProvider.UnitTests.DataAccess.Context
+namespace SecretsService.UnitTests.DataAccess.Context
 {
 	[TestFixture]
 	public class InMemoryStorageContextTests

@@ -13,7 +13,7 @@ using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
 
 
-namespace SecretsProvider.UnitTests.Managers
+namespace SecretsService.UnitTests.Managers
 {
 	[TestFixture]
 	public class SecretsManagerTests

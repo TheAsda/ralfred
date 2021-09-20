@@ -10,10 +10,10 @@ using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.Helpers.Serialization;
-using Ralfred.SecretsProvider.Services.Formatters;
+using Ralfred.SecretsService.Services.Formatters;
 
 
-namespace SecretsProvider.UnitTests.Services.Formatters
+namespace SecretsService.UnitTests.Services.Formatters
 {
 	[TestFixture]
 	public class XmlContentFormatterTests
@@ -33,7 +33,7 @@ namespace SecretsProvider.UnitTests.Services.Formatters
 		{
 			// arrange
 			var data = _fixture.CreateMany<Secret>().ToList();
-			var projection = data.Select(x => new Ralfred.SecretsProvider.Models.Secret
+			var projection = data.Select(x => new Ralfred.SecretsService.Models.Secret
 			{
 				Name = x.Name,
 				Value = x.Value
