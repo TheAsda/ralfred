@@ -74,11 +74,11 @@ namespace Ralfred.Common.DataAccess.Repositories
 
 		public void DeleteGroupSecrets(string name, string path, IEnumerable<string> secrets)
 		{
-			var group = _groupContext.Get(x => x.Name == name && x.Path == path);
+			var group = _groupContext.Get(x => x.Name.Equals(name) && x.Path == path);
 
 			foreach (var secret in secrets)
 			{
-				_secretContext.Delete(x => x.GroupId == group.Id && x.Name == secret);
+				_secretContext.Delete(x => x.GroupId == group.Id && x.Name.Equals(secret));
 			}
 		}
 

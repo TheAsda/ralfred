@@ -130,23 +130,23 @@ namespace Ralfred.Common.Managers
 			{
 				case PathType.Secret:
 				{
-					var (name, groupPath) = _pathResolver.DeconstructPath(path);
+					var (secretName, groupPath) = _pathResolver.DeconstructPath(path);
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(groupPath);
-					_secretsRepository.DeleteGroupSecrets(groupName, folderPath, new[] { name });
+					_secretsRepository.DeleteGroupSecrets(groupName, folderPath, new[] { secretName });
 
 					break;
 				}
 				case PathType.Group:
 				{
-					var (name, groupPath) = _pathResolver.DeconstructPath(path);
+					var (secretName, groupPath) = _pathResolver.DeconstructPath(path);
 
 					if (secrets.Length > 0)
 					{
-						_secretsRepository.DeleteGroupSecrets(name, groupPath, secrets);
+						_secretsRepository.DeleteGroupSecrets(secretName, groupPath, secrets);
 					}
 					else
 					{
-						_groupRepository.DeleteGroup(name, groupPath);
+						_groupRepository.DeleteGroup(secretName, groupPath);
 					}
 
 					break;
