@@ -12,5 +12,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		void UpdateGroupSecrets(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files);
 
 		void SetGroupSecrets(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files);
+
+		void DeleteGroupSecrets(string name, string path, IEnumerable<string> secrets);
 	}
 }

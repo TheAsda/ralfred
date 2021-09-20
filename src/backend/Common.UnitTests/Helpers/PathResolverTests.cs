@@ -34,7 +34,7 @@ namespace SecretsProvider.UnitTests.Helpers
 			// assert
 			Assert.AreEqual(PathType.None, result);
 
-			_groupRepository.Verify(x => x.Exists(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+			_groupRepository.Verify(x => x.Exists(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
 		}
 
 		[Test]

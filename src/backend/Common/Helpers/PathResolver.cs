@@ -33,11 +33,6 @@ namespace Ralfred.Common.Helpers
 
 			var (name2, path3) = DeconstructPath(path2);
 
-			if (string.IsNullOrWhiteSpace(path3))
-			{
-				return PathType.None;
-			}
-
 			if (_groupRepository.Exists(name2, path3))
 			{
 				return PathType.Secret;
@@ -48,7 +43,7 @@ namespace Ralfred.Common.Helpers
 
 		public (string name, string path) DeconstructPath(string fullPath)
 		{
-			const string separator = "/";
+			const char separator = '/';
 
 			var splitted = fullPath.Split(separator);
 

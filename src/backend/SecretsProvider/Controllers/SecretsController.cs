@@ -73,11 +73,11 @@ namespace Ralfred.SecretsProvider.Controllers
 		}
 
 		[HttpDelete]
-		public void RemoveSecrets([FromRoute] RequestPayload payload)
+		public void DeleteSecrets([FromRoute] RequestPayload payload)
 		{
 			var secretNames = payload.Secrets?.Split(',') ?? Array.Empty<string>();
 
-			throw new NotImplementedException();
+			_secretsManager.DeleteSecrets(payload.Route ?? string.Empty, secretNames);
 		}
 
 		private static string ResolveContentType(FormatType? format)

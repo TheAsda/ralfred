@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using Ralfred.Common.DataAccess.Context;
 using Ralfred.Common.DataAccess.Entities;
@@ -62,7 +63,14 @@ namespace Ralfred.Common.DataAccess.Repositories
 					IsFile = true
 				});
 			}
+		}
 
+		public void DeleteGroup(string name, string path)
+		{
+			var group = _groupContext.Get(x => x.Name.Equals(name) && x.Path == path);
+			
+			_secretContext.Delete(x => x.GroupId == group.Id);
+			_groupContext.Delete(x => x.Id == group.Id);
 		}
 
 		#endregion
