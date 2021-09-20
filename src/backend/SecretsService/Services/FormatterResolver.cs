@@ -2,10 +2,10 @@
 
 using Ralfred.Common.DependencyInjection;
 using Ralfred.Common.Types;
-using Ralfred.SecretsProvider.Services.Formatters;
+using Ralfred.SecretsService.Services.Formatters;
 
 
-namespace Ralfred.SecretsProvider.Services
+namespace Ralfred.SecretsService.Services
 {
 	public class FormatterResolver : IFormatterResolver
 	{

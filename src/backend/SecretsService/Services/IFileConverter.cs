@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Http;
 
 
-namespace Ralfred.SecretsProvider.Services
+namespace Ralfred.SecretsService.Services
 {
 	public interface IFileConverter
 	{

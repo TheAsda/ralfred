@@ -12,10 +12,10 @@ using Microsoft.Extensions.Primitives;
 
 using NUnit.Framework;
 
-using Ralfred.SecretsProvider.Services;
+using Ralfred.SecretsService.Services;
 
 
-namespace SecretsProvider.UnitTests.Services
+namespace SecretsService.UnitTests.Services
 {
 	public class FileConverterTests
 	{

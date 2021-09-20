@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 
-namespace Ralfred.SecretsProvider
+namespace Ralfred.SecretsService
 {
 	public static class Program
 	{

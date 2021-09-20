@@ -5,7 +5,7 @@ using System.Linq;
 using Ralfred.Common.DataAccess.Entities;
 
 
-namespace Ralfred.SecretsProvider.Services.Formatters
+namespace Ralfred.SecretsService.Services.Formatters
 {
 	public class KeyValueSecretFormatter : ISecretFormatter
 	{
