@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecretsProvider", "SecretsProvider\SecretsProvider.csproj", "{3FCDD01A-2AD5-473F-9504-0F31FE892B0A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecretsService", "SecretsService\SecretsService.csproj", "{3FCDD01A-2AD5-473F-9504-0F31FE892B0A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{37969E99-8035-4D75-B1AA-E59BC1CE557A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.UnitTests", "Common.UnitTests\Common.UnitTests.csproj", "{0427609A-18CE-4F97-A3B2-E40AA1AA82CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecretsProvider.UnitTests", "SecretsProvider.UnitTests\SecretsProvider.UnitTests.csproj", "{D8C4A43F-A162-411B-BD37-3A281726BD5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecretsService.UnitTests", "SecretsService.UnitTests\SecretsService.UnitTests.csproj", "{D8C4A43F-A162-411B-BD37-3A281726BD5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
