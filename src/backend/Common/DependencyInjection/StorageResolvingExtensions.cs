@@ -21,7 +21,6 @@ namespace Ralfred.Common.DependencyInjection
 				StorageEngineType.Mongo    => typeof(MongoStorageContext<>),
 				StorageEngineType.Redis    => typeof(RedisStorageContext<>),
 
-				// TODO: concrete exception
 				_ => throw new ArgumentOutOfRangeException()
 			};
 
