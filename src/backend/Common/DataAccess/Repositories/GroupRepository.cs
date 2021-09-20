@@ -16,12 +16,11 @@ namespace Ralfred.Common.DataAccess.Repositories
 
 		#region Implementation of IGroupRepository
 
-		// TODO: circular dependency
 		public bool Exists(string name, string path)
 		{
 			var group = _groupContext.Find(g => g.Path.Equals(path) && g.Name.Equals(name));
 
-			return group != null;
+			return group is not null;
 		}
 
 		public Group? FindByPath(string path, string name)
@@ -66,7 +65,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		public void DeleteGroup(string name, string path)
 		{
 			var group = _groupContext.Get(x => x.Name.Equals(name) && x.Path == path);
-			
+
 			_secretContext.Delete(x => x.GroupId == group.Id);
 			_groupContext.Delete(x => x.Id == group.Id);
 		}
