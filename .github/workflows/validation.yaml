@@ -60,7 +60,7 @@ jobs:
 
       - name: adding test run statistics to pull request
         uses: machine-learning-apps/pr-comment@master
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' }} && ${{ always() }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
