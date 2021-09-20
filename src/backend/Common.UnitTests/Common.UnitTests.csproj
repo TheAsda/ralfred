@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SecretsProvider\SecretsProvider.csproj" />
+      <ProjectReference Include="..\SecretsService\SecretsService.csproj" />
     </ItemGroup>
 
 </Project>
