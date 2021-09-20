@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 using Ralfred.Common.DataAccess.Context;
 using Ralfred.Common.DataAccess.Entities;
-using Ralfred.Common.Helpers;
 
 
 namespace Ralfred.Common.DataAccess.Repositories
