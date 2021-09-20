@@ -21,7 +21,7 @@ namespace Ralfred.Common.Helpers
 		{
 			if (!ValidatePath(path))
 			{
-				throw new Exception("Path is not valid");
+				throw new ArgumentException("Path is not valid");
 			}
 
 			var (name, path2) = DeconstructPath(path);
