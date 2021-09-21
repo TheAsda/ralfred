@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 using Ralfred.Common.DataAccess.Repositories;
 using Ralfred.Common.DependencyInjection;
@@ -13,6 +14,8 @@ using Ralfred.Common.Helpers.Serialization;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
 using Ralfred.SecretsService.Services;
+
+using Serilog;
 
 
 namespace Ralfred.SecretsService
@@ -26,6 +29,16 @@ namespace Ralfred.SecretsService
 
 		public static void ConfigureServices(IServiceCollection services)
 		{
+			Log.Logger = new LoggerConfiguration()
+				.ReadFrom.Configuration(_configuration, "Serilog")
+				.CreateLogger();
+
+			services.AddLogging(builder =>
+			{
+				builder.ClearProviders();
+				builder.AddSerilog(Log.Logger);
+			});
+
 			services.AddTransient<JsonSerializer>();
 			services.AddTransient<XmlSerializer>();
 			services.AddTransient<YamlSerializer>();
@@ -62,7 +75,7 @@ namespace Ralfred.SecretsService
 			services.AddControllers(options => { options.InputFormatters.Add(new BypassFormDataInputFormatter()); });
 		}
 
-		public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
 		{
 			if (env.IsDevelopment())
 			{
@@ -70,8 +83,14 @@ namespace Ralfred.SecretsService
 			}
 
 			app.UseRouting();
-
 			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+			applicationLifetime.ApplicationStopped.Register(() =>
+			{
+				Log.Logger.Information("Application stopped.");
+			});
+
+			Log.Logger.Information("Application started.");
 		}
 
 		private static Configuration RegisterApplicationConfiguration(IServiceCollection services)
@@ -93,6 +112,8 @@ namespace Ralfred.SecretsService
 				appConfiguration = configurationManager.Merge(appConfigurationDefaults, appConfigurationOverrides);
 
 			services.AddSingleton(appConfiguration);
+
+			Log.Logger.Information("Loading application configuration.");
 
 			return appConfiguration;
 		}

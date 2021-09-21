@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.Managers;
@@ -21,12 +22,14 @@ namespace Ralfred.SecretsService.Controllers
 			ISecretsManager    secretsManager,
 			IFileConverter     fileConverter,
 			IFormatterResolver formatterResolver,
-			Configuration      configuration)
+			Configuration      configuration,
+			ILogger<SecretsController> logger)
 		{
 			_secretsManager = secretsManager;
 			_fileConverter = fileConverter;
 			_formatterResolver = formatterResolver;
 			_configuration = configuration;
+			_logger = logger;
 		}
 
 		[HttpPut]
@@ -92,6 +95,7 @@ namespace Ralfred.SecretsService.Controllers
 		}
 
 		private readonly Configuration _configuration;
+		private readonly ILogger<SecretsController> _logger;
 
 		private readonly ISecretsManager _secretsManager;
 		private readonly IFileConverter _fileConverter;
