@@ -4,6 +4,7 @@ using System.Linq;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories;
+using Ralfred.Common.Exceptions;
 using Ralfred.Common.Helpers;
 using Ralfred.Common.Types;
 
@@ -35,8 +36,7 @@ namespace Ralfred.Common.Managers
 
 					if (secret is null)
 					{
-						// TODO: change to custom exception
-						throw new Exception("Group does not contain such secret");
+						throw new NotFoundException("Group does not contain such secret");
 					}
 
 					return new[] { secret };
@@ -49,8 +49,7 @@ namespace Ralfred.Common.Managers
 						.Where(x => secrets.Length == 0 || secrets.Contains(x.Name));
 				}
 				case PathType.None:
-					// TODO: change to custom exception
-					throw new Exception("Path not found");
+					throw new NotFoundException("Path not found");
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
@@ -76,9 +75,6 @@ namespace Ralfred.Common.Managers
 				{
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
 
-					// NOTE: Возможно поведение непонятное, так как в кейсе None производится фильтрация всегда и устанавливаются секреты из
-					// списка, а в данном кейсе при наличии фильтра производится замена выбранных, в обратном случае заменяются все секреты 
-					// на предоставленные в словаре.
 					if (secrets.Length > 0)
 					{
 						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? string.Empty,
@@ -96,7 +92,7 @@ namespace Ralfred.Common.Managers
 				{
 					if (!input.ContainsKey("value") && !files.ContainsKey("value"))
 					{
-						throw new Exception("Value is not provided");
+						throw new ArgumentException("Value is not provided");
 					}
 
 					var (name, groupPath) = _pathResolver.DeconstructPath(path);
@@ -152,8 +148,7 @@ namespace Ralfred.Common.Managers
 					break;
 				}
 				case PathType.None:
-					// TODO: change to custom exception
-					throw new Exception("Path not found");
+					throw new NotFoundException("Path not found");
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

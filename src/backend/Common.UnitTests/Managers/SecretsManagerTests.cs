@@ -8,6 +8,7 @@ using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories;
+using Ralfred.Common.Exceptions;
 using Ralfred.Common.Helpers;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
@@ -36,7 +37,7 @@ namespace SecretsService.UnitTests.Managers
 			// act
 
 			// assert
-			Assert.Throws<Exception>(() => _target.GetSecrets("test", Array.Empty<string>()));
+			Assert.Throws<NotFoundException>(() => _target.GetSecrets("test", Array.Empty<string>()));
 		}
 
 		[Test]
@@ -119,7 +120,7 @@ namespace SecretsService.UnitTests.Managers
 			});
 
 			// assert
-			Assert.Throws<Exception>(() => _target.GetSecrets("random", Array.Empty<string>()));
+			Assert.Throws<NotFoundException>(() => _target.GetSecrets("random", Array.Empty<string>()));
 		}
 
 		[Test]
@@ -374,7 +375,7 @@ namespace SecretsService.UnitTests.Managers
 			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Secret);
 
 			// assert
-			Assert.Throws<Exception>(() => _target.AddSecrets("path/to/folder", new Dictionary<string, string>(),
+			Assert.Throws<ArgumentException>(() => _target.AddSecrets("path/to/folder", new Dictionary<string, string>(),
 				new Dictionary<string, string>(), Array.Empty<string>()));
 		}
 
@@ -385,7 +386,7 @@ namespace SecretsService.UnitTests.Managers
 			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.None);
 
 			// assert
-			Assert.Throws<Exception>(() => _target.DeleteSecrets("path/to/folder", Array.Empty<string>()));
+			Assert.Throws<NotFoundException>(() => _target.DeleteSecrets("path/to/folder", Array.Empty<string>()));
 		}
 
 		[Test]

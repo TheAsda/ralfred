@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using Ralfred.Common.DataAccess.Entities;
+using Ralfred.Common.Exceptions;
 
 
 namespace Ralfred.Common.DataAccess.Context
@@ -23,8 +24,7 @@ namespace Ralfred.Common.DataAccess.Context
 
 			if (found is null)
 			{
-				// TODO: change to custom exception
-				throw new Exception("No item match criteria");
+				throw new NotFoundException("No item match criteria");
 			}
 
 			return found;
@@ -55,7 +55,6 @@ namespace Ralfred.Common.DataAccess.Context
 			{
 				if (_storage.Any(x => x.Id == entity.Id))
 				{
-					// TODO: change to custom exception
 					throw new ArgumentException("Id already exists");
 				}
 			}
