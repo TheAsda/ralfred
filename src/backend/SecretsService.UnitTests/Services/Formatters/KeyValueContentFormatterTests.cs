@@ -11,10 +11,10 @@ using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.Helpers.Serialization;
-using Ralfred.SecretsProvider.Services.Formatters;
+using Ralfred.SecretsService.Services.Formatters;
 
 
-namespace SecretsProvider.UnitTests.Services.Formatters
+namespace SecretsService.UnitTests.Services.Formatters
 {
 	[TestFixture]
 	public class KeyValueContentFormatterTests

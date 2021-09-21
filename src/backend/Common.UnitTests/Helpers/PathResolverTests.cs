@@ -7,7 +7,7 @@ using Ralfred.Common.Helpers;
 using Ralfred.Common.Types;
 
 
-namespace SecretsProvider.UnitTests.Helpers
+namespace SecretsService.UnitTests.Helpers
 {
 	[TestFixture]
 	public class PathResolverTests
