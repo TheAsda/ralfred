@@ -7,7 +7,7 @@ using Ralfred.Common.Exceptions;
 using Ralfred.SecretsProvider.Models;
 
 
-namespace Ralfred.SecretsProvider
+namespace Ralfred.SecretsService
 {
 	public class ExceptionsFilter : IExceptionFilter
 	{
