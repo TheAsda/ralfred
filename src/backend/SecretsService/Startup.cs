@@ -72,7 +72,11 @@ namespace Ralfred.SecretsService
 			services.AddTransient<ISecretsManager, SecretsManager>();
 			services.AddTransient<IFormatterResolver, FormatterResolver>();
 
-			services.AddControllers(options => { options.InputFormatters.Add(new BypassFormDataInputFormatter()); });
+			services.AddControllers(options =>
+			{
+				options.Filters.Add<ExceptionsFilter>();
+				options.InputFormatters.Add(new BypassFormDataInputFormatter());
+			});
 		}
 
 		public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
