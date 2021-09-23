@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 using Ralfred.Common.Exceptions;
-using Ralfred.SecretsProvider.Models;
+using Ralfred.SecretsService.Models;
 
 
 namespace Ralfred.SecretsService
@@ -14,7 +14,7 @@ namespace Ralfred.SecretsService
 		public void OnException(ExceptionContext context)
 		{
 			var status = HttpStatusCode.InternalServerError;
-			var message = "Something went wrong";
+			var message = "Internal sever error";
 
 			if (context.Exception is NotFoundException)
 			{

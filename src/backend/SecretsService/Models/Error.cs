@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-
-
-namespace Ralfred.SecretsProvider.Models
+﻿namespace Ralfred.SecretsService.Models
 {
 	public record Error
 	{
-		public int StatusCode { get; set; }
+		public int StatusCode { init; get; }
 
-		public string Message { get; set; }
+		public string Message { init; get; }
 	}
 }
