@@ -14,7 +14,7 @@ namespace Ralfred.SecretsService
 		public void OnException(ExceptionContext context)
 		{
 			var status = HttpStatusCode.InternalServerError;
-			var message = "Internal sever error";
+			var message = "Internal sever error.";
 
 			if (context.Exception is NotFoundException)
 			{
