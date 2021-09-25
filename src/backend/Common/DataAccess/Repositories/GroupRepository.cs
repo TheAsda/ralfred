@@ -2,16 +2,19 @@
 
 using Ralfred.Common.DataAccess.Context;
 using Ralfred.Common.DataAccess.Entities;
+using Ralfred.Common.DataAccess.Helpers;
 
 
 namespace Ralfred.Common.DataAccess.Repositories
 {
 	public class GroupRepository : IGroupRepository
 	{
-		public GroupRepository(IStorageContext<Group> groupContext, IStorageContext<Secret> secretContext)
+		public GroupRepository(IStorageContext<Group> groupContext, IStorageContext<Secret> secretContext, ITransactionFactory transactionFactory)
 		{
 			_groupContext = groupContext;
 			_secretContext = secretContext;
+
+			_transactionFactory = transactionFactory;
 		}
 
 		#region Implementation of IGroupRepository
@@ -32,13 +35,13 @@ namespace Ralfred.Common.DataAccess.Repositories
 
 		public void CreateGroup(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
+			var transaction = _transactionFactory.BeginTransaction();
 			var group = _groupContext.Add(new Group
 			{
 				Name = name,
 				Path = path
 			});
 
-			// TODO: add transaction
 			foreach (var (key, value) in secrets)
 			{
 				_secretContext.Add(new Secret
@@ -60,19 +63,26 @@ namespace Ralfred.Common.DataAccess.Repositories
 					IsFile = true
 				});
 			}
+
+			transaction.Commit();
 		}
 
 		public void DeleteGroup(string name, string path)
 		{
+			var transaction = _transactionFactory.BeginTransaction();
 			var group = _groupContext.Get(x => x.Name.Equals(name) && x.Path == path);
 
 			_secretContext.Delete(x => x.GroupId == group.Id);
 			_groupContext.Delete(x => x.Id == group.Id);
+
+			transaction.Commit();
 		}
 
 		#endregion
 
 		private readonly IStorageContext<Group> _groupContext;
 		private readonly IStorageContext<Secret> _secretContext;
+
+		private readonly ITransactionFactory _transactionFactory;
 	}
 }

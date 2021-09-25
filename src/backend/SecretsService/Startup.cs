@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+using Ralfred.Common.DataAccess.Helpers;
 using Ralfred.Common.DataAccess.Repositories;
 using Ralfred.Common.DependencyInjection;
 using Ralfred.Common.Helpers;
@@ -38,6 +39,8 @@ namespace Ralfred.SecretsService
 				builder.ClearProviders();
 				builder.AddSerilog(Log.Logger);
 			});
+
+			services.AddTransient<ITransactionFactory, TransactionFactory>();
 
 			services.AddTransient<JsonSerializer>();
 			services.AddTransient<XmlSerializer>();

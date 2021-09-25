@@ -5,12 +5,15 @@ using System.Linq.Expressions;
 
 using AutoFixture;
 
+using FluentAssertions;
+
 using Moq;
 
 using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Context;
 using Ralfred.Common.DataAccess.Entities;
+using Ralfred.Common.DataAccess.Helpers;
 using Ralfred.Common.DataAccess.Repositories;
 
 
@@ -23,40 +26,30 @@ namespace SecretsService.UnitTests.DataAccess.Repositories
 		public void Setup()
 		{
 			_fixture = new Fixture();
+
 			_secretContext = new Mock<IStorageContext<Secret>>();
 			_groupContext = new Mock<IStorageContext<Group>>();
-			_target = new SecretsRepository(_secretContext.Object, _groupContext.Object);
+			_transactionFactory = new Mock<ITransactionFactory>();
+
+			_target = new SecretsRepository(_secretContext.Object, _groupContext.Object, _transactionFactory.Object);
 		}
 
 		[Test]
 		public void GetGroupSecretsTest()
 		{
 			// arrange
-			var mockGroup = new Group
-			{
-				Id = Guid.NewGuid(),
-				Name = "test",
-				Path = ""
-			};
+			var group = _fixture.Create<Group>();
+			var secret = _fixture.Build<Secret>().With(x => x.GroupId, group.Id).Create();
 
-			var mockSecret = new Secret
-			{
-				Id = Guid.NewGuid(),
-				Name = "testSecret",
-				Value = "test",
-				GroupId = mockGroup.Id,
-				IsFile = false
-			};
-
-			_groupContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Group>>>())).Returns(mockGroup);
-			_secretContext.Setup(x => x.List(It.IsAny<Expression<Func<Secret, bool>>>())).Returns(new List<Secret> { mockSecret });
+			_groupContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Group>>>())).Returns(group);
+			_secretContext.Setup(x => x.List(It.IsAny<Expression<Func<Secret, bool>>>())).Returns(new List<Secret> { secret });
 
 			// act
-			var result = _target.GetGroupSecrets(mockGroup.Path, mockGroup.Name).ToList();
+			var result = _target.GetGroupSecrets(group.Path, group.Name).ToList();
 
 			// assert
-			Assert.AreEqual(result.Count, 1);
-			Assert.AreEqual(result[0], mockSecret);
+			result.Should().HaveCount(1);
+			result.Single().Should().BeEquivalentTo(secret);
 		}
 
 		[Test]
@@ -66,12 +59,10 @@ namespace SecretsService.UnitTests.DataAccess.Repositories
 			const string name = "test";
 			const string path = "";
 
-			var mockGroup = new Group
-			{
-				Id = Guid.NewGuid(),
-				Name = name,
-				Path = path
-			};
+			var secret = _fixture.Create<Secret>();
+			var group = _fixture.Build<Group>().With(x => x.Name, name).With(x => x.Path, path).Create();
+
+			var mockedTransaction = new Mock<IDatabaseTransactionScope>();
 
 			var secrets = new Dictionary<string, string>
 			{
@@ -84,15 +75,12 @@ namespace SecretsService.UnitTests.DataAccess.Repositories
 				{ "file", "file" }
 			};
 
-			_groupContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Group>>>())).Returns(mockGroup);
+			_groupContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Group>>>())).Returns(group);
 
-			var mockSecret = new Secret
-			{
-				Id = Guid.NewGuid(),
-				Value = "oldValue",
-			};
+			_transactionFactory.Setup(x => x.BeginTransaction()).Returns(mockedTransaction.Object);
+			mockedTransaction.Setup(x => x.Commit()).Verifiable();
 
-			_secretContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Secret>>>())).Returns(mockSecret);
+			_secretContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Secret>>>())).Returns(secret);
 			_secretContext.Setup(x => x.Update(It.IsAny<Secret>()));
 
 			// act
@@ -101,10 +89,12 @@ namespace SecretsService.UnitTests.DataAccess.Repositories
 			// assert
 			_groupContext.Verify(x => x.Get(It.IsAny<Expression<Predicate<Group>>>()), Times.Once);
 
-			_secretContext.Verify(x => x.Get(It.IsAny<Expression<Predicate<Secret>>>()),
-				Times.Exactly(secrets.Keys.Count + files.Keys.Count));
+			_transactionFactory.Verify(x => x.BeginTransaction(), Times.Once);
+			mockedTransaction.Verify(x => x.Commit(), Times.Once);
 
 			_secretContext.Verify(x => x.Update(It.IsAny<Secret>()), Times.Exactly(secrets.Keys.Count + files.Keys.Count));
+			_secretContext.Verify(x => x.Get(It.IsAny<Expression<Predicate<Secret>>>()),
+				Times.Exactly(secrets.Keys.Count + files.Keys.Count));
 		}
 
 		[Test]
@@ -114,12 +104,8 @@ namespace SecretsService.UnitTests.DataAccess.Repositories
 			const string name = "test";
 			const string path = "";
 
-			var mockGroup = new Group
-			{
-				Id = Guid.NewGuid(),
-				Name = name,
-				Path = path
-			};
+			var mockedTransaction = new Mock<IDatabaseTransactionScope>();
+			var group = _fixture.Build<Group>().With(x => x.Name, name).With(x => x.Path, path).Create();
 
 			var secrets = new Dictionary<string, string>
 			{
@@ -132,13 +118,10 @@ namespace SecretsService.UnitTests.DataAccess.Repositories
 				{ "file", "file" }
 			};
 
-			_groupContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Group>>>())).Returns(mockGroup);
+			_groupContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Group>>>())).Returns(group);
 
-			var mockSecret = new Secret
-			{
-				Id = Guid.NewGuid(),
-				Value = "oldValue",
-			};
+			_transactionFactory.Setup(x => x.BeginTransaction()).Returns(mockedTransaction.Object);
+			mockedTransaction.Setup(x => x.Commit()).Verifiable();
 
 			_secretContext.Setup(x => x.Add(It.IsAny<Secret>()));
 
@@ -147,6 +130,9 @@ namespace SecretsService.UnitTests.DataAccess.Repositories
 
 			// assert
 			_groupContext.Verify(x => x.Get(It.IsAny<Expression<Predicate<Group>>>()), Times.Once);
+
+			_transactionFactory.Verify(x => x.BeginTransaction(), Times.Once);
+			mockedTransaction.Verify(x => x.Commit(), Times.Once);
 
 			_secretContext.Verify(x => x.Add(It.IsAny<Secret>()), Times.Exactly(secrets.Keys.Count + files.Keys.Count));
 		}
@@ -157,8 +143,14 @@ namespace SecretsService.UnitTests.DataAccess.Repositories
 			// arrange
 			var group = _fixture.Create<Group>();
 			var secrets = _fixture.Build<Secret>().With(x => x.GroupId, () => group.Id).CreateMany().ToList();
+
+			var mockedTransaction = new Mock<IDatabaseTransactionScope>();
+
 			_groupContext.Setup(x => x.Get(It.IsAny<Expression<Predicate<Group>>>())).Returns(group);
 			_secretContext.Setup(x => x.Delete(It.IsAny<Expression<Func<Secret, bool>>>())).Verifiable();
+
+			_transactionFactory.Setup(x => x.BeginTransaction()).Returns(mockedTransaction.Object);
+			mockedTransaction.Setup(x => x.Commit()).Verifiable();
 
 			// act
 			var enumerable = secrets.ToList();
@@ -167,12 +159,17 @@ namespace SecretsService.UnitTests.DataAccess.Repositories
 			// assert
 			_groupContext.Verify(x => x.Get(It.IsAny<Expression<Predicate<Group>>>()), Times.Once);
 			_secretContext.Verify(x => x.Delete(It.IsAny<Expression<Func<Secret, bool>>>()), Times.Exactly(secrets.Count));
+
+			_transactionFactory.Verify(x => x.BeginTransaction(), Times.Once);
+			mockedTransaction.Verify(x => x.Commit(), Times.Once);
 		}
 
 		private IFixture _fixture;
 
-		private ISecretsRepository _target;
-		private Mock<IStorageContext<Secret>> _secretContext;
 		private Mock<IStorageContext<Group>> _groupContext;
+		private Mock<IStorageContext<Secret>> _secretContext;
+		private Mock<ITransactionFactory> _transactionFactory;
+
+		private ISecretsRepository _target;
 	}
 }

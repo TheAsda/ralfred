@@ -35,6 +35,8 @@ namespace Ralfred.SecretsService.Controllers
 		[HttpPut]
 		public void AddSecrets([FromRoute] RequestPayload payload)
 		{
+			_logger.LogInformation($"Adding secrets to path {payload.Route}.");
+
 			var secretNames = payload.Secrets?.Split(',') ?? Array.Empty<string>();
 
 			if (payload.Body is null && payload.FormData is null)
@@ -60,6 +62,8 @@ namespace Ralfred.SecretsService.Controllers
 		[HttpGet]
 		public string? GetSecrets([FromRoute] RequestPayload payload)
 		{
+			_logger.LogInformation($"Getting secrets from path {payload.Route}.");
+
 			var secretNames = payload.Secrets?.Split(',') ?? Array.Empty<string>();
 
 			var secrets = _secretsManager.GetSecrets(payload.Route ?? string.Empty, secretNames);
@@ -78,6 +82,8 @@ namespace Ralfred.SecretsService.Controllers
 		[HttpDelete]
 		public void DeleteSecrets([FromRoute] RequestPayload payload)
 		{
+			_logger.LogInformation($"Deleting secrets on path {payload.Route}.");
+
 			var secretNames = payload.Secrets?.Split(',') ?? Array.Empty<string>();
 
 			_secretsManager.DeleteSecrets(payload.Route ?? string.Empty, secretNames);
