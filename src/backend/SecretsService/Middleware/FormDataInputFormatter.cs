@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Mvc.Formatters;
 
 
-namespace Ralfred.SecretsService
+namespace Ralfred.SecretsService.Middleware
 {
 	public class BypassFormDataInputFormatter : IInputFormatter
 	{

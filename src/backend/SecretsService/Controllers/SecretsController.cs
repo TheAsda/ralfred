@@ -8,12 +8,14 @@ using Microsoft.Extensions.Logging;
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
+using Ralfred.SecretsService.Middleware;
 using Ralfred.SecretsService.Models;
 using Ralfred.SecretsService.Services;
 
 
 namespace Ralfred.SecretsService.Controllers
 {
+	[Authenticatе]
 	[ApiController]
 	[Route("{*route}")]
 	public class SecretsController : ControllerBase
