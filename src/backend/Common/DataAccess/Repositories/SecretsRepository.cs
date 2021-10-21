@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using EnsureArg;
+
 using Ralfred.Common.DataAccess.Context;
 using Ralfred.Common.DataAccess.Entities;
 
@@ -16,6 +18,9 @@ namespace Ralfred.Common.DataAccess.Repositories
 
 		public IEnumerable<Secret> GetGroupSecrets(string groupName, string path)
 		{
+			Ensure.Arg(groupName).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNullOrWhiteSpace();
+
 			var group = _groupContext.Get(x => x.Name == groupName && x.Path == path);
 
 			return _secretContext.List(x => x.GroupId == group.Id);
@@ -23,6 +28,11 @@ namespace Ralfred.Common.DataAccess.Repositories
 
 		public void UpdateGroupSecrets(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
+			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNullOrWhiteSpace();
+			Ensure.Arg(secrets).IsNotNull();
+			Ensure.Arg(files).IsNotNull();
+
 			var group = _groupContext.Get(x => x.Name == name && x.Path == path);
 
 			// TODO: add transaction
@@ -45,6 +55,11 @@ namespace Ralfred.Common.DataAccess.Repositories
 
 		public void SetGroupSecrets(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
+			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNullOrWhiteSpace();
+			Ensure.Arg(secrets).IsNotNull();
+			Ensure.Arg(files).IsNotNull();
+
 			var group = _groupContext.Get(x => x.Name == name && x.Path == path);
 			_secretContext.Delete(x => x.GroupId == group.Id);
 
@@ -74,6 +89,9 @@ namespace Ralfred.Common.DataAccess.Repositories
 
 		public void DeleteGroupSecrets(string name, string path, IEnumerable<string> secrets)
 		{
+			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNullOrWhiteSpace();
+
 			var group = _groupContext.Get(x => x.Name.Equals(name) && x.Path == path);
 
 			foreach (var secret in secrets)
