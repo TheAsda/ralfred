@@ -19,7 +19,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		public IEnumerable<Secret> GetGroupSecrets(string groupName, string path)
 		{
 			Ensure.Arg(groupName).IsNotNullOrWhiteSpace();
-			Ensure.Arg(path).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNull();
 
 			var group = _groupContext.Get(x => x.Name == groupName && x.Path == path);
 
@@ -29,7 +29,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		public void UpdateGroupSecrets(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
 			Ensure.Arg(name).IsNotNullOrWhiteSpace();
-			Ensure.Arg(path).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNull();
 			Ensure.Arg(secrets).IsNotNull();
 			Ensure.Arg(files).IsNotNull();
 
@@ -56,7 +56,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		public void SetGroupSecrets(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
 			Ensure.Arg(name).IsNotNullOrWhiteSpace();
-			Ensure.Arg(path).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNull();
 			Ensure.Arg(secrets).IsNotNull();
 			Ensure.Arg(files).IsNotNull();
 
@@ -90,7 +90,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		public void DeleteGroupSecrets(string name, string path, IEnumerable<string> secrets)
 		{
 			Ensure.Arg(name).IsNotNullOrWhiteSpace();
-			Ensure.Arg(path).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNull();
 
 			var group = _groupContext.Get(x => x.Name.Equals(name) && x.Path == path);
 

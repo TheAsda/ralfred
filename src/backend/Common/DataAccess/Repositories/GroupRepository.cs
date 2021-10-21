@@ -21,6 +21,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		public bool Exists(string name, string path)
 		{
 			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNull();
 
 			var group = _groupContext.Find(g => g.Path.Equals(path) && g.Name.Equals(name));
 
@@ -30,6 +31,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		public Group? FindByPath(string path, string name)
 		{
 			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNull();
 
 			var group = _groupContext.Find(g => g.Path.Equals(path) && g.Name.Equals(name));
 
@@ -39,6 +41,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		public void CreateGroup(string name, string path, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
 			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNull();
 			Ensure.Arg(secrets).IsNotNull();
 			Ensure.Arg(files).IsNotNull();
 
@@ -75,6 +78,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 		public void DeleteGroup(string name, string path)
 		{
 			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			Ensure.Arg(path).IsNotNull();
 
 			var group = _groupContext.Get(x => x.Name.Equals(name) && x.Path == path);
 
