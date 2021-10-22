@@ -52,7 +52,7 @@ namespace SecretsService.UnitTests.DataAccess.Repositories
 			_secretContext.Setup(x => x.List(It.IsAny<Expression<Func<Secret, bool>>>())).Returns(new List<Secret> { mockSecret });
 
 			// act
-			var result = _target.GetGroupSecrets(mockGroup.Path, mockGroup.Name).ToList();
+			var result = _target.GetGroupSecrets(mockGroup.Name, mockGroup.Path).ToList();
 
 			// assert
 			Assert.AreEqual(result.Count, 1);

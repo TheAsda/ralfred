@@ -5,7 +5,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
 using Ralfred.SecretsService.Models;
@@ -19,10 +18,10 @@ namespace Ralfred.SecretsService.Controllers
 	public class SecretsController : ControllerBase
 	{
 		public SecretsController(
-			ISecretsManager    secretsManager,
-			IFileConverter     fileConverter,
-			IFormatterResolver formatterResolver,
-			Configuration      configuration,
+			ISecretsManager            secretsManager,
+			IFileConverter             fileConverter,
+			IFormatterResolver         formatterResolver,
+			Configuration              configuration,
 			ILogger<SecretsController> logger)
 		{
 			_secretsManager = secretsManager;
