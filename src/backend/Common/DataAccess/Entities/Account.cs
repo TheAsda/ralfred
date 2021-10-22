@@ -1,4 +1,7 @@
-﻿namespace Ralfred.Common.DataAccess.Entities
+﻿using System;
+
+
+namespace Ralfred.Common.DataAccess.Entities
 {
 	public record Account : Entity
 	{
@@ -8,6 +11,6 @@
 
 		public string? CertificateThumbprint { get; init; }
 
-		public string[]? RoleIds { get; init; }
+		public Guid[]? RoleIds { get; init; }
 	}
 }
