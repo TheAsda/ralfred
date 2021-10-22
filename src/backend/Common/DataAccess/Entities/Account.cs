@@ -8,6 +8,6 @@
 
 		public string? CertificateThumbprint { get; init; }
 
-		public Role[]? Roles { get; init; }
+		public string[]? RoleIds { get; init; }
 	}
 }

@@ -21,7 +21,7 @@ namespace Ralfred.Common.DataAccess.Repositories
 
 			var account = _storageContext.Find(x => x.Name != null && x.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
 
-			return account == null;
+			return account != null;
 		}
 
 		public void Add(Account account)
@@ -40,7 +40,10 @@ namespace Ralfred.Common.DataAccess.Repositories
 
 		public Account? Update(Account account)
 		{
-			Ensure.Arg(account).IsNotNull();
+			if (string.IsNullOrEmpty(account.Name))
+			{
+				Ensure.Arg(account.TokenHash).IsNotNull();
+			}
 
 			return _storageContext.Update(account);
 		}
