@@ -110,7 +110,8 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 
 		private void DeleteSecretByGroupIdAndName(Guid groupId, string secret)
 		{
-			var items = _storage.Where(x => x.GroupId.Equals(groupId) && x.Name.Equals(secret, StringComparison.OrdinalIgnoreCase))
+			var items = _storage
+				.Where(x => x.GroupId.Equals(groupId) && x.Name.Equals(secret, StringComparison.OrdinalIgnoreCase))
 				.ToList();
 
 			items.ForEach(x => _storage.Remove(x));
