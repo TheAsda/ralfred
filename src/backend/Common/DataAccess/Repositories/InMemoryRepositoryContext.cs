@@ -15,9 +15,9 @@ namespace Ralfred.Common.DataAccess.Repositories
 			_serviceProvider = serviceProvider;
 		}
 
-		public ISecretsRepository GetSecretsRepository()
+		public ISecretsRepository GetSecretRepository()
 		{
-			return _serviceProvider.GetService<InMemorySecretsRepository>()!;
+			return _serviceProvider.GetService<InMemorySecretRepository>()!;
 		}
 
 		public IAccountRepository GetAccountRepository()
@@ -30,9 +30,9 @@ namespace Ralfred.Common.DataAccess.Repositories
 			return _serviceProvider.GetService<InMemoryGroupRepository>()!;
 		}
 
-		public IRolesRepository GetRolesRepository()
+		public IRolesRepository GetRoleRepository()
 		{
-			return _serviceProvider.GetService<InMemoryRolesRepository>()!;
+			return _serviceProvider.GetService<InMemoryRoleRepository>()!;
 		}
 
 		private readonly IServiceProvider _serviceProvider;

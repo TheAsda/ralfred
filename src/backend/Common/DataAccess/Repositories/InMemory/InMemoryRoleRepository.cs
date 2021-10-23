@@ -3,5 +3,5 @@
 
 namespace Ralfred.Common.DataAccess.Repositories.InMemory
 {
-	public class PostgresRolesRepository : IRolesRepository { }
+	public class InMemoryRoleRepository : IRolesRepository { }
 }

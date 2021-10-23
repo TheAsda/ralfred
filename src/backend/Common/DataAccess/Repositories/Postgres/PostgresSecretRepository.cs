@@ -3,12 +3,19 @@ using System.Collections.Generic;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
+using Ralfred.Common.DataAccess.Repositories.InMemory.EntityConfiguration;
+using Ralfred.Common.Types;
 
 
 namespace Ralfred.Common.DataAccess.Repositories.InMemory
 {
-	public class PostgresSecretsRepository : ISecretsRepository
+	public class PostgresSecretRepository : BasePostgresRepository, ISecretsRepository
 	{
+		public PostgresSecretRepository(StorageConnection storageConnection) : base(typeof(SecretMapper))
+		{
+			_storageConnection = storageConnection;
+		}
+
 		public IEnumerable<Secret> GetGroupSecrets(Guid groupId)
 		{
 			throw new System.NotImplementedException();
@@ -28,5 +35,7 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 		{
 			throw new System.NotImplementedException();
 		}
+
+		private readonly StorageConnection _storageConnection;
 	}
 }

@@ -18,7 +18,7 @@ namespace Ralfred.Common.Managers
 		{
 			_pathResolver = pathResolver;
 
-			_secretsRepository = repositoryContext.GetSecretsRepository();
+			_secretsRepository = repositoryContext.GetSecretRepository();
 			_groupRepository = repositoryContext.GetGroupRepository();
 		}
 

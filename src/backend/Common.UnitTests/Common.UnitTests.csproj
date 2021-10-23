@@ -22,4 +22,8 @@
       <ProjectReference Include="..\SecretsService\SecretsService.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="DataAccess\Repositories" />
+    </ItemGroup>
+
 </Project>

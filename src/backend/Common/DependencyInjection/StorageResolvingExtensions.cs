@@ -24,8 +24,13 @@ namespace Ralfred.Common.DependencyInjection
 
 			services.AddSingleton<InMemoryAccountRepository>();
 			services.AddSingleton<InMemoryGroupRepository>();
-			services.AddSingleton<InMemorySecretsRepository>();
-			services.AddSingleton<InMemoryRolesRepository>();
+			services.AddSingleton<InMemorySecretRepository>();
+			services.AddSingleton<InMemoryRoleRepository>();
+
+			services.AddSingleton<PostgresAccountRepository>();
+			services.AddSingleton<PostgresGroupRepository>();
+			services.AddSingleton<PostgresSecretRepository>();
+			services.AddSingleton<PostgresRoleRepository>();
 
 			services.AddSingleton(typeof(IRepositoryContext), targetType);
 		}

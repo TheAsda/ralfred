@@ -10,9 +10,9 @@ using Ralfred.Common.DataAccess.Repositories.Abstractions;
 
 namespace Ralfred.Common.DataAccess.Repositories.InMemory
 {
-	public class InMemorySecretsRepository : ISecretsRepository
+	public class InMemorySecretRepository : ISecretsRepository
 	{
-		public InMemorySecretsRepository()
+		public InMemorySecretRepository()
 		{
 			_storage = new List<Secret>();
 		}

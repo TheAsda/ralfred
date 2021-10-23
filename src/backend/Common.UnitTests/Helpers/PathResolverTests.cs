@@ -3,6 +3,7 @@
 using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Repositories;
+using Ralfred.Common.DataAccess.Repositories.Abstractions;
 using Ralfred.Common.Helpers;
 using Ralfred.Common.Types;
 
@@ -15,9 +16,11 @@ namespace SecretsService.UnitTests.Helpers
 		[SetUp]
 		public void Setup()
 		{
+			_repositoryContext = new Mock<IRepositoryContext>();
 			_groupRepository = new Mock<IGroupRepository>();
 
-			_target = new PathResolver(_groupRepository.Object);
+			_repositoryContext.Setup(x => x.GetGroupRepository()).Returns(_groupRepository.Object);
+			_target = new PathResolver(_repositoryContext.Object);
 		}
 
 		[Test]
@@ -124,6 +127,7 @@ namespace SecretsService.UnitTests.Helpers
 			Assert.AreEqual(expectedResult, result);
 		}
 
+		private Mock<IRepositoryContext> _repositoryContext;
 		private Mock<IGroupRepository> _groupRepository;
 
 		private IPathResolver _target;
