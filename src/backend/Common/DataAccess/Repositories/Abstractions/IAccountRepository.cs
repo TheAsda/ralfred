@@ -1,7 +1,7 @@
 ﻿using Ralfred.Common.DataAccess.Entities;
 
 
-namespace Ralfred.Common.DataAccess.Repositories
+namespace Ralfred.Common.DataAccess.Repositories.Abstractions
 {
 	public interface IAccountRepository
 	{

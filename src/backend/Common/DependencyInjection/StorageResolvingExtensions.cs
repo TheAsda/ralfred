@@ -2,7 +2,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Ralfred.Common.DataAccess.Context;
+using Ralfred.Common.DataAccess.Repositories;
+using Ralfred.Common.DataAccess.Repositories.InMemory;
 using Ralfred.Common.Helpers.Serialization;
 using Ralfred.Common.Types;
 
@@ -11,20 +12,22 @@ namespace Ralfred.Common.DependencyInjection
 {
 	public static class StorageResolvingExtensions
 	{
-		public static void ConfigureStorageContext(this IServiceCollection services, StorageEngineType storageEngine)
+		public static void ConfigureRepositoryContext(this IServiceCollection services, StorageEngineType storageEngine)
 		{
 			var targetType = storageEngine switch
 			{
-				StorageEngineType.InMemory => typeof(InMemoryStorageContext<>),
-
-				StorageEngineType.Postgres => typeof(PostgreStorageContext<>),
-				StorageEngineType.Mongo    => typeof(MongoStorageContext<>),
-				StorageEngineType.Redis    => typeof(RedisStorageContext<>),
+				StorageEngineType.InMemory => typeof(InMemoryRepositoryContext),
+				StorageEngineType.Postgres => typeof(PostgreRepositoryContext),
 
 				_ => throw new ArgumentOutOfRangeException()
 			};
 
-			services.AddSingleton(typeof(IStorageContext<>), targetType);
+			services.AddSingleton<InMemoryAccountRepository>();
+			services.AddSingleton<InMemoryGroupRepository>();
+			services.AddSingleton<InMemorySecretsRepository>();
+			services.AddSingleton<InMemoryRolesRepository>();
+
+			services.AddSingleton(typeof(IRepositoryContext), targetType);
 		}
 
 		public delegate ISerializer? SerializerResolver(FormatType? format);

@@ -1,0 +1,3 @@
+CREATE TABLE public.role (
+	id VARCHAR(36) NOT NULL PRIMARY KEY
+);

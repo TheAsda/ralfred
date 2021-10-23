@@ -4,6 +4,7 @@ using System.Linq;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories;
+using Ralfred.Common.DataAccess.Repositories.Abstractions;
 using Ralfred.Common.Exceptions;
 using Ralfred.Common.Helpers;
 using Ralfred.Common.Types;
@@ -13,11 +14,12 @@ namespace Ralfred.Common.Managers
 {
 	public class SecretsManager : ISecretsManager
 	{
-		public SecretsManager(IPathResolver pathResolver, ISecretsRepository secretsRepository, IGroupRepository groupRepository)
+		public SecretsManager(IPathResolver pathResolver, IRepositoryContext repositoryContext)
 		{
 			_pathResolver = pathResolver;
-			_secretsRepository = secretsRepository;
-			_groupRepository = groupRepository;
+
+			_secretsRepository = repositoryContext.GetSecretsRepository();
+			_groupRepository = repositoryContext.GetGroupRepository();
 		}
 
 		public IEnumerable<Secret> GetSecrets(string path, string[] secrets)
@@ -30,7 +32,9 @@ namespace Ralfred.Common.Managers
 				{
 					var (name, groupPath) = _pathResolver.DeconstructPath(path);
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(groupPath);
-					var groupSecrets = _secretsRepository.GetGroupSecrets(groupName, folderPath ?? string.Empty);
+
+					var group = _groupRepository.Get(groupName, folderPath);
+					var groupSecrets = _secretsRepository.GetGroupSecrets(group.Id);
 
 					var secret = groupSecrets.FirstOrDefault(x => x.Name == name);
 
@@ -44,8 +48,9 @@ namespace Ralfred.Common.Managers
 				case PathType.Group:
 				{
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
+					var group = _groupRepository.Get(groupName, folderPath);
 
-					return _secretsRepository.GetGroupSecrets(groupName, folderPath ?? string.Empty)
+					return _secretsRepository.GetGroupSecrets(group.Id)
 						.Where(x => secrets.Length == 0 || secrets.Contains(x.Name));
 				}
 				case PathType.None:
@@ -65,25 +70,25 @@ namespace Ralfred.Common.Managers
 				{
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
 
-					_groupRepository.CreateGroup(groupName, folderPath ?? string.Empty,
-						FilterDictionaryKeys(input, secrets),
-						FilterDictionaryKeys(files, secrets));
+					var groupId = _groupRepository.CreateGroup(groupName, folderPath ?? string.Empty);
+
+					_secretsRepository.SetGroupSecrets(groupId, FilterDictionaryKeys(input, secrets), FilterDictionaryKeys(files, secrets));
 
 					break;
 				}
 				case PathType.Group:
 				{
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
+					var group = _groupRepository.Get(groupName, folderPath);
 
 					if (secrets.Length > 0)
 					{
-						_secretsRepository.UpdateGroupSecrets(groupName, folderPath ?? string.Empty,
-							FilterDictionaryKeys(input, secrets),
+						_secretsRepository.UpdateGroupSecrets(group.Id, FilterDictionaryKeys(input, secrets),
 							FilterDictionaryKeys(files, secrets));
 					}
 					else
 					{
-						_secretsRepository.SetGroupSecrets(groupName, folderPath ?? string.Empty, input, files);
+						_secretsRepository.SetGroupSecrets(group.Id, input, files);
 					}
 
 					break;
@@ -98,16 +103,16 @@ namespace Ralfred.Common.Managers
 					var (name, groupPath) = _pathResolver.DeconstructPath(path);
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(groupPath);
 
+					var group = _groupRepository.Get(groupName, folderPath);
+
 					if (input.ContainsKey("value"))
 					{
-						_secretsRepository.UpdateGroupSecrets(groupName, folderPath,
-							new Dictionary<string, string> { { name, input["value"] } },
+						_secretsRepository.UpdateGroupSecrets(group.Id, new Dictionary<string, string> { { name, input["value"] } },
 							new Dictionary<string, string>());
 					}
 					else
 					{
-						_secretsRepository.UpdateGroupSecrets(groupName, folderPath,
-							new Dictionary<string, string>(),
+						_secretsRepository.UpdateGroupSecrets(group.Id, new Dictionary<string, string>(),
 							new Dictionary<string, string> { { name, files["value"] } });
 					}
 
@@ -128,21 +133,26 @@ namespace Ralfred.Common.Managers
 				{
 					var (secretName, groupPath) = _pathResolver.DeconstructPath(path);
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(groupPath);
-					_secretsRepository.DeleteGroupSecrets(groupName, folderPath, new[] { secretName });
+
+					var group = _groupRepository.Get(groupName, folderPath);
+
+					_secretsRepository.DeleteGroupSecrets(group.Id, new[] { secretName });
 
 					break;
 				}
 				case PathType.Group:
 				{
-					var (secretName, groupPath) = _pathResolver.DeconstructPath(path);
+					var (groupName, groupPath) = _pathResolver.DeconstructPath(path);
+
+					var group = _groupRepository.Get(groupName, groupPath);
 
 					if (secrets.Length > 0)
 					{
-						_secretsRepository.DeleteGroupSecrets(secretName, groupPath, secrets);
+						_secretsRepository.DeleteGroupSecrets(group.Id, secrets);
 					}
 					else
 					{
-						_groupRepository.DeleteGroup(secretName, groupPath);
+						_groupRepository.DeleteGroup(groupName, groupPath);
 					}
 
 					break;

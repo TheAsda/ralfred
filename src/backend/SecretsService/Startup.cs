@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Ralfred.Common.DataAccess.Repositories;
+using Ralfred.Common.DataAccess.Repositories.Abstractions;
 using Ralfred.Common.DependencyInjection;
 using Ralfred.Common.Helpers;
 using Ralfred.Common.Helpers.Serialization;
@@ -62,10 +63,7 @@ namespace Ralfred.SecretsService
 
 			var configuration = RegisterApplicationConfiguration(services);
 
-			services.ConfigureStorageContext(configuration.Engine!.Value);
-
-			services.AddTransient<IGroupRepository, GroupRepository>();
-			services.AddTransient<ISecretsRepository, SecretsRepository>();
+			services.ConfigureRepositoryContext(configuration.Engine!.Value);
 
 			services.AddTransient<IPathResolver, PathResolver>();
 			services.AddTransient<IFileConverter, FileConverter>();
@@ -89,10 +87,7 @@ namespace Ralfred.SecretsService
 			app.UseRouting();
 			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-			applicationLifetime.ApplicationStopped.Register(() =>
-			{
-				Log.Logger.Information("Application stopped.");
-			});
+			applicationLifetime.ApplicationStopped.Register(() => { Log.Logger.Information("Application stopped."); });
 
 			Log.Logger.Information("Application started.");
 		}
