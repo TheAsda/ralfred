@@ -9,6 +9,7 @@ using EnsureArg;
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
 using Ralfred.Common.DataAccess.Repositories.InMemory;
+using Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration;
 using Ralfred.Common.Types;
 
 

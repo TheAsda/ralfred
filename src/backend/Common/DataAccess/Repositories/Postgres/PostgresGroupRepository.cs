@@ -7,11 +7,12 @@ using EnsureArg;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
-using Ralfred.Common.DataAccess.Repositories.InMemory.EntityConfiguration;
+using Ralfred.Common.DataAccess.Repositories.InMemory;
+using Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration;
 using Ralfred.Common.Types;
 
 
-namespace Ralfred.Common.DataAccess.Repositories.InMemory
+namespace Ralfred.Common.DataAccess.Repositories.Postgres
 {
 	public class PostgresGroupRepository : BasePostgresRepository, IGroupRepository
 	{

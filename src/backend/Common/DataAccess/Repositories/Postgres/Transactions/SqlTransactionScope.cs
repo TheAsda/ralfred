@@ -1,7 +1,7 @@
 ﻿using System.Transactions;
 
 
-namespace Ralfred.Common.DataAccess.Repositories.InMemory.Transactions
+namespace Ralfred.Common.DataAccess.Repositories.Postgres.Transactions
 {
 	public sealed class SqlTransactionScope : ITransactionScope
 	{
