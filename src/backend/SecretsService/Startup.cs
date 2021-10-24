@@ -63,7 +63,7 @@ namespace Ralfred.SecretsService
 
 			var configuration = RegisterApplicationConfiguration(services);
 
-			services.ConfigureRepositoryContext(configuration.Engine!.Value);
+			services.ConfigureRepositoryContext(configuration);
 
 			services.AddTransient<IPathResolver, PathResolver>();
 			services.AddTransient<IFileConverter, FileConverter>();
