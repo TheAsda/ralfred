@@ -8,7 +8,6 @@ using AutoFixture;
 using FluentAssertions;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
 
 using NUnit.Framework;
 
@@ -39,13 +38,10 @@ namespace SecretsService.UnitTests.Services
 			var file = Encoding.UTF8.GetBytes(content);
 			mockStream.Write(file);
 
-			var form = new FormCollection(new Dictionary<string, StringValues>
+			var form = new Dictionary<string, IFormFile>
 			{
-				{ _fixture.Create<string>(), _fixture.Create<string>() }
-			}, new FormFileCollection
-			{
-				new FormFile(mockStream, 0, mockStream.Length, fileKey, fileKey)
-			});
+				{ fileKey, new FormFile(mockStream, 0, mockStream.Length, fileKey, fileKey) }
+			};
 
 			// act
 			var dictionary = _target.Convert(form);
