@@ -8,8 +8,10 @@ namespace Ralfred.Common.Managers
 {
 	public interface IAccountManager
 	{
-		Account              CreateTokenAccount(string token);
-		void                 DeleteAccount(Guid        accountId);
+		void CreateTokenAccount(string token);
+
+		void DeleteAccount(Guid accountId);
+
 		IEnumerable<Account> GetAccounts();
 	}
 }

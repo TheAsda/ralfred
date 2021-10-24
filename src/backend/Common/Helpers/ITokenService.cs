@@ -1,4 +1,4 @@
-﻿namespace Ralfred.SecretsService.Services
+﻿namespace Ralfred.Common.Helpers
 {
 	public interface ITokenService
 	{

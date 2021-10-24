@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
 
 using Ralfred.Common.DataAccess.Entities;
-using Ralfred.Common.DataAccess.Repositories;
-using Ralfred.Common.DataAccess.Repositories.Abstractions;
+using Ralfred.Common.Helpers;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
 using Ralfred.SecretsService.Models;
@@ -17,7 +15,7 @@ namespace Ralfred.SecretsService.Controllers
 {
 	[ApiController]
 	[Route("account")]
-	public class AccountController
+	public class AccountController : ControllerBase
 	{
 		public AccountController(IAccountManager accountManager, ITokenService tokenService)
 		{
@@ -26,7 +24,7 @@ namespace Ralfred.SecretsService.Controllers
 		}
 
 		[HttpPost]
-		public Account CreateAccount([FromRoute] RequestPayload payload)
+		public string CreateAccount([FromRoute] RequestPayload payload)
 		{
 			var accountType = GetAccountType(payload.Data);
 
@@ -49,14 +47,16 @@ namespace Ralfred.SecretsService.Controllers
 						token = payload.Data["token"];
 					}
 
-					return _accountManager.CreateTokenAccount(token);
+					_accountManager.CreateTokenAccount(token);
+
+					return token;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
 		}
 
 		[HttpDelete("{accountId}")]
-		public void DeleteAccount([FromQuery] Guid accountId)
+		public void DeleteAccount([FromRoute] Guid accountId)
 		{
 			_accountManager.DeleteAccount(accountId);
 		}
