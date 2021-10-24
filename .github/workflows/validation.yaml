@@ -46,7 +46,7 @@ jobs:
       - name: running backend tests
         run: |
           for test_dir in ${{ env.BACKEND_DIRECTORY }}/*.UnitTests; do
-            dotnet test --no-restore --no-build --logger:"liquid.md" --results-directory=${{ github.workspace }}/test-results $test_dir;
+            dotnet test --no-restore --no-build --filter "TestCategory!~Integration" --logger:"liquid.md" --results-directory=${{ github.workspace }}/test-results $test_dir;
           done;
 
           cat ${{ github.workspace }}/test-results/* > ${{ github.workspace }}/${{ env.file_name }};
