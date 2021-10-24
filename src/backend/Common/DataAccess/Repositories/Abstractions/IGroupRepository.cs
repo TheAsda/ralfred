@@ -9,7 +9,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Abstractions
 	{
 		bool Exists(string name, string path);
 
-		Group Get(string name, string path);
+		Group? Get(string name, string path);
 
 		Guid CreateGroup(string name, string path);
 

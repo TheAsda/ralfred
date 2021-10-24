@@ -1,54 +1,51 @@
 ﻿using DapperExtensions;
 using DapperExtensions.Predicate;
 
-using EnsureArg;
+using EnsureThat;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
-using Ralfred.Common.Types;
 
 
 namespace Ralfred.Common.DataAccess.Repositories.InMemory
 {
 	public class PostgresAccountRepository : BasePostgresRepository, IAccountRepository
 	{
-		public PostgresAccountRepository(StorageConnection storageConnection, IConnectionFactory connectionFactory)
-			: base(typeof(AccountMapper))
+		public PostgresAccountRepository(IConnectionFactory connectionFactory) : base(typeof(AccountMapper))
 		{
-			_storageConnection = storageConnection;
 			_connectionFactory = connectionFactory;
 		}
 
-		public bool Exists(string accountName)
+		public bool Exists(string? accountName)
 		{
-			Ensure.Arg(accountName).IsNotNullOrWhiteSpace();
+			EnsureArg.IsNotEmptyOrWhiteSpace(accountName);
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			return connection.Get<Account>(
 				Predicates.Field<Account>(x => x.Name, Operator.Eq, accountName)
-			) is null;
+			) is not null;
 		}
 
 		public void Add(Account account)
 		{
 			if (string.IsNullOrEmpty(account.Name))
 			{
-				Ensure.Arg(account.TokenHash).IsNotNull();
+				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
 			}
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			connection.Insert(account);
 		}
 
-		public Account? GetByName(string accountName)
+		public Account? GetByName(string? accountName)
 		{
-			Ensure.Arg(accountName).IsNotNullOrWhiteSpace();
+			EnsureArg.IsNotEmptyOrWhiteSpace(accountName);
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			return connection.Get<Account>(
@@ -60,10 +57,10 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 		{
 			if (string.IsNullOrEmpty(account.Name))
 			{
-				Ensure.Arg(account.TokenHash).IsNotNull();
+				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
 			}
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 
 			connection.Open();
 			connection.Update(account);
@@ -71,7 +68,6 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			return account;
 		}
 
-		private readonly StorageConnection _storageConnection;
 		private readonly IConnectionFactory _connectionFactory;
 	}
 }

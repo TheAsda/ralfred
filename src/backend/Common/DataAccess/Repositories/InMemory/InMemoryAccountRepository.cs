@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using EnsureArg;
+using EnsureThat;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
@@ -17,23 +17,26 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			_storage = new List<Account>();
 		}
 
-		public bool Exists(string accountName)
+		public bool Exists(string? accountName)
 		{
-			Ensure.Arg(accountName).IsNotNullOrWhiteSpace();
+			EnsureArg.IsNotEmptyOrWhiteSpace(accountName);
 
 			return _storage.Any(x => x.Name != null && x.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
 		}
 
 		public void Add(Account account)
 		{
-			Ensure.Arg(account).IsNotNull();
+			if (string.IsNullOrEmpty(account.Name))
+			{
+				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
+			}
 
 			_storage.Add(account);
 		}
 
-		public Account? GetByName(string accountName)
+		public Account? GetByName(string? accountName)
 		{
-			Ensure.Arg(accountName).IsNotNullOrWhiteSpace();
+			EnsureArg.IsNotEmptyOrWhiteSpace(accountName);
 
 			return _storage.SingleOrDefault(x => x.Name != null && x.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
 		}
@@ -42,7 +45,7 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 		{
 			if (string.IsNullOrEmpty(account.Name))
 			{
-				Ensure.Arg(account.TokenHash).IsNotNull();
+				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
 			}
 
 			var index = _storage.FindIndex(x => x.Id == account.Id);

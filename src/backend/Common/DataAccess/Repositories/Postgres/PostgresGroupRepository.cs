@@ -3,7 +3,7 @@
 using DapperExtensions;
 using DapperExtensions.Predicate;
 
-using EnsureArg;
+using EnsureThat;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
@@ -15,17 +15,16 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 {
 	public class PostgresGroupRepository : BasePostgresRepository, IGroupRepository
 	{
-		public PostgresGroupRepository(StorageConnection storageConnection, IConnectionFactory connectionFactory) : base(typeof(RoleMapper))
+		public PostgresGroupRepository(IConnectionFactory connectionFactory) : base(typeof(RoleMapper))
 		{
-			_storageConnection = storageConnection;
 			_connectionFactory = connectionFactory;
 		}
 
 		public bool Exists(string name, string path)
 		{
-			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			var predicates = new IPredicate[]
@@ -34,14 +33,14 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 				Predicates.Field<Group>(x => x.Path, Operator.Eq, path)
 			};
 
-			return connection.Get<Group>(Predicates.Group(GroupOperator.And, predicates)) is null;
+			return connection.Get<Group>(Predicates.Group(GroupOperator.And, predicates)) is not null;
 		}
 
 		public Group Get(string name, string path)
 		{
-			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			var predicates = new IPredicate[]
@@ -55,9 +54,9 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 
 		public Guid CreateGroup(string name, string path)
 		{
-			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			var group = new Group
@@ -74,9 +73,9 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 
 		public void DeleteGroup(string name, string path)
 		{
-			Ensure.Arg(name).IsNotNullOrWhiteSpace();
+			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			var predicates = new IPredicate[]
@@ -85,10 +84,9 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 				Predicates.Field<Group>(x => x.Path, Operator.Eq, path)
 			};
 
-			connection.Delete(Predicates.Group(GroupOperator.And, predicates));
+			connection.Delete<Group>(Predicates.Group(GroupOperator.And, predicates));
 		}
 
-		private readonly StorageConnection _storageConnection;
 		private readonly IConnectionFactory _connectionFactory;
 	}
 }

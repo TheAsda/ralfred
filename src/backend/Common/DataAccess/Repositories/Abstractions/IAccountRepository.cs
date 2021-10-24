@@ -5,11 +5,11 @@ namespace Ralfred.Common.DataAccess.Repositories.Abstractions
 {
 	public interface IAccountRepository
 	{
-		bool Exists(string accountName);
+		bool Exists(string? accountName);
 
 		void Add(Account account);
 
-		Account? GetByName(string accountName);
+		Account? GetByName(string? accountName);
 
 		Account? Update(Account account);
 	}

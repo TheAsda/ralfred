@@ -11,9 +11,10 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory.EntityConfiguration
 	{
 		public GroupMapper()
 		{
+			Schema("public");
 			Table("group");
 
-			Map(x => x.Id).Column(nameof(Group.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Guid);
+			Map(x => x.Id).Column(nameof(Group.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Assigned);
 
 			Map(x => x.Name).Column(nameof(Group.Name).ToLower()).Type(DbType.String);
 			Map(x => x.Path).Column(nameof(Group.Path).ToLower()).Type(DbType.String);

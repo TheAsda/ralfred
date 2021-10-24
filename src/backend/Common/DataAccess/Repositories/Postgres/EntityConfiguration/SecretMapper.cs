@@ -13,7 +13,7 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory.EntityConfiguration
 		{
 			Table("secret");
 
-			Map(x => x.Id).Column(nameof(Secret.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Guid);
+			Map(x => x.Id).Column(nameof(Secret.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Assigned);
 
 			Map(x => x.Name).Column(nameof(Secret.Name).ToLower()).Type(DbType.String);
 			Map(x => x.Value).Column(nameof(Secret.Value).ToLower()).Type(DbType.String);

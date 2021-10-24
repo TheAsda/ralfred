@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using EnsureArg;
+using EnsureThat;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
@@ -19,16 +19,16 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 
 		public IEnumerable<Secret> GetGroupSecrets(Guid groupId)
 		{
-			Ensure.Arg(groupId).IsNotDefaultValue();
+			EnsureArg.IsNotDefault(groupId);
 
 			return _storage.Where(x => x.GroupId.Equals(groupId));
 		}
 
 		public void UpdateGroupSecrets(Guid groupId, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
-			Ensure.Arg(groupId).IsNotDefaultValue();
-			Ensure.Arg(secrets).IsNotNull();
-			Ensure.Arg(files).IsNotNull();
+			EnsureArg.IsNotDefault(groupId);
+			EnsureArg.IsNotNull(secrets);
+			EnsureArg.IsNotNull(files);
 
 			foreach (var (key, value) in secrets)
 			{
@@ -49,9 +49,9 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 
 		public void SetGroupSecrets(Guid groupId, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
-			Ensure.Arg(groupId).IsNotDefaultValue();
-			Ensure.Arg(secrets).IsNotNull();
-			Ensure.Arg(files).IsNotNull();
+			EnsureArg.IsNotDefault(groupId);
+			EnsureArg.IsNotNull(secrets);
+			EnsureArg.IsNotNull(files);
 
 			DeleteSecretByGroupId(groupId);
 
@@ -82,7 +82,7 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 
 		public void DeleteGroupSecrets(Guid groupId, IEnumerable<string> secrets)
 		{
-			Ensure.Arg(groupId).IsNotDefaultValue();
+			EnsureArg.IsNotDefault(groupId);
 
 			foreach (var secret in secrets)
 			{
