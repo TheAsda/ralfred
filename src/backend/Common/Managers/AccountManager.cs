@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 
 using Ralfred.Common.DataAccess.Entities;
+using Ralfred.Common.DataAccess.Repositories;
+using Ralfred.Common.DataAccess.Repositories.Abstractions;
 
 
 namespace Ralfred.Common.Managers
 {
 	public class AccountManager : IAccountManager
 	{
+		public AccountManager(IRepositoryContext repositoryContext)
+		{
+			_accountRepository = repositoryContext.GetAccountRepository();
+		}
+
 		public Account CreateTokenAccount(string token)
 		{
 			throw new NotImplementedException();
@@ -22,5 +29,7 @@ namespace Ralfred.Common.Managers
 		{
 			throw new NotImplementedException();
 		}
+
+		private readonly IAccountRepository _accountRepository;
 	}
 }
