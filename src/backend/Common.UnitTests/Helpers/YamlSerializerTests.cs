@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Ralfred.Common.Helpers.Serialization;
 
 
-namespace SecretsService.UnitTests.Helpers
+namespace SecretsProvider.UnitTests.Helpers
 {
 	[TestFixture]
 	public class YamlSerializerTests
