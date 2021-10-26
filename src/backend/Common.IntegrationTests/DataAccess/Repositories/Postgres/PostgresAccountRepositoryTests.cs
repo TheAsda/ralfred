@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using AutoFixture;
 
@@ -7,8 +8,8 @@ using FluentAssertions;
 using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Entities;
-using Ralfred.Common.DataAccess.Repositories.InMemory;
-using Ralfred.Common.DataAccess.Repositories.InMemory.Transactions;
+using Ralfred.Common.DataAccess.Repositories.Postgres;
+using Ralfred.Common.DataAccess.Repositories.Postgres.Transactions;
 using Ralfred.Common.Types;
 
 
@@ -44,13 +45,14 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			// arrange
 			var account = CreateAccount();
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			// act
-			var result = _target.Exists(account.Name);
+			var result = _target.Exists(account.Name!);
 
 			// assert
 			result.Should().BeTrue();
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		[Test]
@@ -72,13 +74,14 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			// arrange
 			var account = CreateAccount();
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			// act
-			var result = _target.GetByName(account.Name);
+			var result = _target.GetByName(account.Name!);
 
 			// assert
 			result.Should().NotBeNull();
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		[Test]
@@ -88,7 +91,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			var account = CreateAccount();
 			var tokenHashLength = _fixture.Create<Generator<int>>().First(x => x < 64);
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			account.TokenHash = CreateStringWithMaxLength(tokenHashLength);
 
@@ -96,10 +99,11 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			_target.Update(account);
 
 			// assert
-			var updated = _target.GetByName(account.Name);
+			var updated = _target.GetByName(account.Name!);
 
 			updated.Should().NotBeNull();
 			updated.Should().BeEquivalentTo(account, e => e.Excluding(x => x.RoleIds));
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		private string CreateStringWithMaxLength(int length)
@@ -123,7 +127,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			return account;
 		}
 
-		private IFixture _fixture = new Fixture();
+		private readonly IFixture _fixture = new Fixture();
 
 		private ITransactionScope _transaction;
 		private ITransactionScopeFactory _transactionScopeFactory;

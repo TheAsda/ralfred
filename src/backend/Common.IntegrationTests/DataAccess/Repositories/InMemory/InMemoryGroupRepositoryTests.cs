@@ -78,7 +78,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			deleted.Should().BeNull();
 		}
 
-		private IFixture _fixture = new Fixture();
+		private readonly IFixture _fixture = new Fixture();
 
 		private InMemoryGroupRepository _target;
 	}

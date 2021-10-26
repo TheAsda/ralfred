@@ -8,9 +8,8 @@ using FluentAssertions;
 
 using NUnit.Framework;
 
-using Ralfred.Common.DataAccess.Entities;
-using Ralfred.Common.DataAccess.Repositories.InMemory;
-using Ralfred.Common.DataAccess.Repositories.InMemory.Transactions;
+using Ralfred.Common.DataAccess.Repositories.Postgres;
+using Ralfred.Common.DataAccess.Repositories.Postgres.Transactions;
 using Ralfred.Common.Types;
 
 
@@ -86,7 +85,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 				.BeEquivalentTo(newSecrets.Keys.Concat(files.Keys).OrderBy(x => x));
 		}
 
-		private IFixture _fixture = new Fixture();
+		private readonly IFixture _fixture = new Fixture();
 
 		private ITransactionScope _transaction;
 		private ITransactionScopeFactory _transactionScopeFactory;

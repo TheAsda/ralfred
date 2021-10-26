@@ -69,7 +69,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 				.BeEquivalentTo(newSecrets.Keys.Concat(files.Keys).OrderBy(x => x));
 		}
 
-		private IFixture _fixture = new Fixture();
+		private readonly IFixture _fixture = new Fixture();
 
 		private InMemorySecretRepository _target;
 	}

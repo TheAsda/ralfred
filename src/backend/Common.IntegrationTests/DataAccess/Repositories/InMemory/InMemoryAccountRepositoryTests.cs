@@ -1,4 +1,6 @@
-﻿using AutoFixture;
+﻿using System;
+
+using AutoFixture;
 
 using FluentAssertions;
 
@@ -26,13 +28,14 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			// arrange
 			var account = CreateAccount();
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			// act
-			var result = _target.Exists(account.Name);
+			var result = _target.Exists(account.Name!);
 
 			// assert
 			result.Should().BeTrue();
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		[Test]
@@ -54,13 +57,14 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			// arrange
 			var account = CreateAccount();
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			// act
-			var result = _target.GetByName(account.Name);
+			var result = _target.GetByName(account.Name!);
 
 			// assert
 			result.Should().NotBeNull();
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		[Test]
@@ -69,7 +73,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			// arrange
 			var account = CreateAccount();
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			account.TokenHash = _fixture.Create<string>();
 
@@ -77,10 +81,11 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			_target.Update(account);
 
 			// assert
-			var updated = _target.GetByName(account.Name);
+			var updated = _target.GetByName(account.Name!);
 
 			updated.Should().NotBeNull();
 			updated.Should().BeEquivalentTo(account, e => e.Excluding(x => x.RoleIds));
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		private Account CreateAccount()
@@ -95,7 +100,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			return account;
 		}
 
-		private IFixture _fixture = new Fixture();
+		private readonly IFixture _fixture = new Fixture();
 
 		private InMemoryAccountRepository _target;
 	}
