@@ -7,10 +7,10 @@ namespace Ralfred.Common.DataAccess.Entities
 	{
 		public Guid GroupId { get; init; }
 
-		public string Name { get; set; }
+		public string Name { get; init; }
 
 		public string Value { get; set; }
 
-		public bool IsFile { get; set; }
+		public bool IsFile { get; init; }
 	}
 }

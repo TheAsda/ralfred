@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  ralfred_db:
+    restart: always
+    build: ./databases/postgres/image
+    container_name: ralfred_db
+    env_file:
+      - ./databases/postgres/.env.local.list
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+volumes:
+  db_data:

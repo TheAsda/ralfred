@@ -19,13 +19,19 @@
     </ItemGroup>
     
     <ItemGroup>
-      <PackageReference Include="EnsureArg" Version="1.1.0" />
+      <PackageReference Include="Dapper" Version="2.0.90" />
+      <PackageReference Include="DapperExtensions" Version="1.7.0" />
+      <PackageReference Include="Ensure.That" Version="10.1.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
       <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="Npgsql" Version="5.0.7" />
       <PackageReference Include="StackExchange.Redis" Version="2.2.50" />
       <PackageReference Include="YamlDotNet" Version="11.2.1" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="DataAccess\Context" />
     </ItemGroup>
 
 </Project>

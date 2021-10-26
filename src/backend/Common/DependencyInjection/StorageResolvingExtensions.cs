@@ -2,7 +2,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Ralfred.Common.DataAccess.Context;
+using Ralfred.Common.DataAccess.Repositories;
+using Ralfred.Common.DataAccess.Repositories.InMemory;
 using Ralfred.Common.Helpers.Serialization;
 using Ralfred.Common.Types;
 
@@ -11,20 +12,48 @@ namespace Ralfred.Common.DependencyInjection
 {
 	public static class StorageResolvingExtensions
 	{
-		public static void ConfigureStorageContext(this IServiceCollection services, StorageEngineType storageEngine)
+		public static void ConfigureRepositoryContext(this IServiceCollection services, Configuration configuration)
 		{
-			var targetType = storageEngine switch
+			var storageEngine = configuration.Engine!.Value;
+
+			if (storageEngine != StorageEngineType.InMemory)
 			{
-				StorageEngineType.InMemory => typeof(InMemoryStorageContext<>),
+				services.AddTransient(_ => new StorageConnection
+				{
+					ConnectionString = configuration.ConnectionString!
+				});
+			}
 
-				StorageEngineType.Postgres => typeof(PostgreStorageContext<>),
-				StorageEngineType.Mongo    => typeof(MongoStorageContext<>),
-				StorageEngineType.Redis    => typeof(RedisStorageContext<>),
+			switch (storageEngine)
+			{
+				case StorageEngineType.InMemory:
+				{
+					services.AddSingleton<InMemoryAccountRepository>();
+					services.AddSingleton<InMemoryGroupRepository>();
+					services.AddSingleton<InMemorySecretRepository>();
+					services.AddSingleton<InMemoryRoleRepository>();
 
-				_ => throw new ArgumentOutOfRangeException()
-			};
+					services.AddSingleton<IRepositoryContext, InMemoryRepositoryContext>();
 
-			services.AddSingleton(typeof(IStorageContext<>), targetType);
+					break;
+				}
+
+				case StorageEngineType.Postgres:
+				{
+					services.AddTransient<IConnectionFactory, ConnectionFactory>();
+
+					services.AddTransient<PostgresAccountRepository>();
+					services.AddTransient<PostgresGroupRepository>();
+					services.AddTransient<PostgresSecretRepository>();
+					services.AddTransient<PostgresRoleRepository>();
+
+					services.AddSingleton<IRepositoryContext, PostgreRepositoryContext>();
+
+					break;
+				}
+
+				default: throw new ArgumentOutOfRangeException();
+			}
 		}
 
 		public delegate ISerializer? SerializerResolver(FormatType? format);

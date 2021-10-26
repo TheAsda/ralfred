@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 using Ralfred.Common.DataAccess.Repositories;
+using Ralfred.Common.DataAccess.Repositories.Abstractions;
 using Ralfred.Common.Types;
 
 
@@ -10,9 +11,9 @@ namespace Ralfred.Common.Helpers
 {
 	public class PathResolver : IPathResolver
 	{
-		public PathResolver(IGroupRepository groupRepository)
+		public PathResolver(IRepositoryContext repositoryContext)
 		{
-			_groupRepository = groupRepository;
+			_groupRepository = repositoryContext.GetGroupRepository();
 		}
 
 		#region Implementation of IPathResolver
