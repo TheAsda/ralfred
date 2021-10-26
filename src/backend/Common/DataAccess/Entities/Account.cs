@@ -7,7 +7,7 @@ namespace Ralfred.Common.DataAccess.Entities
 	{
 		public string? Name { get; init; }
 
-		public string? TokenHash { get; init; }
+		public string? TokenHash { get; set; }
 
 		public string? CertificateThumbprint { get; init; }
 

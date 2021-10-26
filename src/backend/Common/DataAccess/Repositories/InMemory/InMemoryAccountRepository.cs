@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using EnsureArg;
+using EnsureThat;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
@@ -20,14 +20,17 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 
 		public bool Exists(string accountName)
 		{
-			Ensure.Arg(accountName).IsNotNullOrWhiteSpace();
+			EnsureArg.IsNotEmptyOrWhiteSpace(accountName);
 
 			return _storage.Any(x => x.Name != null && x.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
 		}
 
 		public Guid Create(Account account)
 		{
-			Ensure.Arg(account).IsNotNull();
+			if (string.IsNullOrEmpty(account.Name))
+			{
+				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
+			}
 
 			if (account.Id == Guid.Empty)
 			{
@@ -46,14 +49,14 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			if (index == -1)
 			{
 				throw new NotFoundException($"Cannot find account with id {accountId}");
-			}
+			}	
 
 			_storage.RemoveAt(index);
 		}
 
 		public Account GetByName(string accountName)
 		{
-			Ensure.Arg(accountName).IsNotNullOrWhiteSpace();
+			EnsureArg.IsNotEmptyOrWhiteSpace(accountName);
 
 			return _storage.Single(x => x.Name != null && x.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
 		}
@@ -62,7 +65,7 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 		{
 			if (string.IsNullOrEmpty(account.Name))
 			{
-				Ensure.Arg(account.TokenHash).IsNotNull();
+				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
 			}
 
 			var index = _storage.FindIndex(x => x.Id == account.Id);

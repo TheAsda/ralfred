@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using DapperExtensions;
 using DapperExtensions.Predicate;
 
-using EnsureArg;
+using EnsureThat;
 
 using Npgsql;
 
@@ -19,18 +19,16 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 {
 	public class PostgresSecretRepository : BasePostgresRepository, ISecretsRepository
 	{
-		public PostgresSecretRepository(StorageConnection storageConnection, IConnectionFactory connectionFactory)
-			: base(typeof(SecretMapper))
+		public PostgresSecretRepository(IConnectionFactory connectionFactory) : base(typeof(SecretMapper))
 		{
-			_storageConnection = storageConnection;
 			_connectionFactory = connectionFactory;
 		}
 
 		public IEnumerable<Secret> GetGroupSecrets(Guid groupId)
 		{
-			Ensure.Arg(groupId).IsNotDefaultValue();
+			EnsureArg.IsNotDefault(groupId);
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			return connection.GetList<Secret>(Predicates.Field<Secret>(x => x.GroupId, Operator.Eq, groupId));
@@ -38,9 +36,9 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 
 		public void UpdateGroupSecrets(Guid groupId, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
-			Ensure.Arg(groupId).IsNotDefaultValue();
-			Ensure.Arg(secrets).IsNotNull();
-			Ensure.Arg(files).IsNotNull();
+			EnsureArg.IsNotDefault(groupId);
+			EnsureArg.IsNotNull(secrets);
+			EnsureArg.IsNotNull(files);
 
 			void UpdateSecret(NpgsqlConnection connection, string key, string value)
 			{
@@ -55,7 +53,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 				connection.Update(secret);
 			}
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			foreach (var (key, value) in secrets)
@@ -71,11 +69,11 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 
 		public void SetGroupSecrets(Guid groupId, Dictionary<string, string> secrets, Dictionary<string, string> files)
 		{
-			Ensure.Arg(groupId).IsNotDefaultValue();
-			Ensure.Arg(secrets).IsNotNull();
-			Ensure.Arg(files).IsNotNull();
+			EnsureArg.IsNotDefault(groupId);
+			EnsureArg.IsNotNull(secrets);
+			EnsureArg.IsNotNull(files);
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			connection.Delete<Secret>(Predicates.Field<Secret>(x => x.GroupId, Operator.Eq, groupId));
@@ -107,9 +105,9 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 
 		public void DeleteGroupSecrets(Guid groupId, IEnumerable<string> secrets)
 		{
-			Ensure.Arg(groupId).IsNotDefaultValue();
+			EnsureArg.IsNotDefault(groupId);
 
-			using var connection = _connectionFactory.Create(_storageConnection.ConnectionString);
+			using var connection = _connectionFactory.Create();
 			connection.Open();
 
 			foreach (var secret in secrets)
@@ -124,7 +122,6 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			}
 		}
 
-		private readonly StorageConnection _storageConnection;
 		private readonly IConnectionFactory _connectionFactory;
 	}
 }

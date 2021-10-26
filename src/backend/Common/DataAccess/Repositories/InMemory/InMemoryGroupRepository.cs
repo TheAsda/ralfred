@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using EnsureArg;
+using EnsureThat;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
@@ -19,26 +19,23 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 
 		public bool Exists(string name, string path)
 		{
-			Ensure.Arg(name).IsNotNullOrWhiteSpace();
-			Ensure.Arg(path).IsNotNull();
+			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
 			return _storage.Any(x =>
 				x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
 		}
 
-		public Group Get(string name, string path)
+		public Group? Get(string name, string path)
 		{
-			Ensure.Arg(name).IsNotNullOrWhiteSpace();
-			Ensure.Arg(path).IsNotNull();
+			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
-			return _storage.Single(x =>
+			return _storage.SingleOrDefault(x =>
 				x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
 		}
 
 		public Guid CreateGroup(string name, string path)
 		{
-			Ensure.Arg(name).IsNotNullOrWhiteSpace();
-			Ensure.Arg(path).IsNotNull();
+			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
 			var group = new Group
 			{
@@ -54,8 +51,7 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 
 		public void DeleteGroup(string name, string path)
 		{
-			Ensure.Arg(name).IsNotNullOrWhiteSpace();
-			Ensure.Arg(path).IsNotNull();
+			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
 			var items = _storage.Where(x =>
 					x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Path.Equals(path, StringComparison.OrdinalIgnoreCase))

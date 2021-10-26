@@ -1,13 +1,22 @@
 ﻿using Npgsql;
 
+using Ralfred.Common.Types;
+
 
 namespace Ralfred.Common.DataAccess.Repositories.Postgres
 {
 	public class ConnectionFactory : IConnectionFactory
 	{
-		public NpgsqlConnection Create(string connectionString)
+		public ConnectionFactory(StorageConnection storageConnection)
 		{
-			return new NpgsqlConnection(connectionString);
+			_storageConnection = storageConnection;
 		}
+
+		public NpgsqlConnection Create()
+		{
+			return new NpgsqlConnection(_storageConnection.ConnectionString);
+		}
+
+		private readonly StorageConnection _storageConnection;
 	}
 }

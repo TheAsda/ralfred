@@ -13,7 +13,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration
 		{
 			Table("role");
 
-			Map(x => x.Id).Column(nameof(Role.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Guid);
+			Map(x => x.Id).Column(nameof(Role.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Assigned);
 		}
 	}
 }

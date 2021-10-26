@@ -5,7 +5,7 @@ services:
     build: ./databases/postgres/image
     container_name: ralfred_db
     env_file:
-      - ./databases/postgres/.env.list
+      - ./databases/postgres/.env.local.list
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:

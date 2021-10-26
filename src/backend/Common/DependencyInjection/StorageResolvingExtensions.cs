@@ -13,8 +13,18 @@ namespace Ralfred.Common.DependencyInjection
 {
 	public static class StorageResolvingExtensions
 	{
-		public static void ConfigureRepositoryContext(this IServiceCollection services, StorageEngineType storageEngine)
+		public static void ConfigureRepositoryContext(this IServiceCollection services, Configuration configuration)
 		{
+			var storageEngine = configuration.Engine!.Value;
+
+			if (storageEngine != StorageEngineType.InMemory)
+			{
+				services.AddTransient(_ => new StorageConnection
+				{
+					ConnectionString = configuration.ConnectionString!
+				});
+			}
+
 			switch (storageEngine)
 			{
 				case StorageEngineType.InMemory:
@@ -31,6 +41,8 @@ namespace Ralfred.Common.DependencyInjection
 
 				case StorageEngineType.Postgres:
 				{
+					services.AddTransient<IConnectionFactory, ConnectionFactory>();
+
 					services.AddTransient<PostgresAccountRepository>();
 					services.AddTransient<PostgresGroupRepository>();
 					services.AddTransient<PostgresSecretRepository>();
