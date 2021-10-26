@@ -24,8 +24,6 @@ namespace SecretsProvider.UnitTests.Managers
 		[SetUp]
 		public void Setup()
 		{
-			_fixture = new Fixture();
-
 			_accountRepository = new Mock<IAccountRepository>();
 			_repositoryContext = new Mock<IRepositoryContext>();
 			_cryptoService = new Mock<ICryptoService>();
@@ -84,10 +82,11 @@ namespace SecretsProvider.UnitTests.Managers
 			gotAccounts.Should().Equal(accounts);
 		}
 
+		private readonly Fixture _fixture = new Fixture();
+
 		private IAccountManager _target;
 		private Mock<IRepositoryContext> _repositoryContext;
 		private Mock<ICryptoService> _cryptoService;
 		private Mock<IAccountRepository> _accountRepository;
-		private Fixture _fixture;
 	}
 }

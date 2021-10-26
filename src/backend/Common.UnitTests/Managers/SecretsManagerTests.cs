@@ -410,15 +410,21 @@ namespace SecretsProvider.UnitTests.Managers
 			const string path = "path/to";
 			const string name = "group";
 
+			var group = _fixture.Create<Group>();
+
 			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
 			_pathResolver.Setup(x => x.DeconstructPath(fullPath)).Returns((name, path));
+			_groupRepository.Setup(x => x.Get(name, path)).Returns(group).Verifiable();
 			_groupRepository.Setup(x => x.DeleteGroup(name, path)).Verifiable();
+			_secretsRepository.Setup(x => x.DeleteGroupSecrets(group.Id)).Verifiable();
 
 			// act
 			_target.DeleteSecrets(fullPath, Array.Empty<string>());
 
 			// assert
 			_groupRepository.Verify(x => x.DeleteGroup(name, path), Times.Once);
+			_groupRepository.Verify(x => x.Get(name, path), Times.Once);
+			_secretsRepository.Verify(x => x.DeleteGroupSecrets(group.Id), Times.Once);
 		}
 
 		[Test]
@@ -469,7 +475,7 @@ namespace SecretsProvider.UnitTests.Managers
 			_secretsRepository.Verify(x => x.DeleteGroupSecrets(group.Id, new[] { secretName }), Times.Once);
 		}
 
-		private IFixture _fixture = new Fixture();
+		private readonly IFixture _fixture = new Fixture();
 
 		private ISecretsManager _target;
 		private Mock<IPathResolver> _pathResolver;

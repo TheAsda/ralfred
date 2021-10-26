@@ -21,15 +21,19 @@ namespace Ralfred.SecretsService
 		{
 			var status = HttpStatusCode.InternalServerError;
 			var message = "Internal sever error.";
-
-
-			if (context.Exception is NotFoundException)
+			
+			switch (context.Exception)
 			{
-				status = HttpStatusCode.NotFound;
-				message = context.Exception.Message;
-			}
+				case NotFoundException:
+					status = HttpStatusCode.NotFound;
+					message = context.Exception.Message;
 
-			_logger.LogError(context.Exception, message);
+					break;
+				default:
+					_logger.LogError(context.Exception, message);
+
+					break;
+			}
 
 			context.ExceptionHandled = true;
 			context.HttpContext.Response.StatusCode = (int)status;

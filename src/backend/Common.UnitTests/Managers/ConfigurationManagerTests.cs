@@ -20,8 +20,6 @@ namespace SecretsProvider.UnitTests.Managers
 		[SetUp]
 		public void Setup()
 		{
-			_fixture = new Fixture();
-
 			_serializer = new Mock<ISerializer>(MockBehavior.Strict);
 			_contentProvider = new Mock<IContentProvider>(MockBehavior.Strict);
 
@@ -73,7 +71,7 @@ namespace SecretsProvider.UnitTests.Managers
 			result.Should().BeEquivalentTo(expected);
 		}
 
-		private IFixture _fixture;
+		private readonly IFixture _fixture = new Fixture();
 
 		private Mock<ISerializer> _serializer;
 		private Mock<IContentProvider> _contentProvider;

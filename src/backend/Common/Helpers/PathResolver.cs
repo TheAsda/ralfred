@@ -34,7 +34,7 @@ namespace Ralfred.Common.Helpers
 
 			var (name2, path3) = DeconstructPath(path2);
 
-			if (_groupRepository.Exists(name2, path3))
+			if (!string.IsNullOrWhiteSpace(name2) && _groupRepository.Exists(name2, path3))
 			{
 				return PathType.Secret;
 			}

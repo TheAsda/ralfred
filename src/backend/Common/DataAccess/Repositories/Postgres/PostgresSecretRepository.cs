@@ -118,8 +118,16 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 					Predicates.Field<Secret>(x => x.Name, Operator.Eq, secret),
 				};
 
-				connection.Delete(Predicates.Group(GroupOperator.And, predicates));
+				connection.Delete<Secret>(Predicates.Group(GroupOperator.And, predicates));
 			}
+		}
+
+		public void DeleteGroupSecrets(Guid groupId)
+		{
+			using var connection = _connectionFactory.Create();
+			connection.Open();
+
+			connection.Delete<Secret>(Predicates.Field<Secret>(x => x.GroupId, Operator.Eq, groupId));
 		}
 
 		private readonly IConnectionFactory _connectionFactory;
