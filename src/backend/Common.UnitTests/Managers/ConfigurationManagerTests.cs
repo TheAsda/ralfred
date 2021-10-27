@@ -20,7 +20,7 @@ namespace SecretsProvider.UnitTests.Managers
 		[SetUp]
 		public void Setup()
 		{
-			_serializer = new Mock<YamlSerializer>(MockBehavior.Strict);
+			_serializer = new Mock<ISerializer>(MockBehavior.Strict);
 			_contentProvider = new Mock<IContentProvider>(MockBehavior.Strict);
 			_tokenService = new Mock<ITokenService>();
 
@@ -49,7 +49,7 @@ namespace SecretsProvider.UnitTests.Managers
 
 			// assert
 			result.Should().NotBeNull();
-			result.Should().BeEquivalentTo(expected);
+			result.Should().Be(expected);
 		}
 
 		[Test]
@@ -61,7 +61,9 @@ namespace SecretsProvider.UnitTests.Managers
 
 			var expected = secondConfiguration with
 			{
-				ConnectionString = firstConfiguration.ConnectionString, Engine = firstConfiguration.Engine
+				RootToken = firstConfiguration.RootToken,
+				ConnectionString = firstConfiguration.ConnectionString, 
+				Engine = firstConfiguration.Engine
 			};
 
 			// act
@@ -69,12 +71,12 @@ namespace SecretsProvider.UnitTests.Managers
 
 			// assert
 			result.Should().NotBeNull();
-			result.Should().BeEquivalentTo(expected);
+			result.Should().Be(expected);
 		}
 
 		private readonly IFixture _fixture = new Fixture();
 
-		private Mock<YamlSerializer> _serializer;
+		private Mock<ISerializer> _serializer;
 		private Mock<IContentProvider> _contentProvider;
 		private Mock<ITokenService> _tokenService;
 
