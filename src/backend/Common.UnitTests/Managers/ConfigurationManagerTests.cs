@@ -20,10 +20,11 @@ namespace SecretsProvider.UnitTests.Managers
 		[SetUp]
 		public void Setup()
 		{
-			_serializer = new Mock<ISerializer>(MockBehavior.Strict);
+			_serializer = new Mock<YamlSerializer>(MockBehavior.Strict);
 			_contentProvider = new Mock<IContentProvider>(MockBehavior.Strict);
+			_cryptoService = new Mock<ICryptoService>();
 
-			_target = new ConfigurationManager(_serializer.Object, _contentProvider.Object);
+			_target = new ConfigurationManager(_serializer.Object, _contentProvider.Object, _cryptoService.Object);
 		}
 
 		[Test]
@@ -73,8 +74,9 @@ namespace SecretsProvider.UnitTests.Managers
 
 		private readonly IFixture _fixture = new Fixture();
 
-		private Mock<ISerializer> _serializer;
+		private Mock<YamlSerializer> _serializer;
 		private Mock<IContentProvider> _contentProvider;
+		private Mock<ICryptoService> _cryptoService;
 
 		private ConfigurationManager _target;
 	}

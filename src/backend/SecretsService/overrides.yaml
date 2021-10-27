@@ -1,2 +1,2 @@
-﻿engine: Mongo
-connectionString: connectionString
+﻿engine: Postgres
+connectionString: Server=127.0.0.1;Port=5432;Database=ralfred_db;User Id=postgres;Password=postgres

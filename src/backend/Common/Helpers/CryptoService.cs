@@ -13,5 +13,10 @@ namespace Ralfred.Common.Helpers
 
 			return BitConverter.ToString(algorithm.ComputeHash(Encoding.UTF8.GetBytes(input))).Replace("-", string.Empty).ToLower();
 		}
+
+		public string GenerateKey()
+		{
+			return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+		}
 	}
 }

@@ -7,10 +7,11 @@ namespace Ralfred.Common.Managers
 {
 	public class ConfigurationManager : IConfigurationManager
 	{
-		public ConfigurationManager(ISerializer serializer, IContentProvider contentProvider)
+		public ConfigurationManager(ISerializer serializer, IContentProvider contentProvider, ICryptoService cryptoService)
 		{
 			_serializer = serializer;
 			_contentProvider = contentProvider;
+			_cryptoService = cryptoService;
 		}
 
 		public Configuration? Get(string path)
@@ -33,7 +34,25 @@ namespace Ralfred.Common.Managers
 			return old;
 		}
 
+		public Configuration GetDefaultConfiguration()
+		{
+			return new Configuration
+			{
+				Engine = StorageEngineType.InMemory,
+				DefaultFormat = FormatType.Json,
+				RootToken = _cryptoService.GenerateKey(),
+				EnableWebUi = true
+			};
+		}
+
+		public void Save(string path, Configuration configuration)
+		{
+			var content = _serializer.Serialize(configuration);
+			_contentProvider.Save(path, content!);
+		}
+
 		private readonly ISerializer _serializer;
 		private readonly IContentProvider _contentProvider;
+		private readonly ICryptoService _cryptoService;
 	}
 }

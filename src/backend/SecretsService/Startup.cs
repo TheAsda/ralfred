@@ -56,15 +56,6 @@ namespace Ralfred.SecretsService
 				};
 			});
 
-			services.AddTransient<IContentProvider, ContentProvider>();
-
-			services.AddTransient<IConfigurationManager, ConfigurationManager>(serviceProvider =>
-				new ConfigurationManager(serviceProvider.GetService<YamlSerializer>()!, serviceProvider.GetService<IContentProvider>()!));
-
-			var configuration = RegisterApplicationConfiguration(services);
-
-			services.ConfigureRepositoryContext(configuration);
-
 			services.AddTransient<IPathResolver, PathResolver>();
 			services.AddTransient<IFileConverter, FileConverter>();
 			services.AddTransient<ICryptoService, CryptoService>();
@@ -72,6 +63,17 @@ namespace Ralfred.SecretsService
 			services.AddTransient<ITokenService, TokenService>();
 			services.AddTransient<IAccountManager, AccountManager>();
 			services.AddTransient<IFormatterResolver, FormatterResolver>();
+
+			services.AddTransient<IContentProvider, ContentProvider>();
+
+			services.AddTransient<IConfigurationManager, ConfigurationManager>(serviceProvider =>
+				new ConfigurationManager(serviceProvider.GetService<YamlSerializer>()!, serviceProvider.GetService<IContentProvider>()!,
+					serviceProvider.GetService<ICryptoService>()!));
+
+			var configuration = RegisterApplicationConfiguration(services);
+
+			services.ConfigureRepositoryContext(configuration);
+
 
 			services.AddControllers(options =>
 			{
@@ -106,7 +108,11 @@ namespace Ralfred.SecretsService
 			var appConfigurationOverrides = configurationManager.Get(_configuration!["OverridesSettingsPath"]);
 
 			if (appConfigurationDefaults is null)
-				throw new Exception("Cannot read configuration file. Application stopped.");
+			{
+				Log.Information("Application configuration is not initialized");
+				appConfigurationDefaults = configurationManager.GetDefaultConfiguration();
+				configurationManager.Save(_configuration!["DefaultSettingsPath"], appConfigurationDefaults);
+			}
 
 			var appConfiguration = appConfigurationDefaults;
 

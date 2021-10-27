@@ -3,5 +3,7 @@
 	public interface ICryptoService
 	{
 		string GetHash(string input);
+
+		string GenerateKey();
 	}
 }

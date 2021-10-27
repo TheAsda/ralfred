@@ -13,5 +13,7 @@ namespace Ralfred.Common.Types
 		public StorageEngineType? Engine { get; set; }
 
 		public string? ConnectionString { get; set; }
+
+		public string? RootToken { get; set; }
 	}
 }
