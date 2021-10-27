@@ -22,9 +22,9 @@ namespace SecretsProvider.UnitTests.Managers
 		{
 			_serializer = new Mock<YamlSerializer>(MockBehavior.Strict);
 			_contentProvider = new Mock<IContentProvider>(MockBehavior.Strict);
-			_cryptoService = new Mock<ICryptoService>();
+			_tokenService = new Mock<ITokenService>();
 
-			_target = new ConfigurationManager(_serializer.Object, _contentProvider.Object, _cryptoService.Object);
+			_target = new ConfigurationManager(_serializer.Object, _contentProvider.Object, _tokenService.Object);
 		}
 
 		[Test]
@@ -76,7 +76,7 @@ namespace SecretsProvider.UnitTests.Managers
 
 		private Mock<YamlSerializer> _serializer;
 		private Mock<IContentProvider> _contentProvider;
-		private Mock<ICryptoService> _cryptoService;
+		private Mock<ITokenService> _tokenService;
 
 		private ConfigurationManager _target;
 	}

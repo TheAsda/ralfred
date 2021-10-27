@@ -68,7 +68,7 @@ namespace Ralfred.SecretsService
 
 			services.AddTransient<IConfigurationManager, ConfigurationManager>(serviceProvider =>
 				new ConfigurationManager(serviceProvider.GetService<YamlSerializer>()!, serviceProvider.GetService<IContentProvider>()!,
-					serviceProvider.GetService<ICryptoService>()!));
+					serviceProvider.GetService<ITokenService>()!));
 
 			var configuration = RegisterApplicationConfiguration(services);
 
@@ -112,6 +112,7 @@ namespace Ralfred.SecretsService
 				Log.Information("Application configuration is not initialized");
 				appConfigurationDefaults = configurationManager.GetDefaultConfiguration();
 				configurationManager.Save(_configuration!["DefaultSettingsPath"], appConfigurationDefaults);
+				Log.Information($"Here is your root token: {appConfigurationDefaults.RootToken}");
 			}
 
 			var appConfiguration = appConfigurationDefaults;
