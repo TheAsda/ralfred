@@ -92,9 +92,9 @@ namespace Ralfred.SecretsService
 			app.UseRouting();
 			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-			applicationLifetime.ApplicationStopped.Register(() => { Log.Logger.Information("Application stopped."); });
+			applicationLifetime.ApplicationStopped.Register(() => { Log.Information("Application stopped."); });
 
-			Log.Logger.Information("Application started.");
+			Log.Information("Application started.");
 		}
 
 		private static Configuration RegisterApplicationConfiguration(IServiceCollection services)
@@ -122,7 +122,7 @@ namespace Ralfred.SecretsService
 
 			services.AddSingleton(appConfiguration);
 
-			Log.Logger.Information("Loading application configuration.");
+			Log.Information("Loading application configuration.");
 
 			return appConfiguration;
 		}
