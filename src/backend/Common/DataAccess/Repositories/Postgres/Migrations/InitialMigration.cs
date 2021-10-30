@@ -36,7 +36,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres.Migrations
 				.WithColumn(nameof(Secret.Name).ToLower()).AsString(256).NotNullable()
 				.WithColumn(nameof(Secret.Value).ToLower()).AsString().NotNullable()
 				.WithColumn(nameof(Secret.GroupId).ToLower()).AsGuid().NotNullable()
-				.WithColumn(nameof(Secret.IsFile)).AsBoolean().NotNullable().WithDefaultValue(false);
+				.WithColumn(nameof(Secret.IsFile).ToLower()).AsBoolean().NotNullable().WithDefaultValue(false);
 		}
 	}
 }
