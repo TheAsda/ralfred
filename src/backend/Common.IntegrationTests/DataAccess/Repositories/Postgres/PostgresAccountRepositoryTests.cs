@@ -117,8 +117,9 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 		{
 			// arrange
 			var ids = new List<Guid>();
+			var accountsCount = _fixture.Create<Generator<int>>().First(x => x > 0 && x < 10);
 
-			for (var i = 0; i < 10; i++)
+			for (var i = 0; i < accountsCount; i++)
 			{
 				var account = CreateAccount();
 				ids.Add(_target.Create(account));
@@ -128,7 +129,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			var accounts = _target.List().ToArray();
 
 			// assert
-			accounts.Should().HaveCount(accounts.Length);
+			accounts.Should().HaveCount(accountsCount);
 			accounts.Select(a => a.Id).Should().Equal(ids);
 		}
 		
