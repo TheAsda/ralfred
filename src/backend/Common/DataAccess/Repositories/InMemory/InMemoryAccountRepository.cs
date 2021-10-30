@@ -13,10 +13,10 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 {
 	public class InMemoryAccountRepository : IAccountRepository
 	{
-		private readonly List<Account> _storage;
-
-		public InMemoryAccountRepository() =>
+		public InMemoryAccountRepository()
+		{
 			_storage = new List<Account>();
+		}
 
 		public bool Exists(string accountName)
 		{
@@ -25,13 +25,24 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			return _storage.Any(x => x.Name != null && x.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
 		}
 
+		public bool ExistsWithToken(string tokenHash)
+		{
+			EnsureArg.IsNotEmptyOrWhiteSpace(tokenHash);
+
+			return _storage.Any(x => x.TokenHash != null && x.TokenHash.Equals(tokenHash, StringComparison.OrdinalIgnoreCase));
+		}
+
 		public Guid Create(Account account)
 		{
 			if (string.IsNullOrEmpty(account.Name))
+			{
 				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
+			}
 
 			if (account.Id == Guid.Empty)
+			{
 				account.Id = Guid.NewGuid();
+			}
 
 			_storage.Add(account);
 
@@ -43,7 +54,9 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			var index = _storage.FindIndex(x => x.Id == accountId);
 
 			if (index == -1)
+			{
 				throw new NotFoundException($"Cannot find account with id {accountId}");
+			}
 
 			_storage.RemoveAt(index);
 		}
@@ -58,12 +71,16 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 		public Account? Update(Account account)
 		{
 			if (string.IsNullOrEmpty(account.Name))
+			{
 				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
+			}
 
 			var index = _storage.FindIndex(x => x.Id == account.Id);
 
 			if (index == -1)
+			{
 				return null;
+			}
 
 			_storage[index] = account;
 
@@ -74,5 +91,7 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 		{
 			return _storage;
 		}
+
+		private readonly List<Account> _storage;
 	}
 }

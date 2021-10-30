@@ -8,17 +8,17 @@ using Ralfred.Common.Helpers;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
 using Ralfred.SecretsService.Models;
+using Ralfred.SecretsService.RequestFiltering;
+using Ralfred.SecretsService.Services;
 
 
 namespace Ralfred.SecretsService.Controllers
 {
 	[ApiController]
+	[Authenticate]
 	[Route("account")]
 	public class AccountController : ControllerBase
 	{
-		private readonly IAccountManager _accountManager;
-		private readonly ITokenService _tokenService;
-
 		public AccountController(IAccountManager accountManager, ITokenService tokenService)
 		{
 			_accountManager = accountManager;
@@ -36,11 +36,15 @@ namespace Ralfred.SecretsService.Controllers
 					string token;
 
 					if (payload.Data!.ContainsKey("generate") && payload.Data!["generate"] == "true")
+					{
 						token = _tokenService.GenerateToken();
+					}
 					else
 					{
 						if (!payload.Data.ContainsKey("token"))
+						{
 							throw new ArgumentException("Token is not provided");
+						}
 
 						token = payload.Data["token"];
 					}
@@ -68,7 +72,9 @@ namespace Ralfred.SecretsService.Controllers
 		private static AccountType GetAccountType(IDictionary<string, string>? body)
 		{
 			if (body is null || !body.ContainsKey("type"))
+			{
 				throw new ArgumentException("Type is not provided");
+			}
 
 			return body["type"].ToLower() switch
 			{
@@ -76,5 +82,8 @@ namespace Ralfred.SecretsService.Controllers
 				_       => throw new ArgumentOutOfRangeException()
 			};
 		}
+
+		private readonly IAccountManager _accountManager;
+		private readonly ITokenService _tokenService;
 	}
 }

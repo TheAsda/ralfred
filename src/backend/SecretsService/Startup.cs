@@ -10,6 +10,7 @@ using Ralfred.Common.Helpers;
 using Ralfred.Common.Helpers.Serialization;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
+using Ralfred.SecretsService.RequestFiltering;
 using Ralfred.SecretsService.Services;
 
 using Serilog;
@@ -19,10 +20,10 @@ namespace Ralfred.SecretsService
 {
 	public class Startup
 	{
-		private static IConfiguration? _configuration;
-
-		public Startup(IConfiguration configuration) =>
+		public Startup(IConfiguration configuration)
+		{
 			_configuration = configuration;
+		}
 
 		public static void ConfigureServices(IServiceCollection services)
 		{
@@ -54,10 +55,13 @@ namespace Ralfred.SecretsService
 
 			services.AddTransient<IPathResolver, PathResolver>();
 			services.AddTransient<IFileConverter, FileConverter>();
+
 			services.AddTransient<ICryptoService, CryptoService>();
-			services.AddTransient<ISecretsManager, SecretsManager>();
 			services.AddTransient<ITokenService, TokenService>();
+
+			services.AddTransient<ISecretsManager, SecretsManager>();
 			services.AddTransient<IAccountManager, AccountManager>();
+
 			services.AddTransient<IFormatterResolver, FormatterResolver>();
 
 			services.AddTransient<IContentManager, ContentManager>();
@@ -70,6 +74,8 @@ namespace Ralfred.SecretsService
 
 			services.ConfigureRepositoryContext(configuration);
 
+			services.AddTransient<ITokenValidator, TokenValidator>();
+
 			services.AddControllers(options =>
 			{
 				options.Filters.Add<ExceptionsFilter>();
@@ -80,7 +86,9 @@ namespace Ralfred.SecretsService
 		public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
 		{
 			if (env.IsDevelopment())
+			{
 				app.UseDeveloperExceptionPage();
+			}
 
 			app.UseRouting();
 			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
@@ -121,5 +129,7 @@ namespace Ralfred.SecretsService
 
 			return appConfiguration;
 		}
+
+		private static IConfiguration? _configuration;
 	}
 }
