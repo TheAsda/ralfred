@@ -110,8 +110,10 @@ namespace Ralfred.SecretsService
 			if (appConfigurationDefaults is null)
 			{
 				Log.Information("Application configuration is not initialized");
+				
 				appConfigurationDefaults = configurationManager.GetDefaultConfiguration();
 				configurationManager.Save(_configuration!["DefaultSettingsPath"], appConfigurationDefaults);
+				
 				Log.Information($"Here is your root token: {appConfigurationDefaults.RootToken}");
 			}
 
