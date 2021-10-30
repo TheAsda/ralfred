@@ -35,8 +35,6 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			using var connection = _connectionFactory.Create();
 
 			return connection.GetTable<Account>().SingleOrDefault(x => x.TokenHash != null && x.TokenHash.Equals(tokenHash)) is not null;
-
-			;
 		}
 
 		public Guid Create(Account account)
