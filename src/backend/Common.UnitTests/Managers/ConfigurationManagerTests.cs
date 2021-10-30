@@ -21,9 +21,10 @@ namespace SecretsProvider.UnitTests.Managers
 		public void Setup()
 		{
 			_serializer = new Mock<ISerializer>(MockBehavior.Strict);
-			_contentProvider = new Mock<IContentProvider>(MockBehavior.Strict);
+			_contentProvider = new Mock<IContentManager>(MockBehavior.Strict);
+			_tokenService = new Mock<ITokenService>();
 
-			_target = new ConfigurationManager(_serializer.Object, _contentProvider.Object);
+			_target = new ConfigurationManager(_serializer.Object, _contentProvider.Object, _tokenService.Object);
 		}
 
 		[Test]
@@ -48,7 +49,7 @@ namespace SecretsProvider.UnitTests.Managers
 
 			// assert
 			result.Should().NotBeNull();
-			result.Should().BeEquivalentTo(expected);
+			result.Should().Be(expected);
 		}
 
 		[Test]
@@ -60,7 +61,9 @@ namespace SecretsProvider.UnitTests.Managers
 
 			var expected = secondConfiguration with
 			{
-				ConnectionString = firstConfiguration.ConnectionString, Engine = firstConfiguration.Engine
+				RootToken = firstConfiguration.RootToken,
+				ConnectionString = firstConfiguration.ConnectionString, 
+				Engine = firstConfiguration.Engine
 			};
 
 			// act
@@ -68,13 +71,14 @@ namespace SecretsProvider.UnitTests.Managers
 
 			// assert
 			result.Should().NotBeNull();
-			result.Should().BeEquivalentTo(expected);
+			result.Should().Be(expected);
 		}
 
 		private readonly IFixture _fixture = new Fixture();
 
 		private Mock<ISerializer> _serializer;
-		private Mock<IContentProvider> _contentProvider;
+		private Mock<IContentManager> _contentProvider;
+		private Mock<ITokenService> _tokenService;
 
 		private ConfigurationManager _target;
 	}

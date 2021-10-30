@@ -8,5 +8,9 @@ namespace Ralfred.Common.Managers
 		Configuration? Get(string path);
 
 		Configuration Merge(Configuration old, Configuration @new);
+
+		Configuration GetDefaultConfiguration();
+
+		void Save(string path, Configuration configuration);
 	}
 }

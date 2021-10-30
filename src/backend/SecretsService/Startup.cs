@@ -56,15 +56,6 @@ namespace Ralfred.SecretsService
 				};
 			});
 
-			services.AddTransient<IContentProvider, ContentProvider>();
-
-			services.AddTransient<IConfigurationManager, ConfigurationManager>(serviceProvider =>
-				new ConfigurationManager(serviceProvider.GetService<YamlSerializer>()!, serviceProvider.GetService<IContentProvider>()!));
-
-			var configuration = RegisterApplicationConfiguration(services);
-
-			services.ConfigureRepositoryContext(configuration);
-
 			services.AddTransient<IPathResolver, PathResolver>();
 			services.AddTransient<IFileConverter, FileConverter>();
 			services.AddTransient<ICryptoService, CryptoService>();
@@ -72,6 +63,17 @@ namespace Ralfred.SecretsService
 			services.AddTransient<ITokenService, TokenService>();
 			services.AddTransient<IAccountManager, AccountManager>();
 			services.AddTransient<IFormatterResolver, FormatterResolver>();
+
+			services.AddTransient<IContentManager, ContentManager>();
+
+			services.AddTransient<IConfigurationManager, ConfigurationManager>(serviceProvider =>
+				new ConfigurationManager(serviceProvider.GetService<YamlSerializer>()!, serviceProvider.GetService<IContentManager>()!,
+					serviceProvider.GetService<ITokenService>()!));
+
+			var configuration = RegisterApplicationConfiguration(services);
+
+			services.ConfigureRepositoryContext(configuration);
+
 
 			services.AddControllers(options =>
 			{
@@ -90,9 +92,9 @@ namespace Ralfred.SecretsService
 			app.UseRouting();
 			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-			applicationLifetime.ApplicationStopped.Register(() => { Log.Logger.Information("Application stopped."); });
+			applicationLifetime.ApplicationStopped.Register(() => { Log.Information("Application stopped."); });
 
-			Log.Logger.Information("Application started.");
+			Log.Information("Application started.");
 		}
 
 		private static Configuration RegisterApplicationConfiguration(IServiceCollection services)
@@ -106,7 +108,14 @@ namespace Ralfred.SecretsService
 			var appConfigurationOverrides = configurationManager.Get(_configuration!["OverridesSettingsPath"]);
 
 			if (appConfigurationDefaults is null)
-				throw new Exception("Cannot read configuration file. Application stopped.");
+			{
+				Log.Information("Application configuration is not initialized");
+				
+				appConfigurationDefaults = configurationManager.GetDefaultConfiguration();
+				configurationManager.Save(_configuration!["DefaultSettingsPath"], appConfigurationDefaults);
+				
+				Log.Information($"Here is your root token: {appConfigurationDefaults.RootToken}");
+			}
 
 			var appConfiguration = appConfigurationDefaults;
 
@@ -115,7 +124,7 @@ namespace Ralfred.SecretsService
 
 			services.AddSingleton(appConfiguration);
 
-			Log.Logger.Information("Loading application configuration.");
+			Log.Information("Loading application configuration.");
 
 			return appConfiguration;
 		}
