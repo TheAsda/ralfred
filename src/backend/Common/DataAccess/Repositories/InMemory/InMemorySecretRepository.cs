@@ -90,6 +90,11 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			}
 		}
 
+		public void DeleteGroupSecrets(Guid groupId)
+		{
+			DeleteSecretByGroupId(groupId);
+		}
+
 		private void UpdateSecret(Secret secret)
 		{
 			var index = _storage.FindIndex(x => x.Id == secret.Id);

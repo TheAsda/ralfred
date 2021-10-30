@@ -153,6 +153,7 @@ namespace Ralfred.Common.Managers
 					else
 					{
 						_groupRepository.DeleteGroup(groupName, groupPath);
+						_secretsRepository.DeleteGroupSecrets(group.Id);
 					}
 
 					break;

@@ -5,21 +5,24 @@ using DapperExtensions.Mapper;
 using Ralfred.Common.DataAccess.Entities;
 
 
-internal sealed class AccountMapper : ClassMapper<Account>
+namespace Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration
 {
-	public AccountMapper()
+	internal sealed class AccountMapper : ClassMapper<Account>
 	{
-		Schema("public");
-		Table("account");
+		public AccountMapper()
+		{
+			Schema("public");
+			Table("account");
 
-		Map(x => x.Id).Column(nameof(Account.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Assigned);
+			Map(x => x.Id).Column(nameof(Account.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Assigned);
 
-		Map(x => x.Name).Column(nameof(Account.Name).ToLower()).Type(DbType.String);
-		Map(x => x.TokenHash).Column(nameof(Account.TokenHash).ToLower()).Type(DbType.String);
-		Map(x => x.CertificateThumbprint).Column(nameof(Account.CertificateThumbprint).ToLower()).Type(DbType.String);
+			Map(x => x.Name).Column(nameof(Account.Name).ToLower()).Type(DbType.String);
+			Map(x => x.TokenHash).Column(nameof(Account.TokenHash).ToLower()).Type(DbType.String);
+			Map(x => x.CertificateThumbprint).Column(nameof(Account.CertificateThumbprint).ToLower()).Type(DbType.String);
 
-		Map(x => x.RoleIds).Ignore();
+			Map(x => x.RoleIds).Ignore();
 
-		AutoMap();
+			AutoMap();
+		}
 	}
 }

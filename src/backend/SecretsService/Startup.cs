@@ -67,7 +67,10 @@ namespace Ralfred.SecretsService
 
 			services.AddTransient<IPathResolver, PathResolver>();
 			services.AddTransient<IFileConverter, FileConverter>();
+			services.AddTransient<ICryptoService, CryptoService>();
 			services.AddTransient<ISecretsManager, SecretsManager>();
+			services.AddTransient<ITokenService, TokenService>();
+			services.AddTransient<IAccountManager, AccountManager>();
 			services.AddTransient<IFormatterResolver, FormatterResolver>();
 
 			services.AddControllers(options =>

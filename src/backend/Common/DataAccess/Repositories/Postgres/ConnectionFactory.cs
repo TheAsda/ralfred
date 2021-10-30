@@ -3,7 +3,7 @@
 using Ralfred.Common.Types;
 
 
-namespace Ralfred.Common.DataAccess.Repositories.InMemory
+namespace Ralfred.Common.DataAccess.Repositories.Postgres
 {
 	public class ConnectionFactory : IConnectionFactory
 	{

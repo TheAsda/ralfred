@@ -36,24 +36,12 @@ namespace Ralfred.SecretsService.Controllers
 		{
 			var secretNames = payload.Secrets?.Split(',') ?? Array.Empty<string>();
 
-			if (payload.Body is null && payload.FormData is null)
+			if (payload.Data is null || !payload.Data.Keys.Any())
 			{
 				throw new Exception("Secrets are not provided");
 			}
 
-			if (payload.Body is not null)
-			{
-				_secretsManager.AddSecrets(payload.Route ?? string.Empty, payload.Body, new Dictionary<string, string>(), secretNames);
-
-				return;
-			}
-
-			var files = _fileConverter.Convert(payload.FormData);
-
-			_secretsManager.AddSecrets(payload.Route ?? string.Empty,
-				payload.FormData.ToDictionary(x => x.Key, x => x.Value.ToString()),
-				files,
-				secretNames);
+			_secretsManager.AddSecrets(payload.Route ?? string.Empty, payload.Data, _fileConverter.Convert(payload.Files), secretNames);
 		}
 
 		[HttpGet]

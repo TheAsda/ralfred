@@ -1,3 +1,5 @@
 ﻿enableWebUi: true
-engine: InMemory
+engine: Postgres
 defaultFormat: env
+connectionString: Server=127.0.0.1;Port=5432;Database=ralfred_db;User Id=postgres;Password=postgres
+

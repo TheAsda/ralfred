@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using AutoFixture;
 
@@ -7,8 +9,8 @@ using FluentAssertions;
 using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Entities;
-using Ralfred.Common.DataAccess.Repositories.InMemory;
-using Ralfred.Common.DataAccess.Repositories.InMemory.Transactions;
+using Ralfred.Common.DataAccess.Repositories.Postgres;
+using Ralfred.Common.DataAccess.Repositories.Postgres.Transactions;
 using Ralfred.Common.Types;
 
 
@@ -44,13 +46,14 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			// arrange
 			var account = CreateAccount();
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			// act
-			var result = _target.Exists(account.Name);
+			var result = _target.Exists(account.Name!);
 
 			// assert
 			result.Should().BeTrue();
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		[Test]
@@ -72,13 +75,14 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			// arrange
 			var account = CreateAccount();
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			// act
-			var result = _target.GetByName(account.Name);
+			var result = _target.GetByName(account.Name!);
 
 			// assert
 			result.Should().NotBeNull();
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		[Test]
@@ -88,7 +92,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			var account = CreateAccount();
 			var tokenHashLength = _fixture.Create<Generator<int>>().First(x => x < 64);
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			account.TokenHash = CreateStringWithMaxLength(tokenHashLength);
 
@@ -96,15 +100,52 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			_target.Update(account);
 
 			// assert
-			var updated = _target.GetByName(account.Name);
+			var updated = _target.GetByName(account.Name!);
 
 			updated.Should().NotBeNull();
 			updated.Should().BeEquivalentTo(account, e => e.Excluding(x => x.RoleIds));
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		private string CreateStringWithMaxLength(int length)
 		{
 			return string.Join(string.Empty, _fixture.CreateMany<char>(length));
+		}
+		
+		[Test]
+		public void ListTest()
+		{
+			// arrange
+			var ids = new List<Guid>();
+			var accountsCount = _fixture.Create<Generator<int>>().First(x => x > 0 && x < 10);
+
+			for (var i = 0; i < accountsCount; i++)
+			{
+				var account = CreateAccount();
+				ids.Add(_target.Create(account));
+			}
+
+			// act
+			var accounts = _target.List().ToArray();
+
+			// assert
+			accounts.Should().HaveCount(accountsCount);
+			accounts.Select(a => a.Id).Should().Equal(ids);
+		}
+		
+		[Test]
+		public void DeleteTest()
+		{
+			// arrange
+			var account = CreateAccount();
+
+			var id = _target.Create(account);
+			
+			// act
+			_target.Delete(id);
+
+			// assert
+			_target.Exists(account.Name).Should().BeFalse();
 		}
 
 		private Account CreateAccount()
@@ -123,7 +164,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.Postgres
 			return account;
 		}
 
-		private IFixture _fixture = new Fixture();
+		private readonly IFixture _fixture = new Fixture();
 
 		private ITransactionScope _transaction;
 		private ITransactionScopeFactory _transactionScopeFactory;

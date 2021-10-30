@@ -1,4 +1,8 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using AutoFixture;
 
 using FluentAssertions;
 
@@ -26,13 +30,14 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			// arrange
 			var account = CreateAccount();
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			// act
-			var result = _target.Exists(account.Name);
+			var result = _target.Exists(account.Name!);
 
 			// assert
 			result.Should().BeTrue();
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		[Test]
@@ -54,13 +59,14 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			// arrange
 			var account = CreateAccount();
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			// act
-			var result = _target.GetByName(account.Name);
+			var result = _target.GetByName(account.Name!);
 
 			// assert
 			result.Should().NotBeNull();
+			id.Should().NotBe(Guid.Empty);
 		}
 
 		[Test]
@@ -69,7 +75,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			// arrange
 			var account = CreateAccount();
 
-			_target.Add(account);
+			var id = _target.Create(account);
 
 			account.TokenHash = _fixture.Create<string>();
 
@@ -77,10 +83,46 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			_target.Update(account);
 
 			// assert
-			var updated = _target.GetByName(account.Name);
+			var updated = _target.GetByName(account.Name!);
 
 			updated.Should().NotBeNull();
 			updated.Should().BeEquivalentTo(account, e => e.Excluding(x => x.RoleIds));
+			id.Should().NotBe(Guid.Empty);
+		}
+
+		[Test]
+		public void ListTest()
+		{
+			// arrange
+			var ids = new List<Guid>();
+
+			for (var i = 0; i < 10; i++)
+			{
+				var account = CreateAccount();
+				ids.Add(_target.Create(account));
+			}
+
+			// act
+			var accounts = _target.List().ToArray();
+
+			// assert
+			accounts.Should().HaveCount(accounts.Length);
+			accounts.Select(a => a.Id).Should().Equal(ids);
+		}
+
+		[Test]
+		public void DeleteTest()
+		{
+			// arrange
+			var account = CreateAccount();
+
+			var id = _target.Create(account);
+
+			// act
+			_target.Delete(id);
+
+			// assert
+			_target.Exists(account.Name).Should().BeFalse();
 		}
 
 		private Account CreateAccount()
@@ -95,7 +137,7 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			return account;
 		}
 
-		private IFixture _fixture = new Fixture();
+		private readonly IFixture _fixture = new Fixture();
 
 		private InMemoryAccountRepository _target;
 	}

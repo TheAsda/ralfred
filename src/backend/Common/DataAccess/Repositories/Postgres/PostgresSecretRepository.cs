@@ -10,11 +10,12 @@ using Npgsql;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
-using Ralfred.Common.DataAccess.Repositories.InMemory.EntityConfiguration;
+using Ralfred.Common.DataAccess.Repositories.InMemory;
+using Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration;
 using Ralfred.Common.Types;
 
 
-namespace Ralfred.Common.DataAccess.Repositories.InMemory
+namespace Ralfred.Common.DataAccess.Repositories.Postgres
 {
 	public class PostgresSecretRepository : BasePostgresRepository, ISecretsRepository
 	{
@@ -117,8 +118,16 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 					Predicates.Field<Secret>(x => x.Name, Operator.Eq, secret),
 				};
 
-				connection.Delete(Predicates.Group(GroupOperator.And, predicates));
+				connection.Delete<Secret>(Predicates.Group(GroupOperator.And, predicates));
 			}
+		}
+
+		public void DeleteGroupSecrets(Guid groupId)
+		{
+			using var connection = _connectionFactory.Create();
+			connection.Open();
+
+			connection.Delete<Secret>(Predicates.Field<Secret>(x => x.GroupId, Operator.Eq, groupId));
 		}
 
 		private readonly IConnectionFactory _connectionFactory;

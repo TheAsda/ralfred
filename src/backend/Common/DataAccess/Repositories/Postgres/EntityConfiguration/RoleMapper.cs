@@ -5,7 +5,7 @@ using DapperExtensions.Mapper;
 using Ralfred.Common.DataAccess.Entities;
 
 
-namespace Ralfred.Common.DataAccess.Repositories.InMemory.EntityConfiguration
+namespace Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration
 {
 	internal sealed class RoleMapper : ClassMapper<Role>
 	{

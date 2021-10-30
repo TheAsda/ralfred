@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using Microsoft.AspNetCore.Http;
 
@@ -8,23 +9,20 @@ namespace Ralfred.SecretsService.Services
 {
 	public class FileConverter : IFileConverter
 	{
-		public Dictionary<string, string> Convert(IFormCollection? form)
+		public Dictionary<string, string> Convert(Dictionary<string, IFormFile>? form)
 		{
-			var dict = new Dictionary<string, string>();
-
 			if (form is null)
 			{
-				return dict;
+				return new Dictionary<string, string>();
 			}
 
-			foreach (var file in form.Files)
+			return form.ToDictionary(x => x.Key, x =>
 			{
 				var ms = new MemoryStream();
-				file.OpenReadStream().CopyTo(ms);
-				dict.Add(file.Name, System.Convert.ToBase64String(ms.ToArray()));
-			}
+				x.Value.OpenReadStream().CopyTo(ms);
 
-			return dict;
+				return System.Convert.ToBase64String(ms.ToArray());
+			});
 		}
 	}
 }

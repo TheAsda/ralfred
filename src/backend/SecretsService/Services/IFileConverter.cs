@@ -7,6 +7,6 @@ namespace Ralfred.SecretsService.Services
 {
 	public interface IFileConverter
 	{
-		Dictionary<string, string> Convert(IFormCollection? form);
+		Dictionary<string, string> Convert(Dictionary<string, IFormFile>? form);
 	}
 }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
 using Ralfred.Common.DataAccess.Repositories.InMemory;
+using Ralfred.Common.DataAccess.Repositories.Postgres;
 
 
 namespace Ralfred.Common.DataAccess.Repositories

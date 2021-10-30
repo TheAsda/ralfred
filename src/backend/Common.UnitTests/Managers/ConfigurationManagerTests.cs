@@ -12,7 +12,7 @@ using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
 
 
-namespace SecretsService.UnitTests.Managers
+namespace SecretsProvider.UnitTests.Managers
 {
 	[TestFixture]
 	public class ConfigurationManagerTests
@@ -20,8 +20,6 @@ namespace SecretsService.UnitTests.Managers
 		[SetUp]
 		public void Setup()
 		{
-			_fixture = new Fixture();
-
 			_serializer = new Mock<ISerializer>(MockBehavior.Strict);
 			_contentProvider = new Mock<IContentProvider>(MockBehavior.Strict);
 
@@ -73,7 +71,7 @@ namespace SecretsService.UnitTests.Managers
 			result.Should().BeEquivalentTo(expected);
 		}
 
-		private IFixture _fixture;
+		private readonly IFixture _fixture = new Fixture();
 
 		private Mock<ISerializer> _serializer;
 		private Mock<IContentProvider> _contentProvider;

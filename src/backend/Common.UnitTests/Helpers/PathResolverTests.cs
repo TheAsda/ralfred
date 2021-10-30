@@ -8,7 +8,7 @@ using Ralfred.Common.Helpers;
 using Ralfred.Common.Types;
 
 
-namespace SecretsService.UnitTests.Helpers
+namespace SecretsProvider.UnitTests.Helpers
 {
 	[TestFixture]
 	public class PathResolverTests
@@ -37,7 +37,7 @@ namespace SecretsService.UnitTests.Helpers
 			// assert
 			Assert.AreEqual(PathType.None, result);
 
-			_groupRepository.Verify(x => x.Exists(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
+			_groupRepository.Verify(x => x.Exists(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
 		}
 
 		[Test]

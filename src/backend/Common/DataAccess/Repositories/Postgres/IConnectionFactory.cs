@@ -1,7 +1,7 @@
 ﻿using Npgsql;
 
 
-namespace Ralfred.Common.DataAccess.Repositories.InMemory
+namespace Ralfred.Common.DataAccess.Repositories.Postgres
 {
 	public interface IConnectionFactory
 	{
