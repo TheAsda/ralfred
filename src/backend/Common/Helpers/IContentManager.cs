@@ -1,7 +1,4 @@
-﻿using System;
-
-
-namespace Ralfred.Common.Helpers
+﻿namespace Ralfred.Common.Helpers
 {
 	public interface IContentManager
 	{

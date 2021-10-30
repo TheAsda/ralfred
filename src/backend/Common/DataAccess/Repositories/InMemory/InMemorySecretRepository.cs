@@ -12,9 +12,34 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 {
 	public class InMemorySecretRepository : ISecretsRepository
 	{
-		public InMemorySecretRepository()
-		{
+		private readonly List<Secret> _storage;
+
+		public InMemorySecretRepository() =>
 			_storage = new List<Secret>();
+
+		private void UpdateSecret(Secret secret)
+		{
+			var index = _storage.FindIndex(x => x.Id == secret.Id);
+
+			if (index == -1)
+				return;
+
+			_storage[index] = secret;
+		}
+
+		private void DeleteSecretByGroupId(Guid groupId)
+		{
+			var items = _storage.Where(x => x.GroupId.Equals(groupId)).ToList();
+			items.ForEach(x => _storage.Remove(x));
+		}
+
+		private void DeleteSecretByGroupIdAndName(Guid groupId, string secret)
+		{
+			var items = _storage
+				.Where(x => x.GroupId.Equals(groupId) && x.Name.Equals(secret, StringComparison.OrdinalIgnoreCase))
+				.ToList();
+
+			items.ForEach(x => _storage.Remove(x));
 		}
 
 		public IEnumerable<Secret> GetGroupSecrets(Guid groupId)
@@ -56,7 +81,6 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			DeleteSecretByGroupId(groupId);
 
 			foreach (var (key, value) in secrets)
-			{
 				_storage.Add(new Secret
 				{
 					Name = key,
@@ -65,10 +89,8 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 					Id = Guid.NewGuid(),
 					IsFile = false
 				});
-			}
 
 			foreach (var (key, value) in files)
-			{
 				_storage.Add(new Secret
 				{
 					Name = key,
@@ -77,7 +99,6 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 					Id = Guid.NewGuid(),
 					IsFile = true
 				});
-			}
 		}
 
 		public void DeleteGroupSecrets(Guid groupId, IEnumerable<string> secrets)
@@ -85,43 +106,12 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			EnsureArg.IsNotDefault(groupId);
 
 			foreach (var secret in secrets)
-			{
 				DeleteSecretByGroupIdAndName(groupId, secret);
-			}
 		}
 
 		public void DeleteGroupSecrets(Guid groupId)
 		{
 			DeleteSecretByGroupId(groupId);
 		}
-
-		private void UpdateSecret(Secret secret)
-		{
-			var index = _storage.FindIndex(x => x.Id == secret.Id);
-
-			if (index == -1)
-			{
-				return;
-			}
-
-			_storage[index] = secret;
-		}
-
-		private void DeleteSecretByGroupId(Guid groupId)
-		{
-			var items = _storage.Where(x => x.GroupId.Equals(groupId)).ToList();
-			items.ForEach(x => _storage.Remove(x));
-		}
-
-		private void DeleteSecretByGroupIdAndName(Guid groupId, string secret)
-		{
-			var items = _storage
-				.Where(x => x.GroupId.Equals(groupId) && x.Name.Equals(secret, StringComparison.OrdinalIgnoreCase))
-				.ToList();
-
-			items.ForEach(x => _storage.Remove(x));
-		}
-
-		private readonly List<Secret> _storage;
 	}
 }

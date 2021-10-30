@@ -5,8 +5,9 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres.Transactions
 {
 	public sealed class SqlTransactionScope : ITransactionScope
 	{
-		public SqlTransactionScope()
-		{
+		private readonly TransactionScope _transactionScope;
+
+		public SqlTransactionScope() =>
 			_transactionScope = new TransactionScope(TransactionScopeOption.Required,
 				new TransactionOptions
 				{
@@ -14,7 +15,6 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres.Transactions
 					IsolationLevel = IsolationLevel.ReadCommitted
 				},
 				TransactionScopeAsyncFlowOption.Enabled);
-		}
 
 		public void Commit()
 		{
@@ -26,7 +26,5 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres.Transactions
 		{
 			_transactionScope.Dispose();
 		}
-
-		private readonly TransactionScope _transactionScope;
 	}
 }

@@ -34,7 +34,6 @@ namespace Ralfred.SecretsService.Controllers
 		public void Start()
 		{
 			// TODO: add start logic
-			return;
 		}
 
 		[HttpGet("stop")]
@@ -42,7 +41,6 @@ namespace Ralfred.SecretsService.Controllers
 		public void Stop()
 		{
 			// TODO: add stop logic
-			return;
 		}
 	}
 }

@@ -6,6 +6,7 @@ using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.InMemory;
+using Ralfred.Common.Exceptions;
 
 
 namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
@@ -18,6 +19,29 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 		public void Setup()
 		{
 			_target = new InMemoryGroupRepository();
+		}
+
+		private readonly IFixture _fixture = new Fixture();
+
+		private InMemoryGroupRepository _target;
+
+		[Test]
+		public void DeleteGroupTest()
+		{
+			// arrange
+			var groupName = _fixture.Create<string>();
+			var groupPath = _fixture.Create<string>();
+
+			_target.CreateGroup(groupName, groupPath);
+
+			// act
+			var existing = _target.Get(groupName, groupPath);
+			existing.Should().NotBeNull();
+
+			_target.DeleteGroup(groupName, groupPath);
+
+			// assert
+			Assert.Throws<NotFoundException>(() => _target.Get(groupName, groupPath));
 		}
 
 		[Test]
@@ -51,35 +75,11 @@ namespace Common.IntegrationTests.DataAccess.Repositories.InMemory
 			// assert
 			result.Should().NotBeNull();
 
-			result.Should().BeEquivalentTo(new Group()
+			result.Should().BeEquivalentTo(new Group
 			{
 				Name = groupName,
 				Path = groupPath
 			}, e => e.Excluding(x => x.Id));
 		}
-
-		[Test]
-		public void DeleteGroupTest()
-		{
-			// arrange
-			var groupName = _fixture.Create<string>();
-			var groupPath = _fixture.Create<string>();
-
-			_target.CreateGroup(groupName, groupPath);
-
-			// act
-			var existing = _target.Get(groupName, groupPath);
-			existing.Should().NotBeNull();
-
-			_target.DeleteGroup(groupName, groupPath);
-
-			// assert
-			var deleted = _target.Get(groupName, groupPath);
-			deleted.Should().BeNull();
-		}
-
-		private readonly IFixture _fixture = new Fixture();
-
-		private InMemoryGroupRepository _target;
 	}
 }

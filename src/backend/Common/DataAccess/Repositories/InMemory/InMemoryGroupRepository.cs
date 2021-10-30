@@ -6,16 +6,17 @@ using EnsureThat;
 
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
+using Ralfred.Common.Exceptions;
 
 
 namespace Ralfred.Common.DataAccess.Repositories.InMemory
 {
 	public class InMemoryGroupRepository : IGroupRepository
 	{
-		public InMemoryGroupRepository()
-		{
+		private readonly List<Group> _storage;
+
+		public InMemoryGroupRepository() =>
 			_storage = new List<Group>();
-		}
 
 		public bool Exists(string name, string path)
 		{
@@ -25,20 +26,26 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 				x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
 		}
 
-		public Group? Get(string name, string path)
+		public Group Get(string name, string path)
 		{
 			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
-			return _storage.SingleOrDefault(x =>
-				x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
+			try
+			{
+				return _storage.Single(x =>
+					x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
+			}
+			catch (InvalidOperationException)
+			{
+				throw new NotFoundException("Group not found");
+			}
 		}
 
 		public Guid CreateGroup(string name, string path)
 		{
 			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
-			var group = new Group
-			{
+			var group = new Group {
 				Id = Guid.NewGuid(),
 				Name = name,
 				Path = path
@@ -59,7 +66,5 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 
 			items.ForEach(x => _storage.Remove(x));
 		}
-
-		private readonly List<Group> _storage;
 	}
 }

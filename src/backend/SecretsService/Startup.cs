@@ -106,14 +106,14 @@ namespace Ralfred.SecretsService
 			var configurationManager = serviceProvider.GetService<IConfigurationManager>()!;
 
 			var appConfigurationDefaults = configurationManager.Get(_configuration!["DefaultSettingsPath"]);
-			var appConfigurationOverrides = configurationManager.Get(_configuration!["OverridesSettingsPath"]);
+			var appConfigurationOverrides = configurationManager.Get(_configuration["OverridesSettingsPath"]);
 
 			if (appConfigurationDefaults is null)
 			{
 				Log.Information("Application configuration is not initialized");
 
 				appConfigurationDefaults = configurationManager.GetDefaultConfiguration();
-				configurationManager.Save(_configuration!["DefaultSettingsPath"], appConfigurationDefaults);
+				configurationManager.Save(_configuration["DefaultSettingsPath"], appConfigurationDefaults);
 
 				Log.Information($"Here is your root token: {appConfigurationDefaults.RootToken}");
 			}

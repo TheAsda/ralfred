@@ -33,6 +33,13 @@ namespace SecretsProvider.UnitTests.Managers
 			_target = new AccountManager(_repositoryContext.Object, _cryptoService.Object);
 		}
 
+		private readonly Fixture _fixture = new();
+
+		private IAccountManager _target;
+		private Mock<IRepositoryContext> _repositoryContext;
+		private Mock<ICryptoService> _cryptoService;
+		private Mock<IAccountRepository> _accountRepository;
+
 		[Test]
 		public void CreateTokenAccountTest()
 		{
@@ -40,8 +47,8 @@ namespace SecretsProvider.UnitTests.Managers
 			var token = _fixture.Create<string>();
 			var tokenHash = _fixture.Create<string>();
 
-			_cryptoService.Setup(x => x.GetHash(It.Is<string>(x => x.Equals(token)))).Returns(tokenHash).Verifiable();
-			_accountRepository.Setup(x => x.Create(It.Is<Account>(x => x.TokenHash.Equals(tokenHash))));
+			_cryptoService.Setup(x => x.GetHash(It.Is<string>(y => y.Equals(token)))).Returns(tokenHash).Verifiable();
+			_accountRepository.Setup(x => x.Create(It.Is<Account>(y => y.TokenHash.Equals(tokenHash))));
 
 			// act
 			_target.CreateTokenAccount(token);
@@ -81,12 +88,5 @@ namespace SecretsProvider.UnitTests.Managers
 			_accountRepository.Verify(x => x.List(), Times.Once);
 			gotAccounts.Should().Equal(accounts);
 		}
-
-		private readonly Fixture _fixture = new Fixture();
-
-		private IAccountManager _target;
-		private Mock<IRepositoryContext> _repositoryContext;
-		private Mock<ICryptoService> _cryptoService;
-		private Mock<IAccountRepository> _accountRepository;
 	}
 }

@@ -23,6 +23,25 @@ namespace SecretsProvider.UnitTests.Helpers
 			_target = new PathResolver(_repositoryContext.Object);
 		}
 
+		private Mock<IRepositoryContext> _repositoryContext;
+		private Mock<IGroupRepository> _groupRepository;
+
+		private IPathResolver _target;
+
+		[Test]
+		[TestCase("path/to/folder", "path/to", "folder")]
+		[TestCase("path/to", "path", "to")]
+		[TestCase("path", "", "path")]
+		public void DeconstructTest(string fullPath, string expectedPath, string expectedName)
+		{
+			// act
+			var (name, path) = _target.DeconstructPath(fullPath);
+
+			// assert
+			Assert.AreEqual(expectedName, name);
+			Assert.AreEqual(expectedPath, path);
+		}
+
 		[Test]
 		public void Resolve_NotExistingSingleFolderPathTest()
 		{
@@ -38,23 +57,6 @@ namespace SecretsProvider.UnitTests.Helpers
 			Assert.AreEqual(PathType.None, result);
 
 			_groupRepository.Verify(x => x.Exists(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-		}
-
-		[Test]
-		public void Resolve_RandomPathTest()
-		{
-			// arrange
-			const string path = "not/existing/path";
-
-			_groupRepository.Setup(x => x.Exists(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
-
-			// act
-			var result = _target.Resolve(path);
-
-			// assert
-			Assert.AreEqual(PathType.None, result);
-
-			_groupRepository.Verify(x => x.Exists(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
 		}
 
 		[Test]
@@ -101,17 +103,20 @@ namespace SecretsProvider.UnitTests.Helpers
 		}
 
 		[Test]
-		[TestCase("path/to/folder", "path/to", "folder")]
-		[TestCase("path/to", "path", "to")]
-		[TestCase("path", "", "path")]
-		public void DeconstructTest(string fullPath, string expectedPath, string expectedName)
+		public void Resolve_RandomPathTest()
 		{
+			// arrange
+			const string path = "not/existing/path";
+
+			_groupRepository.Setup(x => x.Exists(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
+
 			// act
-			var (name, path) = _target.DeconstructPath(fullPath);
+			var result = _target.Resolve(path);
 
 			// assert
-			Assert.AreEqual(expectedName, name);
-			Assert.AreEqual(expectedPath, path);
+			Assert.AreEqual(PathType.None, result);
+
+			_groupRepository.Verify(x => x.Exists(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
 		}
 
 		[Test]
@@ -126,10 +131,5 @@ namespace SecretsProvider.UnitTests.Helpers
 			// assert
 			Assert.AreEqual(expectedResult, result);
 		}
-
-		private Mock<IRepositoryContext> _repositoryContext;
-		private Mock<IGroupRepository> _groupRepository;
-
-		private IPathResolver _target;
 	}
 }

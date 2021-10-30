@@ -28,6 +28,12 @@ namespace SecretsService.UnitTests.Services.Formatters
 			_target = new JsonSecretFormatter(_serializer.Object);
 		}
 
+		private IFixture _fixture;
+
+		private Mock<ISerializer> _serializer;
+
+		private JsonSecretFormatter _target;
+
 		[Test]
 		public void FormatTest()
 		{
@@ -47,11 +53,5 @@ namespace SecretsService.UnitTests.Services.Formatters
 
 			_serializer.Verify(x => x.Serialize(dictionary), Times.Once);
 		}
-
-		private IFixture _fixture;
-
-		private Mock<ISerializer> _serializer;
-
-		private JsonSecretFormatter _target;
 	}
 }

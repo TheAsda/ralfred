@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 using AutoFixture;
@@ -18,6 +19,10 @@ namespace SecretsService.UnitTests.Services
 {
 	public class FileConverterTests
 	{
+		private IFixture _fixture;
+
+		private IFileConverter _target;
+
 		[SetUp]
 		public void Setup()
 		{
@@ -54,8 +59,14 @@ namespace SecretsService.UnitTests.Services
 				.Should().Be(content);
 		}
 
-		private IFixture _fixture;
-
-		private IFileConverter _target;
+		[Test]
+		public void ConvertEmptyForm()
+		{
+			// act
+			var dictionary = _target.Convert(null);
+			
+			// assert
+			dictionary.Keys.Count.Should().Be(0);
+		}
 	}
 }

@@ -14,7 +14,7 @@ namespace Ralfred.SecretsService.RequestFiltering
 
 		public Task<InputFormatterResult> ReadAsync(InputFormatterContext context)
 		{
-			return InputFormatterResult.SuccessAsync(null);
+			return InputFormatterResult.SuccessAsync(null!);
 		}
 	}
 }

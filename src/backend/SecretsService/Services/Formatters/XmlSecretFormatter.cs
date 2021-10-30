@@ -9,10 +9,10 @@ namespace Ralfred.SecretsService.Services.Formatters
 {
 	public class XmlSecretFormatter : ISecretFormatter
 	{
-		public XmlSecretFormatter(ISerializer? serializer)
-		{
+		private readonly ISerializer? _serializer;
+
+		public XmlSecretFormatter(ISerializer? serializer) =>
 			_serializer = serializer;
-		}
 
 		public string? Format(IEnumerable<Secret> data)
 		{
@@ -24,7 +24,5 @@ namespace Ralfred.SecretsService.Services.Formatters
 
 			return _serializer?.Serialize(outputData.ToList());
 		}
-
-		private readonly ISerializer? _serializer;
 	}
 }

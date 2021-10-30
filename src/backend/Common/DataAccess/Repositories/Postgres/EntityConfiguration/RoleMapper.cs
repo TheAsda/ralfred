@@ -1,19 +1,19 @@
-﻿using System.Data;
-
-using DapperExtensions.Mapper;
+﻿using LinqToDB;
+using LinqToDB.Mapping;
 
 using Ralfred.Common.DataAccess.Entities;
 
 
 namespace Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration
 {
-	internal sealed class RoleMapper : ClassMapper<Role>
+	internal sealed class RoleMapper : IMapper
 	{
-		public RoleMapper()
+		public void Apply(MappingSchema schema)
 		{
-			Table("role");
-
-			Map(x => x.Id).Column(nameof(Role.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Assigned);
+			schema.GetFluentMappingBuilder().Entity<Role>()
+				.HasSchemaName("public")
+				.HasTableName("role")
+				.Property(x => x.Id).HasColumnName(nameof(Role.Id).ToLower()).IsPrimaryKey().HasDataType(DataType.Guid);
 		}
 	}
 }

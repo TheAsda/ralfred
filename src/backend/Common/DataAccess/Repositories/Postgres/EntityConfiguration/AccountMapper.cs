@@ -1,28 +1,24 @@
-﻿using System.Data;
-
-using DapperExtensions.Mapper;
+﻿using LinqToDB;
+using LinqToDB.Mapping;
 
 using Ralfred.Common.DataAccess.Entities;
 
 
 namespace Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration
 {
-	internal sealed class AccountMapper : ClassMapper<Account>
+	internal sealed class AccountMapper : IMapper
 	{
-		public AccountMapper()
+		public void Apply(MappingSchema schema)
 		{
-			Schema("public");
-			Table("account");
-
-			Map(x => x.Id).Column(nameof(Account.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Assigned);
-
-			Map(x => x.Name).Column(nameof(Account.Name).ToLower()).Type(DbType.String);
-			Map(x => x.TokenHash).Column(nameof(Account.TokenHash).ToLower()).Type(DbType.String);
-			Map(x => x.CertificateThumbprint).Column(nameof(Account.CertificateThumbprint).ToLower()).Type(DbType.String);
-
-			Map(x => x.RoleIds).Ignore();
-
-			AutoMap();
+			schema.GetFluentMappingBuilder()
+				.Entity<Account>()
+				.HasSchemaName("public")
+				.HasTableName("account")
+				.Property(x => x.Id).HasColumnName(nameof(Account.Id).ToLower()).IsPrimaryKey().HasDataType(DataType.Guid)
+				.Property(x => x.Name).HasColumnName(nameof(Account.Name).ToLower()).IsNullable()
+				.Property(x => x.TokenHash).HasColumnName(nameof(Account.TokenHash).ToLower()).IsNullable()
+				.Property(x => x.CertificateThumbprint).HasColumnName(nameof(Account.CertificateThumbprint).ToLower()).IsNullable()
+				.Property(x => x.RoleIds).IsNotColumn();
 		}
 	}
 }

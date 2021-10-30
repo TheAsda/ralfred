@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using DapperExtensions;
-using DapperExtensions.Predicate;
+using System.Linq;
 
 using EnsureThat;
 
+using LinqToDB;
+
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
-using Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration;
 
 
 namespace Ralfred.Common.DataAccess.Repositories.Postgres
 {
-	public class PostgresAccountRepository : BasePostgresRepository, IAccountRepository
+	public class PostgresAccountRepository : IAccountRepository
 	{
-		public PostgresAccountRepository(IConnectionFactory connectionFactory) : base(typeof(AccountMapper))
+		public PostgresAccountRepository(IConnectionFactory connectionFactory)
 		{
 			_connectionFactory = connectionFactory;
 		}
@@ -25,11 +24,8 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			EnsureArg.IsNotEmptyOrWhiteSpace(accountName);
 
 			using var connection = _connectionFactory.Create();
-			connection.Open();
 
-			return connection.Get<Account>(
-				Predicates.Field<Account>(x => x.Name, Operator.Eq, accountName)
-			) is not null;
+			return connection.GetTable<Account>().SingleOrDefault(x => x.Name != null && x.Name.Equals(accountName)) is not null;
 		}
 
 		public bool ExistsWithToken(string tokenHash)
@@ -37,11 +33,8 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			EnsureArg.IsNotNullOrWhiteSpace(tokenHash);
 
 			using var connection = _connectionFactory.Create();
-			connection.Open();
 
-			return connection.Get<Account>(
-				Predicates.Field<Account>(x => x.TokenHash, Operator.Eq, tokenHash)
-			) is not null;
+			return connection.GetTable<Account>().SingleOrDefault(x => x.TokenHash != null && x.TokenHash.Equals(tokenHash)) is not null;
 		}
 
 		public Guid Create(Account account)
@@ -51,15 +44,15 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
 			}
 
-			if (account.Id == Guid.Empty)
-			{
-				account.Id = Guid.NewGuid();
-			}
-
 			using var connection = _connectionFactory.Create();
-			connection.Open();
 
-			connection.Insert(account);
+			connection.GetTable<Account>().Insert(() => new Account
+			{
+				Id = account.Id == Guid.Empty ? Guid.NewGuid() : account.Id,
+				Name = account.Name,
+				CertificateThumbprint = account.CertificateThumbprint,
+				TokenHash = account.TokenHash
+			});
 
 			return account.Id;
 		}
@@ -67,9 +60,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 		public void Delete(Guid accountId)
 		{
 			using var connection = _connectionFactory.Create();
-			connection.Open();
-
-			connection.Delete<Account>(Predicates.Field<Account>(x => x.Id, Operator.Eq, accountId));
+			connection.GetTable<Account>().Delete(x => x.Id == accountId);
 		}
 
 		public Account GetByName(string accountName)
@@ -77,11 +68,8 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			EnsureArg.IsNotEmptyOrWhiteSpace(accountName);
 
 			using var connection = _connectionFactory.Create();
-			connection.Open();
 
-			return connection.Get<Account>(
-				Predicates.Field<Account>(x => x.Name, Operator.Eq, accountName)
-			);
+			return connection.GetTable<Account>().Single(x => x.Name != null && x.Name.Equals(accountName));
 		}
 
 		public Account Update(Account account)
@@ -93,7 +81,6 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 
 			using var connection = _connectionFactory.Create();
 
-			connection.Open();
 			connection.Update(account);
 
 			return account;
@@ -102,9 +89,8 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 		public IEnumerable<Account> List()
 		{
 			using var connection = _connectionFactory.Create();
-			connection.Open();
 
-			return connection.GetList<Account>();
+			return connection.GetTable<Account>().ToArray();
 		}
 
 		private readonly IConnectionFactory _connectionFactory;

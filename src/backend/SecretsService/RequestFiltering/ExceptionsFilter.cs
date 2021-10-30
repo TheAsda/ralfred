@@ -12,10 +12,10 @@ namespace Ralfred.SecretsService.RequestFiltering
 {
 	public class ExceptionsFilter : IExceptionFilter
 	{
-		public ExceptionsFilter(ILogger<ExceptionsFilter> logger)
-		{
+		private readonly ILogger<ExceptionsFilter> _logger;
+
+		public ExceptionsFilter(ILogger<ExceptionsFilter> logger) =>
 			_logger = logger;
-		}
 
 		public void OnException(ExceptionContext context)
 		{
@@ -52,13 +52,7 @@ namespace Ralfred.SecretsService.RequestFiltering
 			context.HttpContext.Response.StatusCode = (int)status;
 			context.HttpContext.Response.ContentType = "application/json";
 
-			context.Result = new ObjectResult(new Error
-			{
-				StatusCode = (int)status,
-				Message = message
-			});
+			context.Result = new ObjectResult(new Error((int)status, message));
 		}
-
-		private readonly ILogger<ExceptionsFilter> _logger;
 	}
 }

@@ -11,6 +11,9 @@ namespace Ralfred.Common.Managers
 {
 	public class AccountManager : IAccountManager
 	{
+		private readonly IAccountRepository _accountRepository;
+		private readonly ICryptoService _cryptoService;
+
 		public AccountManager(IRepositoryContext repositoryContext, ICryptoService cryptoService)
 		{
 			_cryptoService = cryptoService;
@@ -34,8 +37,5 @@ namespace Ralfred.Common.Managers
 		{
 			return _accountRepository.List();
 		}
-
-		private readonly IAccountRepository _accountRepository;
-		private readonly ICryptoService _cryptoService;
 	}
 }

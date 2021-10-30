@@ -12,9 +12,7 @@ namespace Ralfred.SecretsService.Services
 		public Dictionary<string, string> Convert(Dictionary<string, IFormFile>? form)
 		{
 			if (form is null)
-			{
 				return new Dictionary<string, string>();
-			}
 
 			return form.ToDictionary(x => x.Key, x =>
 			{
