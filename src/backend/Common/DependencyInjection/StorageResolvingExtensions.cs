@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Reflection;
 
-using FluentMigrator;
-
 using Microsoft.Extensions.DependencyInjection;
 
 using Ralfred.Common.DataAccess.Repositories;
@@ -12,10 +10,6 @@ using Ralfred.Common.Helpers.Serialization;
 using Ralfred.Common.Types;
 
 using FluentMigrator.Runner;
-using FluentMigrator.Runner.Initialization;
-
-using Ralfred.Common.DataAccess.Repositories.Postgres.Migrations;
-using Ralfred.Common.Managers;
 
 
 namespace Ralfred.Common.DependencyInjection
