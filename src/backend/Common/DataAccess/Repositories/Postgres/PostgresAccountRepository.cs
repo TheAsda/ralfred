@@ -44,16 +44,11 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
 			}
 
-			if (account.Id == Guid.Empty)
-			{
-				account.Id = Guid.NewGuid();
-			}
-
 			using var connection = _connectionFactory.Create();
 
 			connection.GetTable<Account>().Insert(() => new Account
 			{
-				Id = account.Id == Guid.Empty ? Guid.NewGuid() : account.Id,
+				Id = account.Id,
 				Name = account.Name,
 				CertificateThumbprint = account.CertificateThumbprint,
 				TokenHash = account.TokenHash
