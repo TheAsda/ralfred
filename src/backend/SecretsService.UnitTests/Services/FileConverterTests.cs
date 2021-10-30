@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 using AutoFixture;
@@ -56,6 +57,16 @@ namespace SecretsService.UnitTests.Services
 
 			Encoding.UTF8.GetString(Convert.FromBase64String(dictionary[fileKey]))
 				.Should().Be(content);
+		}
+
+		[Test]
+		public void ConvertEmptyForm()
+		{
+			// act
+			var dictionary = _target.Convert(null);
+			
+			// assert
+			dictionary.Keys.Count.Should().Be(0);
 		}
 	}
 }
