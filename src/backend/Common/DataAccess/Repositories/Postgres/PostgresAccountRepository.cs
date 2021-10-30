@@ -38,7 +38,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			{
 				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
 			}
-			
+
 			if (account.Id == Guid.Empty)
 			{
 				account.Id = Guid.NewGuid();
@@ -56,7 +56,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 		{
 			using var connection = _connectionFactory.Create();
 			connection.Open();
-			connection.Delete(Predicates.Field<Account>(x => x.Id, Operator.Eq, accountId));
+			connection.Delete<Account>(Predicates.Field<Account>(x => x.Id, Operator.Eq, accountId));
 		}
 
 		public Account GetByName(string accountName)
