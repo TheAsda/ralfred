@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,6 +8,8 @@ using Ralfred.Common.DataAccess.Repositories.InMemory;
 using Ralfred.Common.DataAccess.Repositories.Postgres;
 using Ralfred.Common.Helpers.Serialization;
 using Ralfred.Common.Types;
+
+using FluentMigrator.Runner;
 
 
 namespace Ralfred.Common.DependencyInjection
@@ -49,6 +52,21 @@ namespace Ralfred.Common.DependencyInjection
 					services.AddTransient<PostgresRoleRepository>();
 
 					services.AddSingleton<IRepositoryContext, PostgresRepositoryContext>();
+
+					services.AddFluentMigratorCore()
+						.ConfigureRunner(rb =>
+						{
+							var storageConnection = rb.Services.BuildServiceProvider().GetRequiredService<StorageConnection>();
+
+							rb.AddPostgres()
+								.WithGlobalConnectionString(storageConnection.ConnectionString)
+								.ScanIn(Assembly.GetExecutingAssembly()).For.Migrations();
+						});
+
+					using (var scope = services.BuildServiceProvider().CreateScope())
+					{
+						scope.ServiceProvider.GetRequiredService<IMigrationRunner>().MigrateUp();
+					}
 
 					break;
 				}

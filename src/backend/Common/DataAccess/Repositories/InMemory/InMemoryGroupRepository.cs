@@ -45,7 +45,8 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 		{
 			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
-			var group = new Group {
+			var group = new Group
+			{
 				Id = Guid.NewGuid(),
 				Name = name,
 				Path = path

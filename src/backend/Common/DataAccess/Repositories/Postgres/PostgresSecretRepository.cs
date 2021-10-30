@@ -73,7 +73,6 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 					Name = key,
 					Value = value,
 					GroupId = groupId,
-					Id = Guid.NewGuid(),
 					IsFile = false
 				});
 
@@ -83,7 +82,6 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 					Name = key,
 					Value = value,
 					GroupId = groupId,
-					Id = Guid.NewGuid(),
 					IsFile = true
 				});
 		}

@@ -48,7 +48,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 
 			connection.GetTable<Account>().Insert(() => new Account
 			{
-				Id = account.Id == Guid.Empty ? Guid.NewGuid() : account.Id,
+				Id = account.Id,
 				Name = account.Name,
 				CertificateThumbprint = account.CertificateThumbprint,
 				TokenHash = account.TokenHash

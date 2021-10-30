@@ -56,7 +56,7 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			if (index == -1)
 			{
 				throw new NotFoundException($"Cannot find account with id {accountId}");
-			}
+			}	
 
 			_storage.RemoveAt(index);
 		}

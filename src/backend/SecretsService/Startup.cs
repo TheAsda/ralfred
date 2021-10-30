@@ -45,9 +45,9 @@ namespace Ralfred.SecretsService
 			{
 				return key switch
 				{
-					FormatType.Json => serviceProvider.GetService<JsonSerializer>()!,
-					FormatType.Xml  => serviceProvider.GetService<XmlSerializer>()!,
-					FormatType.Yaml => serviceProvider.GetService<YamlSerializer>()!,
+					FormatType.Json => serviceProvider.GetRequiredService<JsonSerializer>(),
+					FormatType.Xml  => serviceProvider.GetRequiredService<XmlSerializer>(),
+					FormatType.Yaml => serviceProvider.GetRequiredService<YamlSerializer>(),
 
 					_ => null
 				};
@@ -57,6 +57,7 @@ namespace Ralfred.SecretsService
 			services.AddTransient<IFileConverter, FileConverter>();
 
 			services.AddTransient<ICryptoService, CryptoService>();
+			services.AddTransient<ISecretsManager, SecretsManager>();
 			services.AddTransient<ITokenService, TokenService>();
 
 			services.AddTransient<ISecretsManager, SecretsManager>();
@@ -67,8 +68,9 @@ namespace Ralfred.SecretsService
 			services.AddTransient<IContentManager, ContentManager>();
 
 			services.AddTransient<IConfigurationManager, ConfigurationManager>(serviceProvider =>
-				new ConfigurationManager(serviceProvider.GetService<YamlSerializer>()!, serviceProvider.GetService<IContentManager>()!,
-					serviceProvider.GetService<ITokenService>()!));
+				new ConfigurationManager(serviceProvider.GetRequiredService<YamlSerializer>(),
+					serviceProvider.GetRequiredService<IContentManager>(),
+					serviceProvider.GetRequiredService<ITokenService>()));
 
 			var configuration = RegisterApplicationConfiguration(services);
 
@@ -103,7 +105,7 @@ namespace Ralfred.SecretsService
 			// TODO: add config validation
 
 			var serviceProvider = services.BuildServiceProvider();
-			var configurationManager = serviceProvider.GetService<IConfigurationManager>()!;
+			var configurationManager = serviceProvider.GetRequiredService<IConfigurationManager>();
 
 			var appConfigurationDefaults = configurationManager.Get(_configuration!["DefaultSettingsPath"]);
 			var appConfigurationOverrides = configurationManager.Get(_configuration["OverridesSettingsPath"]);

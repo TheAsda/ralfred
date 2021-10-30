@@ -52,14 +52,12 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 
 			var group = new Group
 			{
-				Id = Guid.NewGuid(),
 				Name = name,
 				Path = path
 			};
 
 			connection.GetTable<Group>().Insert(() => new Group
 			{
-				Id = Guid.NewGuid(),
 				Name = name,
 				Path = path
 			});
