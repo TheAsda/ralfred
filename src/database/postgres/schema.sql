@@ -1,7 +1,7 @@
 CREATE TABLE public.account (
 	id                    UUID  NOT NULL PRIMARY KEY,
 	name									VARCHAR(255) NULL,
-	tokenHash             VARCHAR(64)  NULL,
+	tokenHash             VARCHAR(128)  NULL,
 	certificateThumbprint VARCHAR(40)  NULL
 );
 
