@@ -14,10 +14,10 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 {
 	public class PostgresAccountRepository : IAccountRepository
 	{
-		private readonly IConnectionFactory _connectionFactory;
-
-		public PostgresAccountRepository(IConnectionFactory connectionFactory) =>
+		public PostgresAccountRepository(IConnectionFactory connectionFactory)
+		{
 			_connectionFactory = connectionFactory;
+		}
 
 		public bool Exists(string accountName)
 		{
@@ -25,16 +25,31 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 
 			using var connection = _connectionFactory.Create();
 
-			return connection.GetTable<Account>().FirstOrDefault(x => x.Name != null && x.Name.Equals(accountName)) is not null;
+			return connection.GetTable<Account>().SingleOrDefault(x => x.Name != null && x.Name.Equals(accountName)) is not null;
+		}
+
+		public bool ExistsWithToken(string tokenHash)
+		{
+			EnsureArg.IsNotNullOrWhiteSpace(tokenHash);
+
+			using var connection = _connectionFactory.Create();
+
+			return connection.GetTable<Account>().SingleOrDefault(x => x.TokenHash != null && x.TokenHash.Equals(tokenHash)) is not null;
+
+			;
 		}
 
 		public Guid Create(Account account)
 		{
 			if (string.IsNullOrEmpty(account.Name))
+			{
 				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
+			}
 
 			if (account.Id == Guid.Empty)
+			{
 				account.Id = Guid.NewGuid();
+			}
 
 			using var connection = _connectionFactory.Create();
 
@@ -67,7 +82,9 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 		public Account Update(Account account)
 		{
 			if (string.IsNullOrEmpty(account.Name))
+			{
 				EnsureArg.IsNotNullOrWhiteSpace(account.TokenHash);
+			}
 
 			using var connection = _connectionFactory.Create();
 
@@ -82,5 +99,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 
 			return connection.GetTable<Account>().ToArray();
 		}
+
+		private readonly IConnectionFactory _connectionFactory;
 	}
 }

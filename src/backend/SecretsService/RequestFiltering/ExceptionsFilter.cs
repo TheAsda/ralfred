@@ -8,7 +8,7 @@ using Ralfred.Common.Exceptions;
 using Ralfred.SecretsService.Models;
 
 
-namespace Ralfred.SecretsService
+namespace Ralfred.SecretsService.RequestFiltering
 {
 	public class ExceptionsFilter : IExceptionFilter
 	{
@@ -29,6 +29,19 @@ namespace Ralfred.SecretsService
 					message = context.Exception.Message;
 
 					break;
+
+				case UnauthorizedException:
+					status = HttpStatusCode.Unauthorized;
+					message = context.Exception.Message;
+
+					break;
+
+				case RestrictedAccessException:
+					status = HttpStatusCode.Forbidden;
+					message = context.Exception.Message;
+
+					break;
+
 				default:
 					_logger.LogError(context.Exception, message);
 

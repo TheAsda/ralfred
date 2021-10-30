@@ -2,6 +2,7 @@
 {
 	public enum AccountType
 	{
-		Token
+		None = 0,
+		Token = 1
 	}
 }
