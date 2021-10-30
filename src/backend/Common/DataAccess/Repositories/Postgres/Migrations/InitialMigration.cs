@@ -15,14 +15,14 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres.Migrations
 				.WithColumn(nameof(Account.Id).ToLower()).AsGuid().NotNullable().PrimaryKey().WithDefault(SystemMethods.NewGuid)
 				.WithColumn(nameof(Account.Name).ToLower()).AsString(256).Nullable()
 				.WithColumn(nameof(Account.TokenHash).ToLower()).AsFixedLengthString(128).Nullable()
-				.WithColumn(nameof(Account.CertificateThumbprint).ToLower()).AsString().Nullable();
+				.WithColumn(nameof(Account.CertificateThumbprint).ToLower()).AsFixedLengthString(40).Nullable();
 
 			Create
 				.Table("group")
 				.InSchema("public")
 				.WithColumn(nameof(Group.Id).ToLower()).AsGuid().NotNullable().PrimaryKey().WithDefault(SystemMethods.NewGuid)
 				.WithColumn(nameof(Group.Name).ToLower()).AsString(256).NotNullable()
-				.WithColumn(nameof(Group.Path).ToLower()).AsString(256).NotNullable();
+				.WithColumn(nameof(Group.Path).ToLower()).AsString(512).NotNullable();
 
 			Create
 				.Table("role")
