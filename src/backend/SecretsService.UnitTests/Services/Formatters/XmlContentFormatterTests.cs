@@ -28,11 +28,18 @@ namespace SecretsService.UnitTests.Services.Formatters
 			_target = new XmlSecretFormatter(_serializer.Object);
 		}
 
+		private IFixture _fixture;
+
+		private Mock<ISerializer> _serializer;
+
+		private XmlSecretFormatter _target;
+
 		[Test]
 		public void FormatTest()
 		{
 			// arrange
 			var data = _fixture.CreateMany<Secret>().ToList();
+
 			var projection = data.Select(x => new Ralfred.SecretsService.Models.Secret
 			{
 				Name = x.Name,
@@ -51,11 +58,5 @@ namespace SecretsService.UnitTests.Services.Formatters
 
 			_serializer.Verify(x => x.Serialize(projection), Times.Once);
 		}
-
-		private IFixture _fixture;
-
-		private Mock<ISerializer> _serializer;
-
-		private XmlSecretFormatter _target;
 	}
 }

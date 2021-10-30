@@ -1,9 +1,9 @@
 ﻿using System.IO;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 
 using InternalXmlSerializer = System.Xml.Serialization.XmlSerializer;
+
 
 namespace Ralfred.Common.Helpers.Serialization
 {
@@ -23,7 +23,7 @@ namespace Ralfred.Common.Helpers.Serialization
 			return result.ToString();
 		}
 
-		public T Deserialize<T>(string? serializedObject) where T : class
+		public T? Deserialize<T>(string? serializedObject) where T : class
 		{
 			if (serializedObject is null)
 				return default;
@@ -40,7 +40,7 @@ namespace Ralfred.Common.Helpers.Serialization
 
 			using var xmlReader = XmlReader.Create(memoryStream);
 
-			return (T) serializer.Deserialize(xmlReader)!;
+			return (T)serializer.Deserialize(xmlReader)!;
 		}
 	}
 }

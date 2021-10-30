@@ -5,12 +5,9 @@ using AutoFixture;
 
 using FluentAssertions;
 
-using Moq;
-
 using NUnit.Framework;
 
 using Ralfred.Common.DataAccess.Entities;
-using Ralfred.Common.Helpers.Serialization;
 using Ralfred.SecretsService.Services.Formatters;
 
 
@@ -27,6 +24,10 @@ namespace SecretsService.UnitTests.Services.Formatters
 			_target = new KeyValueSecretFormatter();
 		}
 
+		private IFixture _fixture;
+
+		private KeyValueSecretFormatter _target;
+
 		[Test]
 		public void FormatTest()
 		{
@@ -40,9 +41,5 @@ namespace SecretsService.UnitTests.Services.Formatters
 			// assert
 			result.Should().Be(expected);
 		}
-
-		private IFixture _fixture;
-
-		private KeyValueSecretFormatter _target;
 	}
 }

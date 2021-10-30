@@ -18,7 +18,7 @@ namespace Ralfred.Common.Helpers.Serialization
 			return serializer.Serialize(@object);
 		}
 
-		public T Deserialize<T>(string? serializedObject) where T : class
+		public T? Deserialize<T>(string? serializedObject) where T : class
 		{
 			if (serializedObject is null)
 				return default;

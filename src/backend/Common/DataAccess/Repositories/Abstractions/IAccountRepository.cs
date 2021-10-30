@@ -12,10 +12,10 @@ namespace Ralfred.Common.DataAccess.Repositories.Abstractions
 
 		Guid Create(Account account);
 
-		void Delete(Guid accountId);
+		void    Delete(Guid      accountId);
 		Account GetByName(string accountName);
 
-		Account? Update(Account account);
+		Account?             Update(Account account);
 		IEnumerable<Account> List();
 	}
 }

@@ -18,6 +18,10 @@ namespace SecretsService.UnitTests.Services
 {
 	public class FileConverterTests
 	{
+		private IFixture _fixture;
+
+		private IFileConverter _target;
+
 		[SetUp]
 		public void Setup()
 		{
@@ -53,9 +57,5 @@ namespace SecretsService.UnitTests.Services
 			Encoding.UTF8.GetString(Convert.FromBase64String(dictionary[fileKey]))
 				.Should().Be(content);
 		}
-
-		private IFixture _fixture;
-
-		private IFileConverter _target;
 	}
 }

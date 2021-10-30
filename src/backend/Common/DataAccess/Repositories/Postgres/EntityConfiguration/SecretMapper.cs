@@ -1,24 +1,24 @@
-﻿using System.Data;
-
-using DapperExtensions.Mapper;
+﻿using LinqToDB;
+using LinqToDB.Mapping;
 
 using Ralfred.Common.DataAccess.Entities;
 
 
 namespace Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration
 {
-	internal sealed class SecretMapper : ClassMapper<Secret>
+	internal sealed class SecretMapper : IMapper
 	{
-		public SecretMapper()
+		public void Apply(MappingSchema schema)
 		{
-			Table("secret");
-
-			Map(x => x.Id).Column(nameof(Secret.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Assigned);
-
-			Map(x => x.Name).Column(nameof(Secret.Name).ToLower()).Type(DbType.String);
-			Map(x => x.Value).Column(nameof(Secret.Value).ToLower()).Type(DbType.String);
-			Map(x => x.GroupId).Column(nameof(Secret.GroupId).ToLower()).Type(DbType.Guid);
-			Map(x => x.IsFile).Column(nameof(Secret.IsFile).ToLower()).Type(DbType.Boolean);
+			schema.GetFluentMappingBuilder()
+				.Entity<Secret>()
+				.HasSchemaName("public")
+				.HasTableName("secret")
+				.Property(x => x.Id).HasColumnName(nameof(Secret.Id).ToLower()).IsPrimaryKey().HasDataType(DataType.Guid)
+				.Property(x => x.Name).HasColumnName(nameof(Secret.Name).ToLower())
+				.Property(x => x.Value).HasColumnName(nameof(Secret.Value).ToLower())
+				.Property(x => x.GroupId).HasColumnName(nameof(Secret.GroupId).ToLower()).HasDataType(DataType.Guid)
+				.Property(x => x.IsFile).HasColumnName(nameof(Secret.IsFile).ToLower());
 		}
 	}
 }

@@ -1,40 +1,31 @@
 ﻿using System;
-
-using DapperExtensions;
-using DapperExtensions.Predicate;
+using System.Linq;
 
 using EnsureThat;
 
+using LinqToDB;
+
 using Ralfred.Common.DataAccess.Entities;
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
-using Ralfred.Common.DataAccess.Repositories.InMemory;
-using Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration;
-using Ralfred.Common.Types;
+using Ralfred.Common.Exceptions;
 
 
 namespace Ralfred.Common.DataAccess.Repositories.Postgres
 {
-	public class PostgresGroupRepository : BasePostgresRepository, IGroupRepository
+	public class PostgresGroupRepository : IGroupRepository
 	{
-		public PostgresGroupRepository(IConnectionFactory connectionFactory) : base(typeof(RoleMapper))
-		{
+		private readonly IConnectionFactory _connectionFactory;
+
+		public PostgresGroupRepository(IConnectionFactory connectionFactory) =>
 			_connectionFactory = connectionFactory;
-		}
 
 		public bool Exists(string name, string path)
 		{
 			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
 			using var connection = _connectionFactory.Create();
-			connection.Open();
 
-			var predicates = new IPredicate[]
-			{
-				Predicates.Field<Group>(x => x.Name, Operator.Eq, name),
-				Predicates.Field<Group>(x => x.Path, Operator.Eq, path)
-			};
-
-			return connection.Get<Group>(Predicates.Group(GroupOperator.And, predicates)) is not null;
+			return connection.GetTable<Group>().SingleOrDefault(x => x.Name.Equals(name) && x.Path.Equals(path)) is not null;
 		}
 
 		public Group Get(string name, string path)
@@ -42,15 +33,15 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
 			using var connection = _connectionFactory.Create();
-			connection.Open();
 
-			var predicates = new IPredicate[]
+			try
 			{
-				Predicates.Field<Group>(x => x.Name, Operator.Eq, name),
-				Predicates.Field<Group>(x => x.Path, Operator.Eq, path)
-			};
-
-			return connection.Get<Group>(Predicates.Group(GroupOperator.And, predicates));
+				return connection.GetTable<Group>().Single(x => x.Name.Equals(name) && x.Path.Equals(path));
+			}
+			catch (InvalidOperationException)
+			{
+				throw new NotFoundException("Group not found");
+			}
 		}
 
 		public Guid CreateGroup(string name, string path)
@@ -58,7 +49,6 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
 			using var connection = _connectionFactory.Create();
-			connection.Open();
 
 			var group = new Group
 			{
@@ -67,7 +57,12 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 				Path = path
 			};
 
-			connection.Insert(group);
+			connection.GetTable<Group>().Insert(() => new Group
+			{
+				Id = Guid.NewGuid(),
+				Name = name,
+				Path = path
+			});
 
 			return group.Id;
 		}
@@ -77,17 +72,8 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			EnsureArg.IsNotEmptyOrWhiteSpace(name);
 
 			using var connection = _connectionFactory.Create();
-			connection.Open();
 
-			var predicates = new IPredicate[]
-			{
-				Predicates.Field<Group>(x => x.Name, Operator.Eq, name),
-				Predicates.Field<Group>(x => x.Path, Operator.Eq, path)
-			};
-
-			connection.Delete<Group>(Predicates.Group(GroupOperator.And, predicates));
+			connection.GetTable<Group>().Delete(x => x.Name.Equals(name) && x.Path.Equals(path));
 		}
-
-		private readonly IConnectionFactory _connectionFactory;
 	}
 }

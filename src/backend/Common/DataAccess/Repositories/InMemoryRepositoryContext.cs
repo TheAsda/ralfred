@@ -10,10 +10,10 @@ namespace Ralfred.Common.DataAccess.Repositories
 {
 	public class InMemoryRepositoryContext : IRepositoryContext
 	{
-		public InMemoryRepositoryContext(IServiceProvider serviceProvider)
-		{
+		private readonly IServiceProvider _serviceProvider;
+
+		public InMemoryRepositoryContext(IServiceProvider serviceProvider) =>
 			_serviceProvider = serviceProvider;
-		}
 
 		public ISecretsRepository GetSecretRepository()
 		{
@@ -34,7 +34,5 @@ namespace Ralfred.Common.DataAccess.Repositories
 		{
 			return _serviceProvider.GetService<InMemoryRoleRepository>()!;
 		}
-
-		private readonly IServiceProvider _serviceProvider;
 	}
 }

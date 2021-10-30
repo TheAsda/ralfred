@@ -14,12 +14,26 @@ namespace Ralfred.Common.Managers
 {
 	public class SecretsManager : ISecretsManager
 	{
+		private readonly IGroupRepository _groupRepository;
+
+		private readonly IPathResolver _pathResolver;
+		private readonly ISecretsRepository _secretsRepository;
+
 		public SecretsManager(IPathResolver pathResolver, IRepositoryContext repositoryContext)
 		{
 			_pathResolver = pathResolver;
 
 			_secretsRepository = repositoryContext.GetSecretRepository();
 			_groupRepository = repositoryContext.GetGroupRepository();
+		}
+
+		private Dictionary<string, string> FilterDictionaryKeys(Dictionary<string, string> dictionary, string[] keys)
+		{
+			return keys.Any()
+				? dictionary
+					.Where(x => keys.Contains(x.Key))
+					.ToDictionary(x => x.Key, x => x.Value)
+				: dictionary;
 		}
 
 		public IEnumerable<Secret> GetSecrets(string path, string[] secrets)
@@ -39,9 +53,7 @@ namespace Ralfred.Common.Managers
 					var secret = groupSecrets.FirstOrDefault(x => x.Name == name);
 
 					if (secret is null)
-					{
 						throw new NotFoundException("Group does not contain such secret");
-					}
 
 					return new[] { secret };
 				}
@@ -70,7 +82,7 @@ namespace Ralfred.Common.Managers
 				{
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(path);
 
-					var groupId = _groupRepository.CreateGroup(groupName, folderPath ?? string.Empty);
+					var groupId = _groupRepository.CreateGroup(groupName, folderPath);
 
 					_secretsRepository.SetGroupSecrets(groupId, FilterDictionaryKeys(input, secrets), FilterDictionaryKeys(files, secrets));
 
@@ -82,23 +94,17 @@ namespace Ralfred.Common.Managers
 					var group = _groupRepository.Get(groupName, folderPath);
 
 					if (secrets.Length > 0)
-					{
-						_secretsRepository.UpdateGroupSecrets(group.Id, FilterDictionaryKeys(input, secrets),
+						_secretsRepository.UpdateGroupSecrets(@group.Id, FilterDictionaryKeys(input, secrets),
 							FilterDictionaryKeys(files, secrets));
-					}
 					else
-					{
-						_secretsRepository.SetGroupSecrets(group.Id, input, files);
-					}
+						_secretsRepository.SetGroupSecrets(@group.Id, input, files);
 
 					break;
 				}
 				case PathType.Secret:
 				{
 					if (!input.ContainsKey("value") && !files.ContainsKey("value"))
-					{
 						throw new ArgumentException("Value is not provided");
-					}
 
 					var (name, groupPath) = _pathResolver.DeconstructPath(path);
 					var (groupName, folderPath) = _pathResolver.DeconstructPath(groupPath);
@@ -106,15 +112,11 @@ namespace Ralfred.Common.Managers
 					var group = _groupRepository.Get(groupName, folderPath);
 
 					if (input.ContainsKey("value"))
-					{
-						_secretsRepository.UpdateGroupSecrets(group.Id, new Dictionary<string, string> { { name, input["value"] } },
+						_secretsRepository.UpdateGroupSecrets(@group.Id, new Dictionary<string, string> { { name, input["value"] } },
 							new Dictionary<string, string>());
-					}
 					else
-					{
-						_secretsRepository.UpdateGroupSecrets(group.Id, new Dictionary<string, string>(),
+						_secretsRepository.UpdateGroupSecrets(@group.Id, new Dictionary<string, string>(),
 							new Dictionary<string, string> { { name, files["value"] } });
-					}
 
 					break;
 				}
@@ -147,9 +149,7 @@ namespace Ralfred.Common.Managers
 					var group = _groupRepository.Get(groupName, groupPath);
 
 					if (secrets.Length > 0)
-					{
-						_secretsRepository.DeleteGroupSecrets(group.Id, secrets);
-					}
+						_secretsRepository.DeleteGroupSecrets(@group.Id, secrets);
 					else
 					{
 						_groupRepository.DeleteGroup(groupName, groupPath);
@@ -164,16 +164,5 @@ namespace Ralfred.Common.Managers
 					throw new ArgumentOutOfRangeException();
 			}
 		}
-
-		private Dictionary<string, string> FilterDictionaryKeys(Dictionary<string, string> dictionary, string[] keys) =>
-			keys.Any()
-				? dictionary
-					.Where(x => keys.Contains(x.Key))
-					.ToDictionary(x => x.Key, x => x.Value)
-				: dictionary;
-
-		private readonly IPathResolver _pathResolver;
-		private readonly ISecretsRepository _secretsRepository;
-		private readonly IGroupRepository _groupRepository;
 	}
 }

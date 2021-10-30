@@ -1,23 +1,22 @@
-﻿using System.Data;
-
-using DapperExtensions.Mapper;
+﻿using LinqToDB;
+using LinqToDB.Mapping;
 
 using Ralfred.Common.DataAccess.Entities;
 
 
 namespace Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration
 {
-	internal sealed class GroupMapper : ClassMapper<Group>
+	internal sealed class GroupMapper : IMapper
 	{
-		public GroupMapper()
+		public void Apply(MappingSchema schema)
 		{
-			Schema("public");
-			Table("group");
-
-			Map(x => x.Id).Column(nameof(Group.Id).ToLower()).Type(DbType.Guid).Key(KeyType.Assigned);
-
-			Map(x => x.Name).Column(nameof(Group.Name).ToLower()).Type(DbType.String);
-			Map(x => x.Path).Column(nameof(Group.Path).ToLower()).Type(DbType.String);
+			schema.GetFluentMappingBuilder()
+				.Entity<Group>()
+				.HasSchemaName("public")
+				.HasTableName("group")
+				.Property(x => x.Id).HasColumnName(nameof(Group.Id).ToLower()).IsPrimaryKey().HasDataType(DataType.Guid)
+				.Property(x => x.Name).HasColumnName(nameof(Group.Name).ToLower())
+				.Property(x => x.Path).HasColumnName(nameof(Group.Path).ToLower());
 		}
 	}
 }

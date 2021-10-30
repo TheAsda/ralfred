@@ -3,18 +3,17 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using Ralfred.Common.DataAccess.Repositories.Abstractions;
-using Ralfred.Common.DataAccess.Repositories.InMemory;
 using Ralfred.Common.DataAccess.Repositories.Postgres;
 
 
 namespace Ralfred.Common.DataAccess.Repositories
 {
-	public class PostgreRepositoryContext : IRepositoryContext
+	public class PostgresRepositoryContext : IRepositoryContext
 	{
-		public PostgreRepositoryContext(IServiceProvider serviceProvider)
-		{
+		private readonly IServiceProvider _serviceProvider;
+
+		public PostgresRepositoryContext(IServiceProvider serviceProvider) =>
 			_serviceProvider = serviceProvider;
-		}
 
 		public ISecretsRepository GetSecretRepository()
 		{
@@ -35,7 +34,5 @@ namespace Ralfred.Common.DataAccess.Repositories
 		{
 			return _serviceProvider.GetService<PostgresRoleRepository>()!;
 		}
-
-		private readonly IServiceProvider _serviceProvider;
 	}
 }

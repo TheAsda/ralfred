@@ -27,6 +27,14 @@ namespace SecretsProvider.UnitTests.Managers
 			_target = new ConfigurationManager(_serializer.Object, _contentProvider.Object, _tokenService.Object);
 		}
 
+		private readonly IFixture _fixture = new Fixture();
+
+		private Mock<ISerializer> _serializer;
+		private Mock<IContentManager> _contentProvider;
+		private Mock<ITokenService> _tokenService;
+
+		private ConfigurationManager _target;
+
 		[Test]
 		public void GetTest()
 		{
@@ -62,7 +70,7 @@ namespace SecretsProvider.UnitTests.Managers
 			var expected = secondConfiguration with
 			{
 				RootToken = firstConfiguration.RootToken,
-				ConnectionString = firstConfiguration.ConnectionString, 
+				ConnectionString = firstConfiguration.ConnectionString,
 				Engine = firstConfiguration.Engine
 			};
 
@@ -73,13 +81,5 @@ namespace SecretsProvider.UnitTests.Managers
 			result.Should().NotBeNull();
 			result.Should().Be(expected);
 		}
-
-		private readonly IFixture _fixture = new Fixture();
-
-		private Mock<ISerializer> _serializer;
-		private Mock<IContentManager> _contentProvider;
-		private Mock<ITokenService> _tokenService;
-
-		private ConfigurationManager _target;
 	}
 }

@@ -37,156 +37,106 @@ namespace SecretsProvider.UnitTests.Managers
 			_target = new SecretsManager(_pathResolver.Object, _repositoryContext.Object);
 		}
 
-		[Test]
-		public void GetSecretsNoneTest()
-		{
-			// arrange
-			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.None);
+		private readonly IFixture _fixture = new Fixture();
 
-			// act
-
-			// assert
-			Assert.Throws<NotFoundException>(() => _target.GetSecrets("test", Array.Empty<string>()));
-		}
+		private ISecretsManager _target;
+		private Mock<IPathResolver> _pathResolver;
+		private Mock<ISecretsRepository> _secretsRepository;
+		private Mock<IGroupRepository> _groupRepository;
+		private Mock<IRepositoryContext> _repositoryContext;
 
 		[Test]
-		public void GetSecretsGroupTest()
+		public void AddSecretFileTest()
 		{
+
 			// arrange
-			var name = _fixture.Create<string>();
-			var path = _fixture.Create<string>();
+			const string fullPath = "path/to/group/secret";
+			const string secretName = "secret";
+			const string groupPath = "path/to/group";
+			const string groupName = "group";
+			const string folderPath = "path/to";
+
 			var group = _fixture.Create<Group>();
-			var mockSecret = _fixture.Create<Secret>();
 
-			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
-			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
-
-			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
-
-			_secretsRepository.Setup(x => x.GetGroupSecrets(group.Id)).Returns(new List<Secret>
-			{
-				mockSecret
-			});
-
-			// act
-			var result = _target.GetSecrets(path, Array.Empty<string>()).ToList();
-
-			// assert
-			Assert.AreEqual(result.Count, 1);
-			Assert.AreEqual(result[0], mockSecret);
-		}
-
-		[Test]
-		public void GetSecretsSecretTest()
-		{
-			// arrange
-			var name = _fixture.Create<string>();
-			var path = _fixture.Create<string>();
-			var group = _fixture.Create<Group>();
-			var mockSecret = _fixture.Build<Secret>().With(x => x.Name, name).Create();
+			var files = new Dictionary<string, string> { { "value", "file" } };
 
 			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Secret);
-			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
+			_pathResolver.Setup(x => x.DeconstructPath(fullPath)).Returns((secretName, groupPath));
+			_pathResolver.Setup(x => x.DeconstructPath(groupPath)).Returns((groupName, folderPath));
 
-			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
+			_groupRepository.Setup(x => x.Get(groupName, folderPath)).Returns(group);
 
-			_secretsRepository.Setup(x => x.GetGroupSecrets(group.Id)).Returns(new List<Secret>
-			{
-				mockSecret
-			});
+			_secretsRepository.Setup(x => x.UpdateGroupSecrets(group.Id,
+					It.Is<Dictionary<string, string>>(y => y.Keys.Count == 0),
+					It.Is<Dictionary<string, string>>(y => y.Keys.Count == 1 && y.ContainsKey(secretName))))
+				.Verifiable();
 
 			// act
-			var result = _target.GetSecrets(path, Array.Empty<string>()).ToList();
+			_target.AddSecrets(fullPath, new Dictionary<string, string>(), files, Array.Empty<string>());
 
 			// assert
-			Assert.AreEqual(result.Count, 1);
-			Assert.AreEqual(result[0], mockSecret);
+			_secretsRepository.Verify(x => x.UpdateGroupSecrets(group.Id,
+				It.Is<Dictionary<string, string>>(y => y.Keys.Count == 0),
+				It.Is<Dictionary<string, string>>(y => y.Keys.Count == 1 && y.ContainsKey(secretName))), Times.Once);
 		}
 
 		[Test]
-		public void GetSecretsSecretNotFoundTest()
+		public void AddSecretsGroupTest()
 		{
+
 			// arrange
+			const string fullPath = "path/to/group";
+			const string name = "group";
+			const string path = "path/to";
+
 			var group = _fixture.Create<Group>();
 
-			var name = _fixture.Create<string>();
-			var path = _fixture.Create<string>();
-
-			var mockSecret = _fixture.Create<Secret>();
-
-			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Secret);
-			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
-
-			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
-
-			_secretsRepository.Setup(x => x.GetGroupSecrets(group.Id)).Returns(new List<Secret>
-			{
-				mockSecret
-			});
-
-			// assert
-			Assert.Throws<NotFoundException>(() => _target.GetSecrets(_fixture.Create<string>(), Array.Empty<string>()));
-		}
-
-		[Test]
-		public void GetSecretsGroupWithNamesTest()
-		{
-			// arrange
-			var group = _fixture.Create<Group>();
-
-			var name = _fixture.Create<string>();
-			var path = _fixture.Create<string>();
-
-			var mockSecret = _fixture.Create<Secret>();
-			var mockSecret2 = _fixture.Create<Secret>();
+			var secrets = new Dictionary<string, string> { { "test", "test" } };
+			var files = new Dictionary<string, string> { { "file", "file" } };
 
 			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
 			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
-
 			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
-
-			_secretsRepository.Setup(x => x.GetGroupSecrets(group.Id)).Returns(new List<Secret>
-			{
-				mockSecret,
-				mockSecret2
-			});
+			_secretsRepository.Setup(x => x.SetGroupSecrets(group.Id, secrets, files)).Verifiable();
 
 			// act
-			var result = _target.GetSecrets(path, new[] { mockSecret2.Name }).ToList();
+			_target.AddSecrets(fullPath, secrets, files, new string[] { });
 
 			// assert
-			Assert.AreEqual(result.Count, 1);
-			Assert.AreEqual(result[0], mockSecret2);
+			_secretsRepository.Verify(x => x.SetGroupSecrets(group.Id, secrets, files), Times.Once);
 		}
 
 		[Test]
-		public void GetSecretsGroupWithRandomNamesTest()
+		public void AddSecretsGroupWithNamesTest()
 		{
 			// arrange
+			const string fullPath = "path/to/group";
+			const string name = "group";
+			const string path = "path/to";
+
 			var group = _fixture.Create<Group>();
 
-			var name = _fixture.Create<string>();
-			var path = _fixture.Create<string>();
-
-			var mockSecret = _fixture.Create<Secret>();
-			var mockSecret2 = _fixture.Create<Secret>();
+			var secrets = new Dictionary<string, string> { { "test", "test" }, { "test2", "test2" } };
+			var files = new Dictionary<string, string> { { "file", "file" } };
 
 			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
 			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
-
 			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
 
-			_secretsRepository.Setup(x => x.GetGroupSecrets(group.Id)).Returns(new List<Secret>
-			{
-				mockSecret,
-				mockSecret2
-			});
+			_secretsRepository.Setup(x => x.UpdateGroupSecrets(group.Id,
+					It.Is<Dictionary<string, string>>(y => y.Keys.Any() && y.ContainsKey("test")),
+					It.Is<Dictionary<string, string>>(y => y.Keys.Count == 0)))
+				.Verifiable();
 
 			// act
-			var result = _target.GetSecrets(path, new[] { _fixture.Create<string>() }).ToList();
+			_target.AddSecrets(fullPath, secrets, files, new[] { "test" });
 
 			// assert
-			Assert.AreEqual(result.Count, 0);
+			_secretsRepository.Verify(
+				x => x.UpdateGroupSecrets(group.Id,
+					It.Is<Dictionary<string, string>>(y => y.Keys.Any() && y.ContainsKey("test")),
+					It.Is<Dictionary<string, string>>(y => y.Keys.Count == 0)),
+				Times.Once);
 		}
 
 		[Test]
@@ -252,100 +202,6 @@ namespace SecretsProvider.UnitTests.Managers
 		}
 
 		[Test]
-		public void AddSecretsGroupTest()
-		{
-
-			// arrange
-			const string fullPath = "path/to/group";
-			const string name = "group";
-			const string path = "path/to";
-
-			var group = _fixture.Create<Group>();
-
-			var secrets = new Dictionary<string, string> { { "test", "test" } };
-			var files = new Dictionary<string, string> { { "file", "file" } };
-
-			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
-			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
-			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
-			_secretsRepository.Setup(x => x.SetGroupSecrets(group.Id, secrets, files)).Verifiable();
-
-			// act
-			_target.AddSecrets(fullPath, secrets, files, new string[] { });
-
-			// assert
-			_secretsRepository.Verify(x => x.SetGroupSecrets(group.Id, secrets, files), Times.Once);
-		}
-
-		[Test]
-		public void AddSecretsGroupWithNamesTest()
-		{
-			// arrange
-			const string fullPath = "path/to/group";
-			const string name = "group";
-			const string path = "path/to";
-
-			var group = _fixture.Create<Group>();
-
-			var secrets = new Dictionary<string, string> { { "test", "test" }, { "test2", "test2" } };
-			var files = new Dictionary<string, string> { { "file", "file" } };
-
-			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
-			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
-			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
-
-			_secretsRepository.Setup(x => x.UpdateGroupSecrets(group.Id,
-					It.Is<Dictionary<string, string>>(y => y.Keys.Any() && y.ContainsKey("test")),
-					It.Is<Dictionary<string, string>>(y => y.Keys.Count == 0)))
-				.Verifiable();
-
-			// act
-			_target.AddSecrets(fullPath, secrets, files, new[] { "test" });
-
-			// assert
-			_secretsRepository.Verify(
-				x => x.UpdateGroupSecrets(group.Id,
-					It.Is<Dictionary<string, string>>(y => y.Keys.Any() && y.ContainsKey("test")),
-					It.Is<Dictionary<string, string>>(y => y.Keys.Count == 0)),
-				Times.Once);
-		}
-
-		[Test]
-		public void AddSecretFileTest()
-		{
-
-			// arrange
-			const string fullPath = "path/to/group/secret";
-			const string secretName = "secret";
-			const string groupPath = "path/to/group";
-			const string groupName = "group";
-			const string folderPath = "path/to";
-
-			var group = _fixture.Create<Group>();
-
-			var files = new Dictionary<string, string> { { "value", "file" } };
-
-			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Secret);
-			_pathResolver.Setup(x => x.DeconstructPath(fullPath)).Returns((secretName, groupPath));
-			_pathResolver.Setup(x => x.DeconstructPath(groupPath)).Returns((groupName, folderPath));
-
-			_groupRepository.Setup(x => x.Get(groupName, folderPath)).Returns(group);
-
-			_secretsRepository.Setup(x => x.UpdateGroupSecrets(group.Id,
-					It.Is<Dictionary<string, string>>(y => y.Keys.Count == 0),
-					It.Is<Dictionary<string, string>>(y => y.Keys.Count == 1 && y.ContainsKey(secretName))))
-				.Verifiable();
-
-			// act
-			_target.AddSecrets(fullPath, new Dictionary<string, string>(), files, Array.Empty<string>());
-
-			// assert
-			_secretsRepository.Verify(x => x.UpdateGroupSecrets(group.Id,
-				It.Is<Dictionary<string, string>>(y => y.Keys.Count == 0),
-				It.Is<Dictionary<string, string>>(y => y.Keys.Count == 1 && y.ContainsKey(secretName))), Times.Once);
-		}
-
-		[Test]
 		public void AddSecretTest()
 		{
 
@@ -393,13 +249,26 @@ namespace SecretsProvider.UnitTests.Managers
 		}
 
 		[Test]
-		public void DeleteNotFoundSecretTest()
+		public void DeleteGroupSecretsTest()
 		{
 			// arrange
-			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.None);
+			const string fullPath = "path/to/group";
+			const string path = "path/to";
+			const string name = "group";
+			var secrets = new[] { "test" };
+
+			var group = _fixture.Create<Group>();
+
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
+			_pathResolver.Setup(x => x.DeconstructPath(fullPath)).Returns((name, path));
+			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
+			_secretsRepository.Setup(x => x.DeleteGroupSecrets(group.Id, secrets)).Verifiable();
+
+			// act
+			_target.DeleteSecrets(fullPath, secrets);
 
 			// assert
-			Assert.Throws<NotFoundException>(() => _target.DeleteSecrets("path/to/folder", Array.Empty<string>()));
+			_secretsRepository.Verify(x => x.DeleteGroupSecrets(group.Id, secrets), Times.Once);
 		}
 
 		[Test]
@@ -428,26 +297,13 @@ namespace SecretsProvider.UnitTests.Managers
 		}
 
 		[Test]
-		public void DeleteGroupSecretsTest()
+		public void DeleteNotFoundSecretTest()
 		{
 			// arrange
-			const string fullPath = "path/to/group";
-			const string path = "path/to";
-			const string name = "group";
-			var secrets = new[] { "test" };
-
-			var group = _fixture.Create<Group>();
-
-			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
-			_pathResolver.Setup(x => x.DeconstructPath(fullPath)).Returns((name, path));
-			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
-			_secretsRepository.Setup(x => x.DeleteGroupSecrets(group.Id, secrets)).Verifiable();
-
-			// act
-			_target.DeleteSecrets(fullPath, secrets);
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.None);
 
 			// assert
-			_secretsRepository.Verify(x => x.DeleteGroupSecrets(group.Id, secrets), Times.Once);
+			Assert.Throws<NotFoundException>(() => _target.DeleteSecrets("path/to/folder", Array.Empty<string>()));
 		}
 
 		[Test]
@@ -475,12 +331,156 @@ namespace SecretsProvider.UnitTests.Managers
 			_secretsRepository.Verify(x => x.DeleteGroupSecrets(group.Id, new[] { secretName }), Times.Once);
 		}
 
-		private readonly IFixture _fixture = new Fixture();
+		[Test]
+		public void GetSecretsGroupTest()
+		{
+			// arrange
+			var name = _fixture.Create<string>();
+			var path = _fixture.Create<string>();
+			var group = _fixture.Create<Group>();
+			var mockSecret = _fixture.Create<Secret>();
 
-		private ISecretsManager _target;
-		private Mock<IPathResolver> _pathResolver;
-		private Mock<ISecretsRepository> _secretsRepository;
-		private Mock<IGroupRepository> _groupRepository;
-		private Mock<IRepositoryContext> _repositoryContext;
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
+			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
+
+			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
+
+			_secretsRepository.Setup(x => x.GetGroupSecrets(group.Id)).Returns(new List<Secret>
+			{
+				mockSecret
+			});
+
+			// act
+			var result = _target.GetSecrets(path, Array.Empty<string>()).ToList();
+
+			// assert
+			Assert.AreEqual(result.Count, 1);
+			Assert.AreEqual(result[0], mockSecret);
+		}
+
+		[Test]
+		public void GetSecretsGroupWithNamesTest()
+		{
+			// arrange
+			var group = _fixture.Create<Group>();
+
+			var name = _fixture.Create<string>();
+			var path = _fixture.Create<string>();
+
+			var mockSecret = _fixture.Create<Secret>();
+			var mockSecret2 = _fixture.Create<Secret>();
+
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
+			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
+
+			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
+
+			_secretsRepository.Setup(x => x.GetGroupSecrets(group.Id)).Returns(new List<Secret>
+			{
+				mockSecret,
+				mockSecret2
+			});
+
+			// act
+			var result = _target.GetSecrets(path, new[] { mockSecret2.Name }).ToList();
+
+			// assert
+			Assert.AreEqual(result.Count, 1);
+			Assert.AreEqual(result[0], mockSecret2);
+		}
+
+		[Test]
+		public void GetSecretsGroupWithRandomNamesTest()
+		{
+			// arrange
+			var group = _fixture.Create<Group>();
+
+			var name = _fixture.Create<string>();
+			var path = _fixture.Create<string>();
+
+			var mockSecret = _fixture.Create<Secret>();
+			var mockSecret2 = _fixture.Create<Secret>();
+
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Group);
+			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
+
+			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
+
+			_secretsRepository.Setup(x => x.GetGroupSecrets(group.Id)).Returns(new List<Secret>
+			{
+				mockSecret,
+				mockSecret2
+			});
+
+			// act
+			var result = _target.GetSecrets(path, new[] { _fixture.Create<string>() }).ToList();
+
+			// assert
+			Assert.AreEqual(result.Count, 0);
+		}
+
+		[Test]
+		public void GetSecretsNoneTest()
+		{
+			// arrange
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.None);
+
+			// act
+
+			// assert
+			Assert.Throws<NotFoundException>(() => _target.GetSecrets("test", Array.Empty<string>()));
+		}
+
+		[Test]
+		public void GetSecretsSecretNotFoundTest()
+		{
+			// arrange
+			var group = _fixture.Create<Group>();
+
+			var name = _fixture.Create<string>();
+			var path = _fixture.Create<string>();
+
+			var mockSecret = _fixture.Create<Secret>();
+
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Secret);
+			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
+
+			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
+
+			_secretsRepository.Setup(x => x.GetGroupSecrets(group.Id)).Returns(new List<Secret>
+			{
+				mockSecret
+			});
+
+			// assert
+			Assert.Throws<NotFoundException>(() => _target.GetSecrets(_fixture.Create<string>(), Array.Empty<string>()));
+		}
+
+		[Test]
+		public void GetSecretsSecretTest()
+		{
+			// arrange
+			var name = _fixture.Create<string>();
+			var path = _fixture.Create<string>();
+			var group = _fixture.Create<Group>();
+			var mockSecret = _fixture.Build<Secret>().With(x => x.Name, name).Create();
+
+			_pathResolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(PathType.Secret);
+			_pathResolver.Setup(x => x.DeconstructPath(It.IsAny<string>())).Returns((name, path));
+
+			_groupRepository.Setup(x => x.Get(name, path)).Returns(group);
+
+			_secretsRepository.Setup(x => x.GetGroupSecrets(group.Id)).Returns(new List<Secret>
+			{
+				mockSecret
+			});
+
+			// act
+			var result = _target.GetSecrets(path, Array.Empty<string>()).ToList();
+
+			// assert
+			Assert.AreEqual(result.Count, 1);
+			Assert.AreEqual(result[0], mockSecret);
+		}
 	}
 }

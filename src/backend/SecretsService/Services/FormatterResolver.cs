@@ -9,10 +9,10 @@ namespace Ralfred.SecretsService.Services
 {
 	public class FormatterResolver : IFormatterResolver
 	{
-		public FormatterResolver(StorageResolvingExtensions.SerializerResolver serializerResolver)
-		{
+		private readonly StorageResolvingExtensions.SerializerResolver _serializerResolver;
+
+		public FormatterResolver(StorageResolvingExtensions.SerializerResolver serializerResolver) =>
 			_serializerResolver = serializerResolver;
-		}
 
 		public ISecretFormatter Resolve(FormatType? type)
 		{
@@ -27,7 +27,5 @@ namespace Ralfred.SecretsService.Services
 				_ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
 			};
 		}
-
-		private readonly StorageResolvingExtensions.SerializerResolver _serializerResolver;
 	}
 }

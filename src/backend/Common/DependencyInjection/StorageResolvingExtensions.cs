@@ -13,17 +13,17 @@ namespace Ralfred.Common.DependencyInjection
 {
 	public static class StorageResolvingExtensions
 	{
+		public delegate ISerializer? SerializerResolver(FormatType? format);
+
 		public static void ConfigureRepositoryContext(this IServiceCollection services, Configuration configuration)
 		{
 			var storageEngine = configuration.Engine!.Value;
 
 			if (storageEngine != StorageEngineType.InMemory)
-			{
 				services.AddTransient(_ => new StorageConnection
 				{
 					ConnectionString = configuration.ConnectionString!
 				});
-			}
 
 			switch (storageEngine)
 			{
@@ -48,7 +48,7 @@ namespace Ralfred.Common.DependencyInjection
 					services.AddTransient<PostgresSecretRepository>();
 					services.AddTransient<PostgresRoleRepository>();
 
-					services.AddSingleton<IRepositoryContext, PostgreRepositoryContext>();
+					services.AddSingleton<IRepositoryContext, PostgresRepositoryContext>();
 
 					break;
 				}
@@ -56,7 +56,5 @@ namespace Ralfred.Common.DependencyInjection
 				default: throw new ArgumentOutOfRangeException();
 			}
 		}
-
-		public delegate ISerializer? SerializerResolver(FormatType? format);
 	}
 }

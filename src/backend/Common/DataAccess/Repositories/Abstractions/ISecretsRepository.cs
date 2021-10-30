@@ -15,7 +15,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Abstractions
 		void SetGroupSecrets(Guid groupId, Dictionary<string, string> secrets, Dictionary<string, string> files);
 
 		void DeleteGroupSecrets(Guid groupId, IEnumerable<string> secrets);
-		
+
 		void DeleteGroupSecrets(Guid groupId);
 	}
 }

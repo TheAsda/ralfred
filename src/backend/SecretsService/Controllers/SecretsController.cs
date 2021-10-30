@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +16,20 @@ namespace Ralfred.SecretsService.Controllers
 	[Route("{*route}")]
 	public class SecretsController : ControllerBase
 	{
+		private readonly Configuration _configuration;
+		private readonly IFileConverter _fileConverter;
+		private readonly IFormatterResolver _formatterResolver;
+		private readonly ILogger<SecretsController> _logger;
+
+		private readonly ISecretsManager _secretsManager;
+
 		public SecretsController(
 			ISecretsManager            secretsManager,
 			IFileConverter             fileConverter,
 			IFormatterResolver         formatterResolver,
 			Configuration              configuration,
-			ILogger<SecretsController> logger)
+			ILogger<SecretsController> logger
+		)
 		{
 			_secretsManager = secretsManager;
 			_fileConverter = fileConverter;
@@ -37,9 +44,7 @@ namespace Ralfred.SecretsService.Controllers
 			var secretNames = payload.Secrets?.Split(',') ?? Array.Empty<string>();
 
 			if (payload.Data is null || !payload.Data.Keys.Any())
-			{
 				throw new Exception("Secrets are not provided");
-			}
 
 			_secretsManager.AddSecrets(payload.Route ?? string.Empty, payload.Data, _fileConverter.Convert(payload.Files), secretNames);
 		}
@@ -80,12 +85,5 @@ namespace Ralfred.SecretsService.Controllers
 				_               => "text/plain"
 			};
 		}
-
-		private readonly Configuration _configuration;
-		private readonly ILogger<SecretsController> _logger;
-
-		private readonly ISecretsManager _secretsManager;
-		private readonly IFileConverter _fileConverter;
-		private readonly IFormatterResolver _formatterResolver;
 	}
 }

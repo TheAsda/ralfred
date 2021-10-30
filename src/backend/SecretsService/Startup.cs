@@ -1,5 +1,3 @@
-using System;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,8 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using Ralfred.Common.DataAccess.Repositories;
-using Ralfred.Common.DataAccess.Repositories.Abstractions;
 using Ralfred.Common.DependencyInjection;
 using Ralfred.Common.Helpers;
 using Ralfred.Common.Helpers.Serialization;
@@ -23,10 +19,10 @@ namespace Ralfred.SecretsService
 {
 	public class Startup
 	{
-		public Startup(IConfiguration configuration)
-		{
+		private static IConfiguration? _configuration;
+
+		public Startup(IConfiguration configuration) =>
 			_configuration = configuration;
-		}
 
 		public static void ConfigureServices(IServiceCollection services)
 		{
@@ -74,7 +70,6 @@ namespace Ralfred.SecretsService
 
 			services.ConfigureRepositoryContext(configuration);
 
-
 			services.AddControllers(options =>
 			{
 				options.Filters.Add<ExceptionsFilter>();
@@ -85,9 +80,7 @@ namespace Ralfred.SecretsService
 		public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
 		{
 			if (env.IsDevelopment())
-			{
 				app.UseDeveloperExceptionPage();
-			}
 
 			app.UseRouting();
 			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
@@ -105,15 +98,15 @@ namespace Ralfred.SecretsService
 			var configurationManager = serviceProvider.GetService<IConfigurationManager>()!;
 
 			var appConfigurationDefaults = configurationManager.Get(_configuration!["DefaultSettingsPath"]);
-			var appConfigurationOverrides = configurationManager.Get(_configuration!["OverridesSettingsPath"]);
+			var appConfigurationOverrides = configurationManager.Get(_configuration["OverridesSettingsPath"]);
 
 			if (appConfigurationDefaults is null)
 			{
 				Log.Information("Application configuration is not initialized");
-				
+
 				appConfigurationDefaults = configurationManager.GetDefaultConfiguration();
-				configurationManager.Save(_configuration!["DefaultSettingsPath"], appConfigurationDefaults);
-				
+				configurationManager.Save(_configuration["DefaultSettingsPath"], appConfigurationDefaults);
+
 				Log.Information($"Here is your root token: {appConfigurationDefaults.RootToken}");
 			}
 
@@ -128,7 +121,5 @@ namespace Ralfred.SecretsService
 
 			return appConfiguration;
 		}
-
-		private static IConfiguration? _configuration;
 	}
 }

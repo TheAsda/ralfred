@@ -16,19 +16,7 @@ namespace SecretsProvider.UnitTests.Helpers
 			_target = new YamlSerializer();
 		}
 
-		[Test]
-		public void SerializeTest()
-		{
-			// arrange
-			var @object = new { Field = "value" };
-
-			// act
-			var result = _target.Serialize(@object);
-
-			// assert
-			result.Should().NotBeNull();
-			result!.Trim().Should().BeEquivalentTo("field: value");
-		}
+		private YamlSerializer _target;
 
 		[Test]
 		public void DeserializeTest()
@@ -50,7 +38,19 @@ namespace SecretsProvider.UnitTests.Helpers
 			result.Should().BeEquivalentTo(expected);
 		}
 
-		private YamlSerializer _target;
+		[Test]
+		public void SerializeTest()
+		{
+			// arrange
+			var @object = new { Field = "value" };
+
+			// act
+			var result = _target.Serialize(@object);
+
+			// assert
+			result.Should().NotBeNull();
+			result!.Trim().Should().BeEquivalentTo("field: value");
+		}
 	}
 
 	internal class TempEntity

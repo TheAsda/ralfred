@@ -31,26 +31,12 @@ namespace SecretsService.UnitTests.Services
 			_target = new FormatterResolver(_serializerResolver.Object);
 		}
 
-		[Test]
-		public void ResolveTest()
-		{
-			// arrange
-			_serializer = new Mock<ISerializer>();
+		private IFixture _fixture;
 
-			var type = _fixture.Create<Generator<FormatType>>().FirstOrDefault(x => new[]
-			{
-				FormatType.Json,
-				FormatType.Xml
-			}.Contains(x));
+		private Mock<ISerializer> _serializer;
+		private Mock<StorageResolvingExtensions.SerializerResolver> _serializerResolver;
 
-			_serializerResolver.Setup(x => x(type)).Returns(_serializer.Object);
-
-			// act
-			var result = _target.Resolve(type);
-
-			// assert
-			new[] { typeof(JsonSecretFormatter), typeof(XmlSecretFormatter) }.Contains(result.GetType()).Should().BeTrue();
-		}
+		private FormatterResolver _target;
 
 		[Test]
 		public void Resolve_KeyValueTest()
@@ -88,11 +74,25 @@ namespace SecretsService.UnitTests.Services
 			Assert.Throws<ArgumentOutOfRangeException>(() => _target.Resolve(type));
 		}
 
-		private IFixture _fixture;
+		[Test]
+		public void ResolveTest()
+		{
+			// arrange
+			_serializer = new Mock<ISerializer>();
 
-		private Mock<ISerializer> _serializer;
-		private Mock<StorageResolvingExtensions.SerializerResolver> _serializerResolver;
+			var type = _fixture.Create<Generator<FormatType>>().FirstOrDefault(x => new[]
+			{
+				FormatType.Json,
+				FormatType.Xml
+			}.Contains(x));
 
-		private FormatterResolver _target;
+			_serializerResolver.Setup(x => x(type)).Returns(_serializer.Object);
+
+			// act
+			var result = _target.Resolve(type);
+
+			// assert
+			new[] { typeof(JsonSecretFormatter), typeof(XmlSecretFormatter) }.Contains(result.GetType()).Should().BeTrue();
+		}
 	}
 }

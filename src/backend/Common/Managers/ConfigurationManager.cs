@@ -7,6 +7,11 @@ namespace Ralfred.Common.Managers
 {
 	public class ConfigurationManager : IConfigurationManager
 	{
+		private readonly IContentManager _contentManager;
+
+		private readonly ISerializer _serializer;
+		private readonly ITokenService _tokenService;
+
 		public ConfigurationManager(ISerializer serializer, IContentManager contentManager, ITokenService tokenService)
 		{
 			_serializer = serializer;
@@ -50,9 +55,5 @@ namespace Ralfred.Common.Managers
 			var content = _serializer.Serialize(configuration);
 			_contentManager.Save(path, content!);
 		}
-
-		private readonly ISerializer _serializer;
-		private readonly IContentManager _contentManager;
-		private readonly ITokenService _tokenService;
 	}
 }

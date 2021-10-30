@@ -9,10 +9,10 @@ namespace Ralfred.SecretsService.Services.Formatters
 {
 	public class JsonSecretFormatter : ISecretFormatter
 	{
-		public JsonSecretFormatter(ISerializer? serializer)
-		{
+		private readonly ISerializer? _serializer;
+
+		public JsonSecretFormatter(ISerializer? serializer) =>
 			_serializer = serializer;
-		}
 
 		public string? Format(IEnumerable<Secret> data)
 		{
@@ -20,7 +20,5 @@ namespace Ralfred.SecretsService.Services.Formatters
 
 			return _serializer?.Serialize(dictionary);
 		}
-
-		private readonly ISerializer? _serializer;
 	}
 }

@@ -12,16 +12,16 @@ namespace Ralfred.SecretsService
 {
 	public class ExceptionsFilter : IExceptionFilter
 	{
-		public ExceptionsFilter(ILogger<ExceptionsFilter> logger)
-		{
+		private readonly ILogger<ExceptionsFilter> _logger;
+
+		public ExceptionsFilter(ILogger<ExceptionsFilter> logger) =>
 			_logger = logger;
-		}
 
 		public void OnException(ExceptionContext context)
 		{
 			var status = HttpStatusCode.InternalServerError;
 			var message = "Internal sever error.";
-			
+
 			switch (context.Exception)
 			{
 				case NotFoundException:
@@ -39,13 +39,7 @@ namespace Ralfred.SecretsService
 			context.HttpContext.Response.StatusCode = (int)status;
 			context.HttpContext.Response.ContentType = "application/json";
 
-			context.Result = new ObjectResult(new Error
-			{
-				StatusCode = (int)status,
-				Message = message
-			});
+			context.Result = new ObjectResult(new Error((int)status, message));
 		}
-
-		private readonly ILogger<ExceptionsFilter> _logger;
 	}
 }
