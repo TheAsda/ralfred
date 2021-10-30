@@ -21,7 +21,7 @@ namespace SecretsProvider.UnitTests.Managers
 		public void Setup()
 		{
 			_serializer = new Mock<ISerializer>(MockBehavior.Strict);
-			_contentProvider = new Mock<IContentProvider>(MockBehavior.Strict);
+			_contentProvider = new Mock<IContentManager>(MockBehavior.Strict);
 			_tokenService = new Mock<ITokenService>();
 
 			_target = new ConfigurationManager(_serializer.Object, _contentProvider.Object, _tokenService.Object);
@@ -77,7 +77,7 @@ namespace SecretsProvider.UnitTests.Managers
 		private readonly IFixture _fixture = new Fixture();
 
 		private Mock<ISerializer> _serializer;
-		private Mock<IContentProvider> _contentProvider;
+		private Mock<IContentManager> _contentProvider;
 		private Mock<ITokenService> _tokenService;
 
 		private ConfigurationManager _target;

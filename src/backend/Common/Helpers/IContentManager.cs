@@ -3,7 +3,7 @@
 
 namespace Ralfred.Common.Helpers
 {
-	public interface IContentProvider
+	public interface IContentManager
 	{
 		public string? Get(string path);
 

@@ -64,10 +64,10 @@ namespace Ralfred.SecretsService
 			services.AddTransient<IAccountManager, AccountManager>();
 			services.AddTransient<IFormatterResolver, FormatterResolver>();
 
-			services.AddTransient<IContentProvider, ContentProvider>();
+			services.AddTransient<IContentManager, ContentManager>();
 
 			services.AddTransient<IConfigurationManager, ConfigurationManager>(serviceProvider =>
-				new ConfigurationManager(serviceProvider.GetService<YamlSerializer>()!, serviceProvider.GetService<IContentProvider>()!,
+				new ConfigurationManager(serviceProvider.GetService<YamlSerializer>()!, serviceProvider.GetService<IContentManager>()!,
 					serviceProvider.GetService<ITokenService>()!));
 
 			var configuration = RegisterApplicationConfiguration(services);

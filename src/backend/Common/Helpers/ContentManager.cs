@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Ralfred.Common.Helpers
 {
-	public class ContentProvider : IContentProvider
+	public class ContentManager : IContentManager
 	{
 		public string? Get(string path)
 		{

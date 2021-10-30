@@ -7,16 +7,16 @@ namespace Ralfred.Common.Managers
 {
 	public class ConfigurationManager : IConfigurationManager
 	{
-		public ConfigurationManager(ISerializer serializer, IContentProvider contentProvider, ITokenService tokenService)
+		public ConfigurationManager(ISerializer serializer, IContentManager contentManager, ITokenService tokenService)
 		{
 			_serializer = serializer;
-			_contentProvider = contentProvider;
+			_contentManager = contentManager;
 			_tokenService = tokenService;
 		}
 
 		public Configuration? Get(string path)
 		{
-			var content = _contentProvider.Get(path);
+			var content = _contentManager.Get(path);
 
 			if (content is null)
 				return default;
@@ -48,11 +48,11 @@ namespace Ralfred.Common.Managers
 		public void Save(string path, Configuration configuration)
 		{
 			var content = _serializer.Serialize(configuration);
-			_contentProvider.Save(path, content!);
+			_contentManager.Save(path, content!);
 		}
 
 		private readonly ISerializer _serializer;
-		private readonly IContentProvider _contentProvider;
+		private readonly IContentManager _contentManager;
 		private readonly ITokenService _tokenService;
 	}
 }
