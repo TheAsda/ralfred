@@ -4,11 +4,11 @@ using LinqToDB.Mapping;
 using Ralfred.Common.DataAccess.Entities;
 
 
-namespace Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration
+namespace Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfigurations
 {
-	internal sealed class AccountMapper : IMapper
+	internal sealed class AccountEntityTableConfiguration : IEntityTableConfiguration
 	{
-		public void Apply(MappingSchema schema)
+		public void Configure(MappingSchema schema)
 		{
 			schema.GetFluentMappingBuilder()
 				.Entity<Account>()

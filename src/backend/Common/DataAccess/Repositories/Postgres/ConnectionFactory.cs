@@ -6,7 +6,7 @@ using LinqToDB.Data;
 using LinqToDB.DataProvider.PostgreSQL;
 using LinqToDB.Mapping;
 
-using Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfiguration;
+using Ralfred.Common.DataAccess.Repositories.Postgres.EntityConfigurations;
 using Ralfred.Common.Types;
 
 
@@ -24,10 +24,10 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			_schema = new MappingSchema();
 
 			var mappers = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
-				.Where(x => typeof(IMapper).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
+				.Where(x => typeof(IEntityTableConfiguration).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
 
 			foreach (var mapper in mappers)
-				((IMapper)Activator.CreateInstance(mapper)!).Apply(_schema);
+				((IEntityTableConfiguration)Activator.CreateInstance(mapper)!).Configure(_schema);
 		}
 
 		public DataConnection Create()
