@@ -32,6 +32,18 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			) is not null;
 		}
 
+		public bool ExistsWithToken(string tokenHash)
+		{
+			EnsureArg.IsNotNullOrWhiteSpace(tokenHash);
+
+			using var connection = _connectionFactory.Create();
+			connection.Open();
+
+			return connection.Get<Account>(
+				Predicates.Field<Account>(x => x.TokenHash, Operator.Eq, tokenHash)
+			) is not null;
+		}
+
 		public Guid Create(Account account)
 		{
 			if (string.IsNullOrEmpty(account.Name))
@@ -56,6 +68,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 		{
 			using var connection = _connectionFactory.Create();
 			connection.Open();
+
 			connection.Delete<Account>(Predicates.Field<Account>(x => x.Id, Operator.Eq, accountId));
 		}
 
@@ -71,7 +84,7 @@ namespace Ralfred.Common.DataAccess.Repositories.Postgres
 			);
 		}
 
-		public Account? Update(Account account)
+		public Account Update(Account account)
 		{
 			if (string.IsNullOrEmpty(account.Name))
 			{

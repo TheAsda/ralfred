@@ -8,12 +8,14 @@ using Ralfred.Common.Helpers;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
 using Ralfred.SecretsService.Models;
+using Ralfred.SecretsService.RequestFiltering;
 using Ralfred.SecretsService.Services;
 
 
 namespace Ralfred.SecretsService.Controllers
 {
 	[ApiController]
+	[Authenticate]
 	[Route("account")]
 	public class AccountController : ControllerBase
 	{

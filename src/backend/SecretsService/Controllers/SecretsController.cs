@@ -8,12 +8,14 @@ using Microsoft.Extensions.Logging;
 using Ralfred.Common.Managers;
 using Ralfred.Common.Types;
 using Ralfred.SecretsService.Models;
+using Ralfred.SecretsService.RequestFiltering;
 using Ralfred.SecretsService.Services;
 
 
 namespace Ralfred.SecretsService.Controllers
 {
 	[ApiController]
+	[Authenticate]
 	[Route("{*route}")]
 	public class SecretsController : ControllerBase
 	{

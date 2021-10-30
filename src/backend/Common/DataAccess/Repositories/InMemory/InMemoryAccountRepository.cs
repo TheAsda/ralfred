@@ -25,6 +25,13 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			return _storage.Any(x => x.Name != null && x.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
 		}
 
+		public bool ExistsWithToken(string tokenHash)
+		{
+			EnsureArg.IsNotEmptyOrWhiteSpace(tokenHash);
+
+			return _storage.Any(x => x.TokenHash != null && x.TokenHash.Equals(tokenHash, StringComparison.OrdinalIgnoreCase));
+		}
+
 		public Guid Create(Account account)
 		{
 			if (string.IsNullOrEmpty(account.Name))
@@ -49,7 +56,7 @@ namespace Ralfred.Common.DataAccess.Repositories.InMemory
 			if (index == -1)
 			{
 				throw new NotFoundException($"Cannot find account with id {accountId}");
-			}	
+			}
 
 			_storage.RemoveAt(index);
 		}
